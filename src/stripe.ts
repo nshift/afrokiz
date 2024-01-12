@@ -29,7 +29,7 @@ export class Stripe {
 
   mountElements(elements: StripeElements, domElement: string | HTMLElement) {
     const options = { layout: { type: "tabs", defaultCollapsed: false } };
-    const paymentElement = elements.create("payment", options);
+    const paymentElement = elements.create("payment" as any, options as any);
     paymentElement.mount(domElement);
   }
 

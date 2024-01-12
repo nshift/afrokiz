@@ -4,16 +4,13 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../sections/Header.astro";
 import Footer from "../../sections/Footer.astro";
 import TicketForm from "../../components/TicketForm.vue";
-import { passes, promotionEndDate } from "../../data/pass";
-
-const promotionEnds = moment(promotionEndDate).diff(moment(new Date()), 'days')
-const promotionHasEnded = promotionEnds < 0
+import { passes } from "../../data/pass";
 ---
 
 <Layout title="Welcome to Astro.">
   <Header />
   <main>
-    { !promotionHasEnded && <TicketForm client:only pass={passes.fullPass} /> }
+    <TicketForm client:only pass={passes.fullPass} />
   </main>
   <Footer />
 </Layout>
