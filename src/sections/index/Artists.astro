@@ -1,0 +1,62 @@
+---
+import Card from "../../components/Card.astro";
+import { artists } from "../../data/artist";
+---
+
+<!-- <h1>Line up</h1> -->
+<div class="container">
+  <div class="list">
+    {
+      artists.map((artist) => (
+        <Card backgroundPath={artist.image} classes={["artist-card"]}>
+          {artist.name}
+        </Card>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .artist-card {
+    width: calc((100% / 4) - 0.8rem) !important;
+    height: 175px !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: end !important;
+  }
+  @media only screen and (max-width: 920px) {
+    .artist-card {
+      width: calc((100% / 2) - 0.5rem) !important;
+    }
+  }
+  .artist-card .background {
+    border-radius: 20px !important;
+  }
+
+  .artist-card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+  }
+  .artist-card .text {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-shadow: 0px 0px 5px black;
+  }
+</style>
+
+<style>
+  .container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: var(--grid-lg-gap);
+    padding: 0 var(--grid-side-padding);
+  }
+  .list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    grid-column: span 12;
+  }
+</style>

@@ -1,0 +1,113 @@
+---
+import Card from "../../components/Card.astro";
+import Currency from "../../components/Currency.vue"
+import { passes } from "../../data/pass";
+import { promotionText } from "../../data/promotion";
+
+const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
+---
+
+<div id="tickets" class="grid">
+  <Card classes={["ticket-card promotion"]}>
+    <h2>{ promotionText }</h2>
+  </Card>
+  <Card classes={["ticket-card early-bird"]}>
+    <div class="container-row">
+      <div class="container-column">
+        <div>
+          <h1><Currency price={promotedPass.price} client:only /></h1>
+          { promotedPass.price.EUR != promotedPass.doorPrice.EUR && <p><s><Currency price={promotedPass.doorPrice} client:only /></s></p> }
+          <h2>{promotedPass.name}</h2>
+        </div>
+        { !promotedPass.isSoldOut && <a href={"/pass/" + promotedPass.id} class="button action">Buy</a> }
+        { promotedPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+      </div>
+      <div class="container-column">
+        <ul>{promotedPass.includes.map((feature) => <li>{feature}</li>)}</ul>
+      </div>
+    </div>
+  </Card>
+  {
+    Object.values(passes).filter((pass) => !pass.isPromoted).map((pass) => (
+      <Card classes={["ticket-card", "ticket"]}>
+        <div class="container-column">
+          <div>
+            <h2><Currency price={pass.price} client:only /></h2>
+            { pass.price.EUR != pass.doorPrice.EUR && <p><s><Currency price={pass.doorPrice} client:only /></s></p> }
+            <h3>{pass.name}</h3>
+          </div>
+          { !pass.isSoldOut && <a href={"/pass/" + pass.id} class="button action">Buy</a> }
+          { pass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+        </div>
+      </Card>
+    ))
+  }
+</div>
+
+<style is:global>
+  .card.promotion {
+    background-color: var(--secondary-color);
+    grid-area: promotion;
+  }
+  .card.early-bird {
+    grid-area: ticket-promo;
+    font-size: 1.2rem;
+    min-height: 400px;
+  }
+  .card.early-bird .container-column {
+    padding: var(--card-lg-padding);
+  }
+  .card.ticket {
+    grid-column: span 4;
+  }
+  @media only screen and (max-width: 920px) {
+    .card.ticket {
+    grid-column: span 6;
+  }
+  }
+  .ticket-card {
+    min-height: 300px;
+    padding: var(--card-lg-padding);
+  }
+</style>
+
+<style>
+  .grid {
+    grid-template-areas:
+      "promotion promotion promotion promotion ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo"
+      "ticket-eco ticket-eco ticket-eco ticket-eco ticket-recommended ticket-recommended ticket-recommended ticket-recommended ticket-vip ticket-vip ticket-vip ticket-vip";
+  }
+  @media only screen and (max-width: 920px) {
+    .grid {
+    grid-template-areas:
+      "ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo"
+      "promotion promotion promotion promotion promotion promotion ticket-eco ticket-eco ticket-eco ticket-eco ticket-eco ticket-eco"
+      "ticket-recommended ticket-recommended ticket-recommended ticket-recommended ticket-recommended ticket-recommended ticket-vip ticket-vip ticket-vip ticket-vip ticket-vip ticket-vip";
+  }
+  }
+  .container-row {
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-lg-gap);
+  }
+  .container-column {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-lg-gap);
+    text-align: center;
+    justify-content: center;
+  }
+  .button.action {
+    min-width: 130px;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+  h1 {
+    font-size: 2.5rem;
+  }
+</style>

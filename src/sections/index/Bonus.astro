@@ -1,0 +1,85 @@
+---
+import Card from "../../components/Card.astro";
+---
+
+<div class="grid">
+  <Card classes={["bonus-card", "cruise"]} backgroundPath="/images/boat4.jpg">
+    <h2>Exclusive Dinner Cruise Party</h2>
+    <p>Limited to 70 pers. Enjoy Thai & International buffet on the Chao Phraya River with live Kizomba Djs.</p>
+  </Card>
+  <Card
+    classes={["bonus-card", "massage"]}
+    backgroundPath="/images/massage.jpg"
+  >
+    <h2>Massage</h2>
+    <p>Traditional foot massage at any time.</p>
+  </Card>
+  <Card
+    classes={["bonus-card", "muay-thai"]}
+    backgroundPath="/images/muay-thai.jpg"
+  >
+    <h2>Muay Thai Class</h2>
+    <p>Limited to 25 pers.</p>
+  </Card>
+  <Card classes={["bonus-card", "master-class"]} backgroundPath="/images/masterclass2.png">
+    <h2>2 Master Classes</h2>
+    <p>2H with Said & Oksana<br />2H with Heneco</p>
+  </Card>
+  <Card classes={["bonus-card", "pickup"]} backgroundPath="/images/pickup.jpg">
+    <h2>Airport Pickup</h2>
+    <p>VIP Only</p>
+  </Card>
+  <Card
+    classes={["bonus-card", "hotel"]}
+    backgroundPath="/images/hotel-room.jpg"
+  >
+    <h2>Hotel Room Included</h2>
+    <p>VIP Only</p>
+  </Card>
+</div>
+
+<style is:global>
+  .bonus-card {
+    min-height: 330px;
+    padding: 0 2rem;
+  }
+  .cruise {
+    grid-area: cruise;
+    padding: 0 8rem;
+  }
+  .massage {
+    grid-area: massage;
+    min-height: 300px;
+  }
+  .muay-thai {
+    grid-area: muay-thai;
+    min-height: 300px;
+  }
+  .master-class {
+    grid-area: master-class;
+  }
+  .pickup {
+    grid-area: pickup;
+  }
+  .hotel {
+    grid-area: hotel;
+  }
+</style>
+
+<style>
+  .grid {
+    grid-template-areas:
+      "cruise cruise cruise cruise cruise cruise cruise cruise massage massage massage massage"
+      "cruise cruise cruise cruise cruise cruise cruise cruise muay-thai muay-thai muay-thai muay-thai"
+      "master-class master-class master-class master-class pickup pickup pickup pickup hotel hotel hotel hotel";
+  }
+  @media only screen and (max-width: 920px) {
+    .grid {
+      grid-template-areas:
+        "cruise cruise cruise cruise cruise cruise cruise cruise cruise cruise cruise cruise"
+        "massage massage massage massage massage massage muay-thai muay-thai muay-thai muay-thai muay-thai muay-thai"
+        "master-class master-class master-class master-class master-class master-class master-class master-class master-class master-class master-class master-class"
+        "hotel hotel hotel hotel hotel hotel pickup pickup pickup pickup pickup pickup";
+    }
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+import Card from "../../components/Card.astro";
+---
+
+<div class="grid">
+  <Card classes={["vp-card intro"]}><h2>Intro</h2></Card>
+  <Card classes={["vp-card artist"]} backgroundPath="/images/kevin.jpg">
+    <h2>13H Workshops</h2>
+    <h2>4H Masterclass</h2>
+    <h2>3 Night Theme Parties</h2>
+    <h2>1 Exclusive Diner Cruise Party</h2>
+    <h2>Afternoon Social</h2>
+  </Card>
+  <Card classes={["vp-card room"]} backgroundPath="/images/room.jpg">
+    <h2>1 Room, All Styles</h2>
+    <p>Kizomba, Semba, Urban Kiz, Tarraxo, Tarraxinha, Kompa, Ghetto Zouk, Douceur, Afrobeats.</p>
+  </Card>
+  <Card classes={["vp-card date"]} backgroundPath="/images/hotel.jpg">
+    <h2>6-8 Sep 2024</h2><p>Glowfish Floor 2, Sathorn Thani 2 Building, Bangkok</p>
+  </Card>
+</div>
+
+<style is:global>
+  .vp-card {
+    padding: var(--card-lg-padding);
+    min-height: 300px;
+  }
+  .card.intro {
+    grid-area: intro;
+    height: 600px;
+  }
+  .card.artist {
+    grid-area: artist;
+  }
+  .card.room {
+    grid-area: room;
+    height: 280px;
+  }
+  .card.date {
+    grid-area: date;
+    height: 280px;
+  }
+</style>
+
+<style>
+  .grid {
+    grid-template-areas:
+      "intro intro intro intro intro intro intro intro intro intro intro intro"
+      "artist artist artist artist artist artist artist room room room room room"
+      "artist artist artist artist artist artist artist date date date date date";
+  }
+  @media only screen and (max-width: 920px) {
+    .grid {
+      grid-template-areas:
+        "intro intro intro intro intro intro intro intro intro intro intro intro"
+        "artist artist artist artist artist artist artist artist artist artist artist artist"
+        "room room room room room room date date date date date date";
+    }
+  }
+</style>

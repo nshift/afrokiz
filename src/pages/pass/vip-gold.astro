@@ -1,0 +1,15 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../sections/Header.astro";
+import Footer from "../../sections/Footer.astro";
+import TicketForm from "../../components/TicketForm.vue";
+import { passes } from "../../data/pass";
+---
+
+<Layout title="Welcome to Astro.">
+  <Header />
+  <main>
+    <TicketForm client:only pass={passes.vipGold} />
+  </main>
+  <Footer />
+</Layout>

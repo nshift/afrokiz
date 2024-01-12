@@ -1,6 +1,6 @@
 ---
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
@@ -8,44 +8,190 @@ const { title } = Astro.props;
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script src="https://kit.fontawesome.com/dd9e4b496c.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>
 <style is:global>
-	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background: #13151a;
-		background-size: 224px;
-	}
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
-	}
+  :root {
+    --primary-darker-color: #12091d;
+    --primary-color: #371b58;
+    --secondary-color: #ef2d56;
+    --tertiary-color: #ed7d3a;
+    --text-primary-color: white;
+    --text-secondary-color: rgb(218, 218, 218);
+    --background-color: var(--primary-color);
+    --grid-side-padding: 7rem;
+    --card-lg-padding: 3rem;
+    --card-m-padding: 2rem;
+    --grid-lg-gap: 2rem;
+  }
+  html {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    background: var(--background-color);
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-lg-gap);
+    margin: 0;
+    background: var(--background-color);
+    font-size: 1rem;
+  }
+  main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-lg-gap);
+  }
+  .button.action {
+    text-decoration: none;
+    color: var(--text-primary-color);
+    border: none;
+    border-radius: 2rem;
+    background-color: var(--secondary-color);
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .button.action.disabled {
+    background-color: gray;
+    cursor:initial;
+  }
+  .button.action:hover {
+    -webkit-transform: translateY(-1px);
+    transform: translateY(-1px);
+    box-shadow:
+      0 10px 18px #14141782,
+      0 5px 9px #00000014;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: var(--grid-lg-gap);
+    padding: 0 var(--grid-side-padding);
+  }
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+  h1 {
+    font-size: 2.5rem;
+  }
+  h2 {
+    font-size: 1.75rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  h4 {
+    font-size: 1.25rem;
+  }
+  .form-control {
+    width: 100%;
+    padding: .175rem .55rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: .375rem;
+  }
+  .el-switch,
+.el-switch-style,
+.el-switch-style:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.el-switch {
+  display: inline-block;
+  font-size: 100%;
+  height: 1.6em;
+  position: relative;
+}
+.el-switch .el-switch-style {
+  height: 1.6em;
+  left: 0;
+  background: #a5a5a5;
+  -webkit-border-radius: 0.8em;
+  border-radius: 0.8em;
+  display: inline-block;
+  position: relative;
+  top: 0;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  width: 3em;
+  cursor: pointer;
+}
+.el-switch .el-switch-style:before {
+  display: block;
+  content: '';
+  height: 1.4em;
+  position: absolute;
+  width: 1.4em;
+  background-color: #fff;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  left: 0.1em;
+  top: 0.1em;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+.el-switch > input[type="checkbox"] {
+  display: none;
+}
+.el-switch > input[type="checkbox"]:checked + .el-switch-style {
+  background-color: #8f2dff;
+}
+.el-switch > input[type="checkbox"]:checked + .el-switch-style:before {
+  left: 50%;
+}
+.field {
+  border: 1px solid rgb(230, 230, 230);
+  padding: 0.75rem;
+  width: 100%;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+
+/* --mobile-max-width: 576px;
+    --screen-medium-width: 776px;
+    --screen-large-width: 992px; */
+
+@media only screen and (min-width: 776px) and (max-width: 1180px) {
+  :root {
+    --grid-side-padding: 1rem;
+    --grid-lg-gap: 1.75rem;
+    --card-lg-padding: 2rem;
+    --card-m-padding: 1rem;
+  }
+}
+@media only screen and (max-width: 920px) {
+  :root {
+    --grid-side-padding: 1rem;
+    --grid-lg-gap: 1.25rem;
+    --card-lg-padding: 1.5rem;
+    --card-m-padding: 0.75rem;
+  }
+}
 </style>

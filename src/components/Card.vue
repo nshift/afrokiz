@@ -1,27 +1,25 @@
----
-interface Props {
+<script setup lang="ts">
+import { defineProps } from 'vue'
+const props = defineProps<{
   backgroundPath?: string;
   classes?: string[];
-}
+}>()
+</script>
 
-const { backgroundPath, classes } = Astro.props;
----
+<template>
+  <div :class="['card', ...(props.classes ?? [])]">
+    <div class="text"><slot></slot></div>
+    <div v-if="props.backgroundPath" class="background">
+      <div class="overlay"></div>
+      <img
+        :src="props.backgroundPath"
+        style="height: 100%; width: 100%; object-fit: cover"
+      />
+    </div>
+  </div>
+</template>
 
-<div class:list={["card", ...(classes ?? [])]}>
-  <div class="text"><slot /></div>
-  {
-    backgroundPath && (
-      <div class="background">
-        <div class="overlay" />
-        <img
-          src={backgroundPath}
-          style="height: 100%; width: 100%; object-fit: cover"
-        />
-      </div>
-    )
-  }
-</div>
-<style>
+<style scoped>
   .card {
     position: relative;
     color: var(--text-primary-color);
