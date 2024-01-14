@@ -13,7 +13,7 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
   </Card>
   <Card classes={["ticket-card early-bird"]}>
     <div class="container-row">
-      <div class="container-column">
+      <div class="container-column ticket">
         <div>
           <h1><Currency price={promotedPass.price} client:only /></h1>
           { promotedPass.price.EUR != promotedPass.doorPrice.EUR && <p><s><Currency price={promotedPass.doorPrice} client:only /></s></p> }
@@ -51,39 +51,53 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
   }
   .card.early-bird {
     grid-area: ticket-promo;
-    font-size: 1.2rem;
-    min-height: 400px;
+    font-size: var(--h4-font-size);
+    min-height: var(--card-m-height);
   }
   .card.early-bird .container-column {
-    padding: var(--card-lg-padding);
+    padding: var(--lg-padding);
   }
   .card.ticket {
     grid-column: span 4;
   }
-  @media only screen and (max-width: 920px) {
-    .card.ticket {
-    grid-column: span 6;
-  }
-  }
   .ticket-card {
-    min-height: 300px;
-    padding: var(--card-lg-padding);
+    min-height: var(--card-m-height);
+    padding: var(--lg-padding);
+  }
+  @media only screen and (max-width: 920px) {
+    .card.early-bird .container-row {
+      flex-direction: column;
+    }
+    .card.early-bird .container-row > * {
+      width: auto;
+    }
+    .card.early-bird .container-row .container-column {
+      padding: 0;
+    }
+    .card.early-bird .container-row .container-column.ticket {
+      align-items: center;
+    }
+    .card.ticket, .card.promotion {
+      grid-column: span 12;
+      min-height: 120px;
+    }
+    .card.ticket .container-column {
+      flex-direction: row;
+      align-items: center;
+    }
+    .card.ticket .container-column > * {
+      width: 100%;
+    }
+    .card.ticket .text {
+      width: 100%;
+    }
   }
 </style>
 
 <style>
   .grid {
     grid-template-areas:
-      "promotion promotion promotion promotion ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo"
-      "ticket-eco ticket-eco ticket-eco ticket-eco ticket-recommended ticket-recommended ticket-recommended ticket-recommended ticket-vip ticket-vip ticket-vip ticket-vip";
-  }
-  @media only screen and (max-width: 920px) {
-    .grid {
-    grid-template-areas:
-      "ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo"
-      "promotion promotion promotion promotion promotion promotion ticket-eco ticket-eco ticket-eco ticket-eco ticket-eco ticket-eco"
-      "ticket-recommended ticket-recommended ticket-recommended ticket-recommended ticket-recommended ticket-recommended ticket-vip ticket-vip ticket-vip ticket-vip ticket-vip ticket-vip";
-  }
+      "promotion promotion promotion promotion ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo";
   }
   .container-row {
     display: flex;
@@ -107,7 +121,15 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
     list-style: none;
     text-align: left;
   }
-  h1 {
-    font-size: 2.5rem;
+  @media only screen and (max-width: 920px) {
+    .grid {
+      grid-template-areas:
+        "ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo ticket-promo"
+        "promotion promotion promotion promotion promotion promotion promotion promotion promotion promotion promotion promotion";
+    }
+    .button.action {
+      min-width: 90px;
+      max-width: 100px;
+    }
   }
 </style>

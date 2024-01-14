@@ -31,9 +31,19 @@ const { title } = Astro.props;
     --text-secondary-color: rgb(218, 218, 218);
     --background-color: var(--primary-color);
     --grid-side-padding: 7rem;
-    --card-lg-padding: 3rem;
-    --card-m-padding: 2rem;
+    --lg-padding: 3rem;
+    --card-lg-height: 600px;
+    --lg-height: 600px;
+    --m-padding: 2rem;
+    --s-padding: 1.5rem;
+    --card-m-height: 300px;
     --grid-lg-gap: 2rem;
+    --grid-m-gap: 1.5rem;
+    --text-font-size: 1rem;
+    --h1-font-size: 2.5rem;
+    --h2-font-size: 1.75rem;
+    --h3-font-size: 1.5rem;
+    --h4-font-size: 1.25rem;
   }
   html {
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -45,7 +55,7 @@ const { title } = Astro.props;
     gap: var(--grid-lg-gap);
     margin: 0;
     background: var(--background-color);
-    font-size: 1rem;
+    font-size: var(--text-font-size);
   }
   main {
     display: flex;
@@ -58,8 +68,8 @@ const { title } = Astro.props;
     border: none;
     border-radius: 2rem;
     background-color: var(--secondary-color);
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
+    padding: calc(var(--s-padding) * 0.8) var(--s-padding);
+    font-size: var(--h4-font-size);
     font-weight: bold;
     text-transform: uppercase;
     transition: all 0.15s ease;
@@ -89,16 +99,16 @@ const { title } = Astro.props;
     margin: 0;
   }
   h1 {
-    font-size: 2.5rem;
+    font-size: var(--h1-font-size);
   }
   h2 {
-    font-size: 1.75rem;
+    font-size: var(--h2-font-size);
   }
   h3 {
-    font-size: 1.5rem;
+    font-size: var(--h3-font-size);
   }
   h4 {
-    font-size: 1.25rem;
+    font-size: var(--h4-font-size);
   }
   .form-control {
     width: 100%;
@@ -178,20 +188,30 @@ const { title } = Astro.props;
     --screen-medium-width: 776px;
     --screen-large-width: 992px; */
 
-@media only screen and (min-width: 776px) and (max-width: 1180px) {
+@media only screen and (min-width: 920px) and (max-width: 1180px) {
   :root {
     --grid-side-padding: 1rem;
     --grid-lg-gap: 1.75rem;
-    --card-lg-padding: 2rem;
-    --card-m-padding: 1rem;
+    --lg-padding: 2rem;
+    --m-padding: 1rem;
   }
 }
 @media only screen and (max-width: 920px) {
   :root {
     --grid-side-padding: 1rem;
     --grid-lg-gap: 1.25rem;
-    --card-lg-padding: 1.5rem;
-    --card-m-padding: 0.75rem;
+    --grid-m-gap: 0.75rem;
+    --lg-padding: 1.5rem;
+    --m-padding: 0.75rem;
+    --s-padding: 0.75rem;
+    --card-lg-height: 400px;
+    --card-m-height: 180px;
+    --lg-height: 350px;
+    --text-font-size: 0.8rem;
+    --h1-font-size: 1.4rem;
+    --h2-font-size: 1.2rem;
+    --h3-font-size: 1.1rem;
+    --h4-font-size: 0.9rem;
   }
 }
 </style>

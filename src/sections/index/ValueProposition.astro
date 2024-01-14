@@ -22,23 +22,23 @@ import Card from "../../components/Card.astro";
 
 <style is:global>
   .vp-card {
-    padding: var(--card-lg-padding);
-    min-height: 300px;
+    padding: var(--lg-padding);
+    min-height: var(--card-m-height);
   }
   .card.intro {
     grid-area: intro;
-    height: 600px;
+    height: var(--lg-height);
   }
   .card.artist {
     grid-area: artist;
   }
   .card.room {
     grid-area: room;
-    height: 280px;
+    height: var(--card-m-height);
   }
   .card.date {
     grid-area: date;
-    height: 280px;
+    height: var(--card-m-height);
   }
 </style>
 

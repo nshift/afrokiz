@@ -205,7 +205,7 @@ const shouldDisabled = (id: string) => {
   align-items: start;
 }
 .container {
-  padding: 3rem;
+  padding: var(--lg-padding);
   display: flex;
   flex-direction: column;
   gap: var(--grid-lg-gap);
@@ -213,18 +213,18 @@ const shouldDisabled = (id: string) => {
 
 .ticket {
   grid-column: span 7;
-  min-height: 600px !important;
+  min-height: var(--card-lg-height) !important;
   align-items: start !important;
   justify-content: start !important;
 }
 .ticket .title {
-  padding: 2rem;
+  padding: var(--lg-padding);
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   background-color: var(--secondary-color);
   display: flex;
   flex-direction: row;
-  gap: 1.5rem;
+  gap: var(--grid-m-gap);
   align-items: center;
   justify-content: space-between;
 }
@@ -234,7 +234,7 @@ const shouldDisabled = (id: string) => {
   gap: 0rem;
 }
 .ticket .description {
-  padding: 2rem;
+  padding: var(--lg-padding);
 }
 
 .payment {
@@ -272,8 +272,8 @@ ul {
 .features > ul {
   list-style: disc;
   padding-left: 1rem;
-  margin-bottom: 2.5rem;
-  margin-top: 1.5rem;
+  margin-bottom: var(--lg-padding);
+  margin-top: var(--m-padding);
 }
 
 .features > ul.pass-features {
@@ -291,9 +291,9 @@ ul {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: var(--grid-lg-gap);
   list-style: none;
-  margin-top: 2.5rem;
+  margin-top: var(--lg-padding);
 }
 .options li {
   display: flex;
@@ -309,7 +309,7 @@ ul {
   transform: translate(-8px, -8px) scale(1.3);
 }
 .options .price {
-  padding: 1rem;
+  padding: var(--m-padding);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -324,7 +324,7 @@ ul {
   justify-content: center;
   text-align: center;
   gap: 0.5rem;
-  padding: 1rem;
+  padding: var(--m-padding);
   background-color: black;
   border-radius: 8px;
   border: 1px solid white;
@@ -333,13 +333,13 @@ ul {
 }
 .options .option h4 {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--h4-font-size);
 }
 
 .couple-option {
   display: flex;
   flex-direction: row;
-  gap: 0.75rem;
+  gap: var(--grid-m-gap);
   font-weight: bold;
 }
 
@@ -355,5 +355,7 @@ ul {
 
 p.validation-error {
   color: rgb(223, 27, 65);
+}
+@media only screen and (max-width: 920px) {
 }
 </style>

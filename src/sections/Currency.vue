@@ -44,7 +44,7 @@ const changeCurrency = () => {
   text-align: center;
   background-color: var(--primary-color);
   color: var(--text-primary-color);
-  padding: 0.75rem 1.5rem;
+  padding: calc(var(--m-padding) / 2) var(--m-padding);
 }
 .currencies:hover {
   background-color: var(--primary-darker-color);

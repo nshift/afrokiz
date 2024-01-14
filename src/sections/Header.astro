@@ -21,7 +21,7 @@ import Currency from "./Currency.vue";
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 2rem;
+    padding: var(--lg-padding) 0;
     grid-column: span 12;
   }
   .logo {
@@ -41,5 +41,10 @@ import Currency from "./Currency.vue";
     display: flex;
     flex-direction: column;
     gap: .375rem;
+  }
+  @media only screen and (max-width: 920px) {
+    .right-side {
+      gap: var(--grid-m-gap);
+    }
   }
 </style>

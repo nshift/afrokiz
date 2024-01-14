@@ -5,7 +5,7 @@ import Card from "../../components/Card.astro";
 <div class="grid">
   <Card classes={["bonus-card", "cruise"]} backgroundPath="/images/boat4.jpg">
     <h2>Exclusive Dinner Cruise Party</h2>
-    <p>Limited to 70 pers. Enjoy Thai & International buffet on the Chao Phraya River with live Kizomba Djs.</p>
+    <p>Limited to 70 pers. Enjoy Thai & International buffet<br />on the Chao Phraya River with live Kizomba Djs.</p>
   </Card>
   <Card
     classes={["bonus-card", "massage"]}
@@ -40,20 +40,20 @@ import Card from "../../components/Card.astro";
 
 <style is:global>
   .bonus-card {
-    min-height: 330px;
-    padding: 0 2rem;
+    min-height: var(--card-m-height);
+    padding: 0 var(--m-padding);
   }
   .cruise {
     grid-area: cruise;
-    padding: 0 8rem;
+    padding: 0 var(--lg-padding);
   }
   .massage {
     grid-area: massage;
-    min-height: 300px;
+    min-height: var(--card-m-height);
   }
   .muay-thai {
     grid-area: muay-thai;
-    min-height: 300px;
+    min-height: var(--card-m-height);
   }
   .master-class {
     grid-area: master-class;
