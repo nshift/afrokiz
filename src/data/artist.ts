@@ -1,11 +1,11 @@
 export const artists: { name: string; image: string }[] = [
   {
     name: "Said 🇫🇷 & Oksana 🇺🇦",
-    image: "/images/artists/Said_Ok.JPG",
+    image: "/images/artists/Said_Ok.jpg",
   },
   {
     name: "Rvan 🇫🇷 & Juliette 🇫🇷",
-    image: "/images/artists/Rvan.jpeg",
+    image: "/images/artists/Rvan.jpg",
   },
   {
     name: "Adrian 🇨🇴 & Carol 🇨🇳",
@@ -13,11 +13,11 @@ export const artists: { name: string; image: string }[] = [
   },
   {
     name: "Heneco 🇫🇷",
-    image: "/images/artists/Heneco.JPG",
+    image: "/images/artists/Heneco.jpg",
   },
   {
     name: "Oncle Kani 🇫🇷",
-    image: "/images/artists/Oncle_Kani.jpeg",
+    image: "/images/artists/Oncle_Kani.jpg",
   },
   {
     name: "Quinn 🇨🇳",
