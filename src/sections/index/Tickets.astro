@@ -19,7 +19,7 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
           { promotedPass.price.EUR != promotedPass.doorPrice.EUR && <p><s><Currency price={promotedPass.doorPrice} client:only /></s></p> }
           <h2>{promotedPass.name}</h2>
         </div>
-        { !promotedPass.isSoldOut && <a href={"/pass/" + promotedPass.id + '/index.html'} class="button action">Buy</a> }
+        { !promotedPass.isSoldOut && <a href={"/pass/" + promotedPass.id} class="button action">Buy</a> }
         { promotedPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
       </div>
       <div class="container-column">
@@ -36,7 +36,7 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
             { pass.price.EUR != pass.doorPrice.EUR && <p><s><Currency price={pass.doorPrice} client:only /></s></p> }
             <h3>{pass.name}</h3>
           </div>
-          { !pass.isSoldOut && <a href={"/pass/" + pass.id + '/index.html'} class="button action">Buy</a> }
+          { !pass.isSoldOut && <a href={"/pass/" + pass.id} class="button action">Buy</a> }
           { pass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
         </div>
       </Card>
