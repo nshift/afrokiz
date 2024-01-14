@@ -7,7 +7,7 @@ frontend:
         - yarn install
     build:
       commands:
-        - yarn run build
+        - yarn build
   artifacts:
     baseDirectory: /dist
     files:
