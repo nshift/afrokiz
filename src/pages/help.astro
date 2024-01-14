@@ -37,12 +37,12 @@ import Card from "../components/Card.astro";
     grid-column: span 12;
     align-items: start !important;
     justify-content: start !important;
-    padding: 2rem;
+    padding: var(--lg-padding);
   }
   .help-content .text {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: var(--grid-lg-gap);
   }
 </style>
 
@@ -50,10 +50,10 @@ import Card from "../components/Card.astro";
   .container {
     border-radius: 20px;
     background-color: black;
-    padding: 2rem;
+    padding: var(--lg-padding);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--grid-m-gap);
   }
   .question {}
   .answer {}
