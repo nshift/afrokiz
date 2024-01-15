@@ -2,6 +2,7 @@ import { type Checkout } from "./checkout";
 
 export class PaymentAPI {
   fetchSuccessfulCheckout(paymentIntentId: string): Promise<Checkout> {
+    console.log({ paymentIntentId });
     return Promise.resolve({
       email: "romain.asnar@gmail.com",
       date: new Date("2024-01-01"),
