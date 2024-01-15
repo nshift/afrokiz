@@ -1,0 +1,177 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../sections/Header.astro";
+import Footer from "../sections/Footer.astro";
+import Card from "../components/Card.astro";
+import { PaymentAPI } from "../payment-api/payment.api";
+import { passes } from "../data/pass";
+
+const queryParams = Astro.url.searchParams
+const paymentIntent = queryParams.get('payment_intent')
+if (!paymentIntent) {
+  return Astro.redirect('/')
+}
+const paymentApi = new PaymentAPI()
+const checkout = await paymentApi.fetchSuccessfulCheckout(paymentIntent)
+const pass = passes[checkout.passId]
+---
+
+<Layout title="Welcome to Astro.">
+  <Header />
+  <main>
+    <div class="grid">
+      <Card classes={["checkout-card"]}>
+        <div class="title">
+          <p>Order #{checkout.orderId}</p>
+          <h2><i class="fa-solid fa-circle-check"></i> Your purchase of {pass.name} has been confirmed.</h2>
+        </div>
+        <div class="content">
+          <div class="checkout-details">
+            <p>An email with all the details has been sent to you at <b>{checkout.email}</b>.</p>
+            <table class="items">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {checkout.items.map((item) => (
+                <tr>
+                    <td>
+                      <p>{item.title}</p>
+                      { item.includes.length > 0 && 
+                        <ul>{item.includes.map((include) => (<li>{include}</li>))}</ul>
+                      }
+                    </td>
+                    <td>{item.amount}</td>
+                    <td>{item.total.currency} {(item.total.amount / 100).toFixed(2)}</td>
+                </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div class="section">
+            <div class="container">
+              <div class="background">
+                <img src="/public/images/hotel.jpg"  width="100"/>
+              </div>
+            </div>
+            <div class="text">
+              <h3>Save the date: From 6th to 9th September 2024</h3>
+              <p>Let's have wonderful dances at <a href="https://maps.app.goo.gl/deTHk2Euinkho3Pq6">GLOWFISH 92/4, Floor 2, Sathorn Thani 2 Building, Bangkok</a>. You can easily access it using the BTS and getting off at Chong Nonsi station.</p>
+            </div>
+          </div>
+          <div class="section">
+            <div class="text">
+              <h3>Follow us on social media to get the latest information</h3>
+              <p>We will share the latest news, behind-the-scenes content, and community updates. Share your excitement by using the official event hashtag: <b>#AfroKizBKK2</b>.</p>
+              <ul>
+                <li><a href="https://www.facebook.com/afrokizbkk">Facebook</a></li>
+                <li><a href="https://www.instagram.com/afrokizbkk/">Instagram</a></li>
+              </ul>
+            </div>
+            <div class="container">
+              <div class="background">
+                <img src="/public/images/room.jpg"  width="100" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .checkout-card {
+    grid-column: span 12;
+    align-items: start !important;
+    justify-content: start !important;
+  }
+  .checkout-card a {
+    color: white;
+    font-weight: bold;
+  }
+  .checkout-card .title {
+    text-align: center;
+    padding: var(--m-padding);
+    background-color: var(--success-color);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .checkout-card .content {
+    padding: var(--lg-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-lg-gap);
+  }
+</style>
+
+<style>
+  .section {
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-lg-gap);
+    min-height: 250px;
+  }
+  .section > * {
+    flex-basis: 0;
+    flex-grow: 1;
+  }
+  .section .text {
+    align-self: center;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-m-gap)
+  }
+  .section .container {
+    position: relative;
+  }
+  .section .background {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index: 0;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+  .section img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  .content .items {
+    flex: 1;
+    text-align: left;
+    padding: var(--lg-padding);
+    border-collapse: collapse;
+  }
+  .content .items td, .content .items th {
+    padding: var(--s-padding) var(--xs-padding);
+  }
+  .content .items td, .content .items th {
+    border-bottom: 1px solid white;
+  }
+  .content .items ul {
+    padding: 0 var(--m-padding);
+  }
+  .checkout-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--grid-lg-gap);
+    margin-bottom: var(--lg-padding);
+  }
+</style>

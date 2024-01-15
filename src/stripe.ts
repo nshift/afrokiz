@@ -4,6 +4,7 @@ import {
   type StripeElements,
   type StripeError,
 } from "@stripe/stripe-js";
+import { Environment } from "./environment";
 
 export { type StripeElements, type StripeError } from "@stripe/stripe-js";
 
@@ -47,11 +48,12 @@ export class Stripe {
       };
     }
     const clientSecret =
-      "pi_3OVy0GIoxYWCQwEM3xtMzEo5_secret_A7TyEpuETghMZo4KGaz2MV52P";
+      "pi_3OYhMdIoxYWCQwEM09hUogNX_secret_qY906IQc65pRGMF3gCqg4lY89";
+    console.log(Environment.Host + "/checkout");
     return await this.stripe.confirmPayment({
       elements,
       clientSecret,
-      confirmParams: { return_url: "https://example.com/order/123/complete" },
+      confirmParams: { return_url: Environment.Host() + "/checkout" },
     });
   }
 }
