@@ -1,15 +1,15 @@
 import { defineConfig } from "astro/config";
 import vue from "@astrojs/vue";
 
-import node from "@astrojs/node";
+import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [vue({
-    appEntrypoint: "/src/app"
-  })],
+  integrations: [
+    vue({
+      appEntrypoint: "/src/app",
+    }),
+  ],
   output: "server",
-  adapter: node({
-    mode: "standalone"
-  })
+  adapter: netlify(),
 });
