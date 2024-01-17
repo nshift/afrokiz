@@ -1,7 +1,9 @@
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import crypto from 'crypto'
 import Stripe from 'stripe'
+import { confirmationEmail } from './confirmation.email'
 import { getOrderByIdRequest, getOrderByPaymentIntentIdRequest, orderResponse } from './dynamodb'
+import { EmailApi } from './email'
 import { processCreateOrderEvent } from './event/create-order.event'
 import { processFailurePaymentEvent } from './event/failure-payment.event'
 import { processSuccessfulPaymentEvent } from './event/successful-payment.event'
@@ -9,7 +11,11 @@ import { Order } from './order'
 import { createPaymentIntent } from './stripe'
 
 export class CheckingOut {
-  constructor(private readonly stripe: Stripe, private readonly dynamodb: DynamoDBDocumentClient) {}
+  constructor(
+    private readonly stripe: Stripe,
+    private readonly dynamodb: DynamoDBDocumentClient,
+    private readonly emailApi: EmailApi
+  ) {}
 
   async createOrder(
     newOrder: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'>
@@ -37,7 +43,9 @@ export class CheckingOut {
     const orders = orderResponse(getOrderByPaymentIntentIdResponse.Items).map(
       (order): Order => ({ ...order, paymentStatus: 'success' })
     )
+    const order = orders[0]
     await processSuccessfulPaymentEvent(this.dynamodb, { orders, paymentIntentId: paymentIntent.id })
+    await this.emailApi.sendEmail(await confirmationEmail(order))
   }
 
   async handleFailurePayment(paymentIntent: Stripe.PaymentIntent): Promise<void> {

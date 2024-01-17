@@ -3,6 +3,7 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
 import Stripe from 'stripe'
 import { CheckingOut } from './checkout'
+import { EmailApi } from './email'
 import { buildCreateOrderRequest, buildUpdateOrderPaymentRequest } from './lambda.request'
 import { buildOrderResponse } from './lambda.response'
 
@@ -12,12 +13,13 @@ const stripe = new Stripe(
 const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
   marshallOptions: { removeUndefinedValues: true },
 })
+const emailApi = new EmailApi({ email: 'romain.a@nshift.co.th', name: 'Romain Asnar' })
 
 export const createOrder = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body ?? '{}')
   const request = buildCreateOrderRequest(body)
   try {
-    const checkout = new CheckingOut(stripe, dynamodb)
+    const checkout = new CheckingOut(stripe, dynamodb, emailApi)
     const { order, clientSecret } = await checkout.createOrder(request)
     return successResponse({ ...buildOrderResponse(order), clientSecret })
   } catch (error) {
@@ -33,7 +35,7 @@ export const updateOrderPaymentStatus = async (
   const request = buildUpdateOrderPaymentRequest(event, stripe)
   console.log(request)
   try {
-    const checkout = new CheckingOut(stripe, dynamodb)
+    const checkout = new CheckingOut(stripe, dynamodb, emailApi)
     switch (request.type) {
       case 'payment_intent.succeeded':
         await checkout.handleSuccessfulPayment(request.data.object)
@@ -57,7 +59,7 @@ export const getOrder = async (event: APIGatewayEvent, context: Context): Promis
     return notFoundErrorResponse('Order id is required.')
   }
   try {
-    const checkout = new CheckingOut(stripe, dynamodb)
+    const checkout = new CheckingOut(stripe, dynamodb, emailApi)
     const order = await checkout.getOrder(orderId)
     if (!order) {
       return notFoundErrorResponse(`Order (${orderId}) is not found.`)

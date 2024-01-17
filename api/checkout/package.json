@@ -12,15 +12,23 @@
     "test:coverage": "./node_modules/.bin/jest --coverage --config ../jest.config.js --rootDir . --passWithNoTests --setupFilesAfterEnv './src/doubles/setup.int.ts'"
   },
   "dependencies": {
+    "jsqr": "^1.4.0",
+    "nodemailer": "^6.9.8",
+    "qrcode": "^1.5.3",
     "stripe": "^14.12.0",
+    "upng-js": "^2.1.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.490.0",
+    "@aws-sdk/client-ses": "^3.490.0",
     "@aws-sdk/lib-dynamodb": "^3.490.0",
     "@types/aws-lambda": "^8.10.110",
     "@types/jest": "^29.2.6",
     "@types/node": "^18.15.5",
+    "@types/nodemailer": "^6.4.14",
+    "@types/qrcode": "^1.5.5",
+    "@types/upng-js": "^2.1.5",
     "@types/uuid": "^9.0.7",
     "aws-lambda": "^1.0.7",
     "dotenv": "^16.0.3",

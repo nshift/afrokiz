@@ -185,6 +185,34 @@ const { title } = Astro.props;
   font-size: 1rem;
 }
 
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #fff;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+.button .loader {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  top: -2px;
+  position: relative;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 
 /* --mobile-max-width: 576px;
     --screen-medium-width: 776px;

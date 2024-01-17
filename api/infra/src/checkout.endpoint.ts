@@ -87,6 +87,13 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
     memorySize: 2048,
     ...props,
   })
+  endpoint.lambda.addToRolePolicy(
+    new cdk.aws_iam.PolicyStatement({
+      actions: ['ses:CreateTemplate', 'ses:DeleteTemplate', 'ses:SendBulkTemplatedEmail', 'ses:SendRawEmail'],
+      resources: ['*'],
+      effect: cdk.aws_iam.Effect.ALLOW,
+    })
+  )
   props.eventTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
   props.orderTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem', 'dynamodb:Query')
   return endpoint
