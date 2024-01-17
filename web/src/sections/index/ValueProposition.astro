@@ -3,7 +3,9 @@ import Card from "../../components/Card.astro";
 ---
 
 <div class="grid">
-  <Card classes={["vp-card intro"]}><h2>Intro</h2></Card>
+  <Card classes={["vp-card intro"]}><video loop autoplay muted>
+    <source src="intro2.mov" type="video/mp4">
+  </video></Card>
   <Card classes={["vp-card artist"]} backgroundPath="/images/kevin.jpg">
     <h2>13H Workshops</h2>
     <h2>4H Masterclass</h2>
@@ -28,6 +30,11 @@ import Card from "../../components/Card.astro";
   .card.intro {
     grid-area: intro;
     height: var(--lg-height);
+    padding: 0;
+    overflow: hidden;
+  }
+  .card.intro video, .card.intro .text {
+    width: 100%;
   }
   .card.artist {
     grid-area: artist;
