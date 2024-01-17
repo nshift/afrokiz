@@ -7,13 +7,14 @@ import { PaymentAPI } from "../payment-api/payment.api";
 import { passes } from "../data/pass";
 
 const queryParams = Astro.url.searchParams
-const paymentIntent = queryParams.get('payment_intent')
-if (!paymentIntent) {
+const orderId = queryParams.get('order_id')
+if (!orderId) {
   return Astro.redirect('/')
 }
 const paymentApi = new PaymentAPI()
-const checkout = await paymentApi.fetchSuccessfulCheckout(paymentIntent)
-const pass = passes[checkout.passId]
+const order = await paymentApi.getOrderById(orderId)
+console.log({ order })
+const pass = Object.values(passes).filter((pass) => pass.id == order.passId)[0]
 ---
 
 <Layout title="Welcome to Astro.">
@@ -22,12 +23,12 @@ const pass = passes[checkout.passId]
     <div class="grid">
       <Card classes={["checkout-card"]}>
         <div class="title">
-          <p>Order #{checkout.orderId}</p>
+          <p>Order #{order.id}</p>
           <h2><i class="fa-solid fa-circle-check"></i> Your purchase of {pass.name} has been confirmed.</h2>
         </div>
         <div class="content">
           <div class="checkout-details">
-            <p>An email with all the details has been sent to you at <b>{checkout.email}</b>.</p>
+            <p>An email with all the details has been sent to you at <b>{order.email}</b>.</p>
             <table class="items">
               <thead>
                 <tr>
@@ -37,7 +38,7 @@ const pass = passes[checkout.passId]
                 </tr>
               </thead>
               <tbody>
-                {checkout.items.map((item) => (
+                {order.items.map((item) => (
                 <tr>
                     <td>
                       <p>{item.title}</p>

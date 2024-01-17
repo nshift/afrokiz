@@ -5,6 +5,7 @@ import {
   type StripeError,
 } from '@stripe/stripe-js'
 import { Environment } from './environment'
+import { PaymentAPI, type Order } from './payment-api/payment.api'
 
 export { type StripeElements, type StripeError } from '@stripe/stripe-js'
 
@@ -15,11 +16,12 @@ export async function loadStripe(): Promise<Stripe> {
   if (!stripe) {
     throw new Error(`Can not load stripe`)
   }
-  return new Stripe(stripe)
+  const paymentApi = new PaymentAPI()
+  return new Stripe(stripe, paymentApi)
 }
 
 export class Stripe {
-  constructor(public readonly stripe: StripJS) {}
+  constructor(public readonly stripe: StripJS, private readonly paymentApi: PaymentAPI) {}
 
   elements = (options: { amount: number; currency: string }): StripeElements =>
     this.stripe.elements({
@@ -34,21 +36,24 @@ export class Stripe {
     paymentElement.mount(domElement)
   }
 
-  async confirmPayment(elements: StripeElements, fullName: string): Promise<never | { error: StripeError }> {
+  async confirmPayment(
+    elements: StripeElements,
+    newOrder: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'>
+  ): Promise<never | { error: StripeError }> {
     const { error: submitError } = await elements.submit()
     if (submitError) {
       return { error: submitError }
     }
-    if (!fullName) {
+    if (!newOrder.fullname || !newOrder.email) {
       return {
-        error: { type: 'validation_error', message: 'Full name is required' },
+        error: { type: 'validation_error', message: 'Full name and email are required.' },
       }
     }
-    const clientSecret = 'pi_3OZHEHIoxYWCQwEM3XAhT9En_secret_u6YD6W2oE6zTrGKVB68e4A1Jp'
+    const { order, clientSecret } = await this.paymentApi.createOrder(newOrder)
     return await this.stripe.confirmPayment({
       elements,
       clientSecret,
-      confirmParams: { return_url: Environment.Host() + '/checkout' },
+      confirmParams: { return_url: Environment.Host() + '/checkout?order_id=' + order.id },
     })
   }
 }

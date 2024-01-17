@@ -1,93 +1,115 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref, inject, watch } from "vue";
-import Card from "../components/Card.vue";
-import { type Pass } from "../data/pass";
-import { loadStripe, Stripe, type StripeElements } from "../stripe";
+import { onMounted, ref, type Ref, inject, watch } from 'vue'
+import Card from '../components/Card.vue'
+import { type Pass } from '../data/pass'
+import { loadStripe, Stripe, type StripeElements } from '../stripe'
+import type { Order } from '../payment-api/payment.api'
 
-const { pass } = defineProps<{ pass: Pass }>();
-console.log({ pass });
-let stripe: Stripe;
-let elements: StripeElements;
-const currency: Ref<"USD" | "EUR" | "THB"> | undefined = inject("currency");
-const fullNameValidationError = ref(false);
-const fullName = ref("");
+const { pass } = defineProps<{ pass: Pass }>()
+console.log({ pass })
+let stripe: Stripe
+let elements: StripeElements
+const currency: Ref<'USD' | 'EUR' | 'THB'> | undefined = inject('currency')
+const submitting = ref(false)
+const fullNameValidationError = ref(false)
+const fullName = ref('')
+const emailValidationError = ref(false)
+const cardDeclinedError = ref(false)
+const cardDeclinedErrorMessage = ref('')
+const email = ref('')
 let optionsFeatures: () => string[] = () =>
-  options.value
-    .map((option) => pass.options[option].description)
-    .filter((x): x is string => x !== undefined);
-const options = ref<string[]>([]);
+  optionIds.value.map((option) => pass.options[option].description).filter((x): x is string => x !== undefined)
+const optionIds = ref<string[]>([])
 const calculateTotal = () => {
-  let total = pass.price[currency?.value ?? "THB"];
+  let total = pass.price[currency?.value ?? 'THB']
   total += Object.values(pass.options).reduce(
-    (total, option) =>
-      (total += options.value.includes(option.id)
-        ? option.price[currency?.value ?? "THB"]
-        : 0),
+    (total, option) => (total += optionIds.value.includes(option.id) ? option.price[currency?.value ?? 'THB'] : 0),
     0
-  );
-  return total;
-};
-const total = ref(calculateTotal());
+  )
+  return total
+}
+const total = ref(calculateTotal())
 
 onMounted(async () => {
-  stripe = await loadStripe();
+  stripe = await loadStripe()
   elements = stripe.elements({
     amount: calculateTotal(),
-    currency: (currency?.value ?? "THB").toLowerCase(),
-  });
-  stripe.mountElements(elements, "#payment-element");
-});
+    currency: (currency?.value ?? 'THB').toLowerCase(),
+  })
+  stripe.mountElements(elements, '#payment-element')
+})
 
 if (currency) {
   watch(currency, () => {
-    total.value = calculateTotal();
+    total.value = calculateTotal()
     elements = stripe.elements({
       amount: calculateTotal(),
-      currency: (currency?.value ?? "THB").toLowerCase(),
-    });
-    stripe.mountElements(elements, "#payment-element");
-  });
+      currency: (currency?.value ?? 'THB').toLowerCase(),
+    })
+    stripe.mountElements(elements, '#payment-element')
+  })
 }
 
-watch(options, () => {
-  total.value = calculateTotal();
-});
+watch(optionIds, () => {
+  total.value = calculateTotal()
+})
 
 const submit = async () => {
-  fullNameValidationError.value = !fullName.value;
-  const { error } = await stripe.confirmPayment(elements, fullName.value);
-  if (error) {
-    return console.error("Confirm payment error: ", error);
+  submitting.value = true
+  fullNameValidationError.value = !fullName.value
+  emailValidationError.value = !email.value
+  const options = optionIds.value.map((option) => pass.options[option])
+  const order: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'> = {
+    email: email.value,
+    fullname: fullName.value,
+    passId: pass.id,
+    date: new Date(),
+    items: [
+      {
+        id: pass.id,
+        title: pass.name,
+        includes: pass.includes,
+        amount: 1,
+        total: { amount: pass.price[currency?.value ?? 'THB'], currency: currency?.value ?? 'THB' },
+      },
+    ].concat(
+      options.map((option) => ({
+        id: option.id,
+        title: option.title,
+        includes: [],
+        amount: 1,
+        total: { amount: option.price[currency?.value ?? 'THB'], currency: currency?.value ?? 'THB' },
+      }))
+    ),
   }
-};
+  const { error } = await stripe.confirmPayment(elements, order)
+  submitting.value = false
+  if (error) {
+    cardDeclinedError.value = true
+    cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
+    return console.error('Confirm payment error: ', error)
+  }
+}
 
 const selectOption = (id: string) => {
-  const disbaled = shouldDisabled(id);
+  const disbaled = shouldDisabled(id)
   if (disbaled) {
-    return;
+    return
   }
-  options.value = options.value.includes(pass.options[id].id)
-    ? options.value.filter((option) => option != pass.options[id].id)
-    : options.value.concat([pass.options[id].id]);
-  if (
-    options.value.includes("said-mc-option") &&
-    options.value.includes("henoco-mc-option")
-  ) {
-    options.value = options.value.concat(["all-mc-option"]);
+  optionIds.value = optionIds.value.includes(pass.options[id].id)
+    ? optionIds.value.filter((option) => option != pass.options[id].id)
+    : optionIds.value.concat([pass.options[id].id])
+  if (optionIds.value.includes('said-mc-option') && optionIds.value.includes('henoco-mc-option')) {
+    optionIds.value = optionIds.value.concat(['all-mc-option'])
   }
-  if (options.value.includes("all-mc-option")) {
-    options.value = options.value.filter(
-      (option) => !["said-mc-option", "henoco-mc-option"].includes(option)
-    );
+  if (optionIds.value.includes('all-mc-option')) {
+    optionIds.value = optionIds.value.filter((option) => !['said-mc-option', 'henoco-mc-option'].includes(option))
   }
-};
+}
 
 const shouldDisabled = (id: string) => {
-  return (
-    options.value.includes("all-mc-option") &&
-    ["said-mc-option", "henoco-mc-option"].includes(id)
-  );
-};
+  return optionIds.value.includes('all-mc-option') && ['said-mc-option', 'henoco-mc-option'].includes(id)
+}
 </script>
 
 <template>
@@ -95,20 +117,17 @@ const shouldDisabled = (id: string) => {
     <Card :class="['ticket']">
       <div class="title">
         <h2>{{ pass.name }}</h2>
-        <div
-          class="promotion-price"
-          v-if="pass.price.EUR != pass.doorPrice.EUR"
-        >
+        <div class="promotion-price" v-if="pass.price.EUR != pass.doorPrice.EUR">
           <p>
             <b>
               {{ currency }}
-              {{ (pass.price[currency ?? "THB"] / 100).toFixed(2) }}
+              {{ (pass.price[currency ?? 'THB'] / 100).toFixed(2) }}
             </b>
           </p>
           <p>
             <s>
               {{ currency }}
-              {{ (pass.doorPrice[currency ?? "THB"] / 100).toFixed(2) }}</s
+              {{ (pass.doorPrice[currency ?? 'THB'] / 100).toFixed(2) }}</s
             >
           </p>
         </div>
@@ -129,18 +148,9 @@ const shouldDisabled = (id: string) => {
         </div>
         <h3>Options</h3>
         <ul class="options">
-          <li
-            v-for="option in Object.values(pass.options)"
-            :key="option.id"
-            @click="selectOption(option.id)"
-          >
+          <li v-for="option in Object.values(pass.options)" :key="option.id" @click="selectOption(option.id)">
             <div :class="['option-container', option.id]">
-              <input
-                type="checkbox"
-                :value="option.id"
-                v-model="options"
-                :disabled="shouldDisabled(option.id)"
-              />
+              <input type="checkbox" :value="option.id" v-model="optionIds" :disabled="shouldDisabled(option.id)" />
               <div class="option">
                 <i :class="['fa-solid', option.icon]"></i>
                 <h4>{{ option.title }}</h4>
@@ -150,7 +160,7 @@ const shouldDisabled = (id: string) => {
             <div class="price">
               <p>
                 {{ currency }}
-                {{ (option.price[currency ?? "THB"] / 100).toFixed(2) }}
+                {{ (option.price[currency ?? 'THB'] / 100).toFixed(2) }}
               </p>
             </div>
           </li>
@@ -162,39 +172,37 @@ const shouldDisabled = (id: string) => {
         <div class="total">
           <h2>Total: {{ currency }} {{ (total / 100).toFixed(2) }}</h2>
         </div>
-        <div id="address-element">
+        <div class="information-element">
           <label>Full name</label>
           <div style="display: flex">
             <input
-              :class="[
-                'field',
-                fullNameValidationError ? 'validation-error' : '',
-              ]"
+              :class="['field', fullNameValidationError ? 'validation-error' : '']"
               type="text"
               placeholder="Full name"
               v-model="fullName"
             />
           </div>
-          <p class="validation-error" v-if="fullNameValidationError">
-            Your full name is incomplete.
-          </p>
+          <p class="validation-error" v-if="fullNameValidationError">Your full name is incomplete.</p>
+        </div>
+        <div class="information-element">
+          <label>Email</label>
+          <div style="display: flex">
+            <input
+              :class="['field', emailValidationError ? 'validation-error' : '']"
+              type="text"
+              placeholder="Email"
+              v-model="email"
+            />
+          </div>
+          <p class="validation-error" v-if="emailValidationError">Your email is incomplete.</p>
         </div>
         <div id="payment-element"></div>
-        <button
-          id="payment-action"
-          class="button action"
-          v-if="!pass.isSoldOut"
-        >
-          Pay
-        </button>
-        <button
-          id="payment-action"
-          class="button action disabled"
-          v-if="pass.isSoldOut"
-          disabled
-        >
+        <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
+        <button id="payment-action" class="button action" v-if="!submitting && !pass.isSoldOut">Pay</button>
+        <button id="payment-action" class="button action disabled" v-if="!submitting && pass.isSoldOut" disabled>
           Sold Out
         </button>
+        <p class="validation-error card-error" v-if="cardDeclinedError">{{ cardDeclinedErrorMessage }}</p>
       </div>
     </Card>
   </form>
@@ -304,7 +312,7 @@ ul {
   flex: 1;
   display: flex;
 }
-.options input[type="checkbox"] {
+.options input[type='checkbox'] {
   position: absolute;
   transform: translate(-8px, -8px) scale(1.3);
 }
@@ -343,7 +351,7 @@ ul {
   font-weight: bold;
 }
 
-#address-element {
+.information-element {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -356,6 +364,10 @@ ul {
 p.validation-error {
   color: rgb(223, 27, 65);
 }
+p.card-error {
+  text-align: center;
+}
+
 @media only screen and (max-width: 920px) {
 }
 </style>
