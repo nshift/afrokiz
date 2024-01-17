@@ -6,7 +6,6 @@ import { loadStripe, Stripe, type StripeElements } from '../stripe'
 import type { Order } from '../payment-api/payment.api'
 
 const { pass } = defineProps<{ pass: Pass }>()
-console.log({ pass })
 let stripe: Stripe
 let elements: StripeElements
 const currency: Ref<'USD' | 'EUR' | 'THB'> | undefined = inject('currency')
@@ -212,7 +211,7 @@ const shouldDisabled = (id: string) => {
 .grid {
   align-items: start;
 }
-.container {
+.payment .container {
   padding: var(--lg-padding);
   display: flex;
   flex-direction: column;
