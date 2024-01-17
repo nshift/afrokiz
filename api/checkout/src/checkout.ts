@@ -1,10 +1,12 @@
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import Stripe from 'stripe'
 import { v4 as uuid } from 'uuid'
-import { getOrderByIdRequest, getOrderByPaymentIntentIdRequest, orderResponse, saveOrdersRequest } from './dynamodb'
-import { Event } from './event'
-import { EventStore } from './event-store'
+import { getOrderByIdRequest, getOrderByPaymentIntentIdRequest, orderResponse } from './dynamodb'
+import { processCreateOrderEvent } from './event/create-order.event'
+import { processFailurePaymentEvent } from './event/failure-payment.event'
+import { processSuccessfulPaymentEvent } from './event/successful-payment.event'
 import { Order } from './order'
+import { createPaymentIntent } from './stripe'
 
 export class CheckingOut {
   constructor(private readonly stripe: Stripe, private readonly dynamodb: DynamoDBDocumentClient) {}
@@ -12,26 +14,13 @@ export class CheckingOut {
   async createOrder(
     newOrder: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'>
   ): Promise<{ order: Order; clientSecret: string }> {
-    const total = newOrder.items.reduce((total, item) => total + item.total.amount, 0)
-    const currency = Array.from(new Set(newOrder.items.map((item) => item.total.currency)))[0]
-    const paymentIntent = await this.stripe.paymentIntents.create({
-      amount: total,
-      currency,
-      automatic_payment_methods: { enabled: true },
-    })
+    const orderId = uuid()
+    const paymentIntent = await createPaymentIntent(this.stripe, { ...newOrder, id: orderId })
     if (!paymentIntent.client_secret) {
       throw new Error(`Payment intent (${paymentIntent.id}) does not contain any client secret.`)
     }
-    const order: Order = { id: uuid(), paymentIntentId: paymentIntent.id, paymentStatus: 'pending', ...newOrder }
-    const event: CreateOrderEvent = {
-      id: uuid(),
-      name: 'CreateOrder',
-      time: new Date(),
-      data: { order },
-      process: () => [saveOrdersRequest([order])],
-    }
-    const eventStore = new EventStore(this.dynamodb)
-    await eventStore.process([event])
+    const order: Order = { id: orderId, paymentIntentId: paymentIntent.id, paymentStatus: 'pending', ...newOrder }
+    await processCreateOrderEvent(this.dynamodb, order)
     return { order, clientSecret: paymentIntent.client_secret }
   }
 
@@ -48,15 +37,7 @@ export class CheckingOut {
     const orders = orderResponse(getOrderByPaymentIntentIdResponse.Items).map(
       (order): Order => ({ ...order, paymentStatus: 'success' })
     )
-    const event: SuccessfulPaymentEvent = {
-      id: uuid(),
-      name: 'SuccessfulPayment',
-      time: new Date(),
-      data: { orders, paymentIntentId: paymentIntent.id },
-      process: () => [saveOrdersRequest(orders)],
-    }
-    const eventStore = new EventStore(this.dynamodb)
-    await eventStore.process([event])
+    await processSuccessfulPaymentEvent(this.dynamodb, { orders, paymentIntentId: paymentIntent.id })
   }
 
   async handleFailurePayment(paymentIntent: Stripe.PaymentIntent): Promise<void> {
@@ -66,22 +47,6 @@ export class CheckingOut {
     const orders = orderResponse(getOrderByPaymentIntentIdResponse.Items).map(
       (order): Order => ({ ...order, paymentStatus: 'failed' })
     )
-    const event: SuccessfulPaymentEvent = {
-      id: uuid(),
-      name: 'FailurePayment',
-      time: new Date(),
-      data: { orders, paymentIntentId: paymentIntent.id },
-      process: () => [saveOrdersRequest(orders)],
-    }
-    const eventStore = new EventStore(this.dynamodb)
-    await eventStore.process([event])
+    await processFailurePaymentEvent(this.dynamodb, { orders, paymentIntentId: paymentIntent.id })
   }
-}
-
-export interface CreateOrderEvent extends Omit<Event, 'data'> {
-  data: { order: Order }
-}
-
-export interface SuccessfulPaymentEvent extends Omit<Event, 'data'> {
-  data: { orders: Order[]; paymentIntentId: string }
 }
