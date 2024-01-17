@@ -5,6 +5,7 @@ export const buildOrderResponse = (order: Order) => ({
   paymentIntentId: order.paymentIntentId,
   paymentStatus: order.paymentStatus,
   email: order.email,
+  fullname: order.fullname,
   pass_id: order.passId,
   date: order.date.toISOString(),
   items: order.items.map((item) => ({

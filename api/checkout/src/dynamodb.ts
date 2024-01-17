@@ -51,6 +51,7 @@ export const saveOrdersRequest = (orders: Order[]) =>
             paymentIntentId: order.paymentIntentId,
             paymentStatus: order.paymentStatus,
             email: order.email,
+            fullname: order.fullname,
             passId: order.passId,
             date: order.date.toISOString(),
             items: order.items.map((item) => ({
@@ -73,6 +74,7 @@ export const orderResponse = (response: any): Order[] =>
       paymentIntentId: item.paymentIntentId,
       paymentStatus: item.paymentStatus,
       email: item.email,
+      fullname: item.fullname,
       passId: item.passId,
       date: new Date(item.date),
       items: item.items.map((item: any) => ({

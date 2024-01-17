@@ -4,6 +4,7 @@ import Stripe from 'stripe'
 export const buildCreateOrderRequest = (request: any) => ({
   email: request.email,
   passId: request.pass_id,
+  fullname: request.fullname,
   date: new Date(request.date),
   items: request.items.map((item: any) => ({
     id: item.id,

@@ -1,6 +1,7 @@
 export type Order = {
   id: string
   email: string
+  fullname: string
   passId: string
   date: Date
   paymentIntentId: string

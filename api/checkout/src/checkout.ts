@@ -1,6 +1,6 @@
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import crypto from 'crypto'
 import Stripe from 'stripe'
-import { v4 as uuid } from 'uuid'
 import { getOrderByIdRequest, getOrderByPaymentIntentIdRequest, orderResponse } from './dynamodb'
 import { processCreateOrderEvent } from './event/create-order.event'
 import { processFailurePaymentEvent } from './event/failure-payment.event'
@@ -14,7 +14,7 @@ export class CheckingOut {
   async createOrder(
     newOrder: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'>
   ): Promise<{ order: Order; clientSecret: string }> {
-    const orderId = uuid()
+    const orderId = crypto.randomBytes(3).toString('hex')
     const paymentIntent = await createPaymentIntent(this.stripe, { ...newOrder, id: orderId })
     if (!paymentIntent.client_secret) {
       throw new Error(`Payment intent (${paymentIntent.id}) does not contain any client secret.`)
