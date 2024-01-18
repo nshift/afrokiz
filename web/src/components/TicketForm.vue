@@ -108,16 +108,16 @@ const selectOption = (id: string) => {
   optionIds.value = optionIds.value.includes(pass.options[id].id)
     ? optionIds.value.filter((option) => option != pass.options[id].id)
     : optionIds.value.concat([pass.options[id].id])
-  if (optionIds.value.includes('said-mc-option') && optionIds.value.includes('henoco-mc-option')) {
+  if (optionIds.value.includes('said-mc-option') && optionIds.value.includes('heneco-mc-option')) {
     optionIds.value = optionIds.value.concat(['all-mc-option'])
   }
   if (optionIds.value.includes('all-mc-option')) {
-    optionIds.value = optionIds.value.filter((option) => !['said-mc-option', 'henoco-mc-option'].includes(option))
+    optionIds.value = optionIds.value.filter((option) => !['said-mc-option', 'heneco-mc-option'].includes(option))
   }
 }
 
 const shouldDisabled = (id: string) => {
-  return optionIds.value.includes('all-mc-option') && ['said-mc-option', 'henoco-mc-option'].includes(id)
+  return optionIds.value.includes('all-mc-option') && ['said-mc-option', 'heneco-mc-option'].includes(id)
 }
 </script>
 
