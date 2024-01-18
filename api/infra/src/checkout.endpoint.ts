@@ -97,6 +97,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
       STRIPE_SECRET_KEY: props.stripeSecretKey,
+      WEB_APP_HOST: Environment.WebAppHost(),
     },
     memorySize: 2048,
     ...props,

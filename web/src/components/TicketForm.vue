@@ -76,7 +76,7 @@ const submit = async () => {
     ].concat(
       options.map((option) => ({
         id: option.id,
-        title: option.title,
+        title: option.description,
         includes: [],
         amount: 1,
         total: {
@@ -158,7 +158,7 @@ const shouldDisabled = (id: string) => {
               <div class="option">
                 <i :class="['fa-solid', option.icon]"></i>
                 <h4>{{ option.title }}</h4>
-                <p>{{ option.description }}</p>
+                <p>{{ option.shortDescription }}</p>
               </div>
             </div>
             <div class="price">
@@ -289,7 +289,7 @@ ul {
 }
 
 .features > ul.pass-features {
-  min-width: 50%;
+  max-width: 50%;
 }
 
 .features > ul.option-features,
@@ -297,6 +297,7 @@ ul {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 50%;
 }
 
 .options {

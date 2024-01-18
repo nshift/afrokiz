@@ -50,6 +50,13 @@ const pass = Object.values(passes).filter((pass) => pass.id == order.passId)[0]
                 </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td></td>
+                  <td>{Array.from(new Set(order.items.map((item) => item.total.currency)))[0]} {(order.items.reduce((total, item) => total += item.total.amount, 0) / 100).toFixed(2)}</td>
+                </tr>
+              </tfoot>
             </table>
           </div>
           <div class="section">

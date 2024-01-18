@@ -1,0 +1,31 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../sections/Header.astro";
+import Footer from "../../sections/Footer.astro";
+import Card from "../../components/Card.astro";
+---
+
+<Layout title="Help Center | Afrokiz Bkk Festival Edition 2">
+  <Header />
+  <main>
+    <div class="grid">
+      <Card classes={["staff-check"]}>
+        This page is reserved to the staff.
+      </Card>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .staff-check {
+    grid-column: span 12;
+    padding: var(--lg-padding);
+    min-height: 50vh;
+  }
+  .staff-check .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-lg-gap);
+  }
+</style>

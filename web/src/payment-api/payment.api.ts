@@ -1,9 +1,9 @@
-const HOST = 'https://wkfdzb62gc.execute-api.ap-southeast-1.amazonaws.com/afrokiz-pr-api-stage-name'
+import { Environment } from '../environment'
 export class PaymentAPI {
   async createOrder(
     newOrder: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'>
   ): Promise<{ order: Order; clientSecret: string }> {
-    const response = await fetch(HOST + '/checkout', {
+    const response = await fetch(Environment.PaymentApiHost() + '/checkout', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -45,7 +45,7 @@ export class PaymentAPI {
 
   async getOrderById(id: string): Promise<Order> {
     const path = '/checkout/' + id
-    const response = await fetch(HOST + path, {
+    const response = await fetch(Environment.PaymentApiHost() + path, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

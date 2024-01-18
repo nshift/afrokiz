@@ -1,5 +1,6 @@
 export class Environment {
   static StripeSecretKeyName = () => required('STRIPE_SECRET_KEY_NAME')
+  static WebAppHost = () => required('WEB_APP_HOST')
 }
 
 function required(environmentName: string) {
