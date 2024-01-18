@@ -10,8 +10,7 @@ import { PaymentAPI, type Order } from './payment-api/payment.api'
 export { type StripeElements, type StripeError } from '@stripe/stripe-js'
 
 export async function loadStripe(): Promise<Stripe> {
-  const stripePublicKey =
-    'pk_test_51MBYkWIoxYWCQwEMxIgJ0J6J3oyfHRlrryExkaBiyyo9nLyyY5yiUYyZ4f4XIVpoVHyEIg4DnBMRLOJCoWbi19dT00g400AjSN'
+  const stripePublicKey = Environment.StripeSecretKey()
   const stripe = await loadStripeJS(stripePublicKey)
   if (!stripe) {
     throw new Error(`Can not load stripe`)
