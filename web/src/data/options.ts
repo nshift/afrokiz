@@ -18,19 +18,19 @@ export const options: {
     id: 'massage-option',
     icon: 'fa-spa',
     title: 'Massage',
-    shortDescription: '1H massage',
+    shortDescription: '1H foot massage',
     description: '1H Foot Massage at Lek Massage',
     price: {
-      USD: 1499,
-      EUR: 1299,
-      THB: 49900,
+      USD: 1199,
+      EUR: 1099,
+      THB: 39900,
     },
   },
   'muay-thai-option': {
     id: 'muay-thai-option',
     icon: 'fa-dumbbell',
     title: 'Muay Thai',
-    shortDescription: '1H session',
+    shortDescription: '1H class',
     description: '1H introduction of Muay Thai',
     price: {
       USD: 1799,
@@ -57,9 +57,9 @@ export const options: {
     shortDescription: '2H masterclass',
     description: '2H Said & Oksana Masterclass',
     price: {
-      USD: 7699,
-      EUR: 6999,
-      THB: 269900,
+      USD: 7299,
+      EUR: 6799,
+      THB: 259900,
     },
   },
   'henoco-mc-option': {
@@ -69,9 +69,9 @@ export const options: {
     shortDescription: '2H masterclass',
     description: '2H Henoco Masterclass',
     price: {
-      USD: 7699,
-      EUR: 6999,
-      THB: 269900,
+      USD: 7299,
+      EUR: 6799,
+      THB: 259900,
     },
   },
   'all-mc-option': {
@@ -81,9 +81,9 @@ export const options: {
     shortDescription: '4H master clas',
     description: '2H Said & Oksana Masterclass and 2H Henoco Masterclass',
     price: {
-      USD: 10699,
-      EUR: 9999,
-      THB: 369900,
+      USD: 9999,
+      EUR: 9099,
+      THB: 349900,
     },
   },
 }

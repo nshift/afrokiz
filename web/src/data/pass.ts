@@ -35,7 +35,7 @@ export const passes: { [key: string]: Pass } = {
     price: (() => {
       const promotions = [
         makePromotion({
-          price: { USD: 8499, EUR: 7499, THB: 290000 },
+          price: { USD: 7599, EUR: 6999, THB: 269900 },
           start: new Date('2024-01-01'),
           end: new Date('2024-01-31'),
         }),
@@ -164,7 +164,8 @@ export const passes: { [key: string]: Pass } = {
     includes: [
       'All Workshops',
       'All parties in main venue',
-      '3 Nights Stay at Heritage Bangkok Hotel',
+      '3 welcome drinks',
+      '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)',
       'Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)',
       '1H Foot Massage at Lek Massage',
     ],
@@ -256,7 +257,8 @@ export const passes: { [key: string]: Pass } = {
       '2H Masterclass by Said & Oksana',
       '2H Masterclass by Heneco',
       'All parties in main venue',
-      '3 Nights Stay at i-Residence Silom Hotel',
+      '3 welcome drinks',
+      '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)',
       'Airport Pick up',
       'Exclusive Dinner Cruise Party',
       '1H Foot Massage at Lek Massage',

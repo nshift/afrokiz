@@ -22,7 +22,8 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
         { !promotedPass.isSoldOut && <a href={"/pass/" + promotedPass.id} class="button action">Buy</a> }
         { promotedPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
       </div>
-      <div class="container-column">
+      <div class="container-column features">
+        <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option avalaible</p>
         <ul>{promotedPass.includes.map((feature) => <li>{feature}</li>)}</ul>
       </div>
     </div>
@@ -53,9 +54,6 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
     grid-area: ticket-promo;
     font-size: var(--h4-font-size);
     min-height: var(--card-m-height);
-  }
-  .card.early-bird .container-column {
-    padding: var(--lg-padding);
   }
   .card.ticket {
     grid-column: span 4;
@@ -116,10 +114,23 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
     min-width: 130px;
   }
   ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+    list-style: disc;
     text-align: left;
+  }
+  ul li {
+    margin-bottom: 0.25rem;
+  }
+  .option-available {
+    border-radius: 8px;
+    border: 1px solid white;
+    padding: var(--xs-padding);
+  }
+  .option-available i {
+    font-size: calc(var(--h4-font-size) * 0.8);
+    margin-right: 0.5rem;
+  }
+  .features {
+    gap: var(--grid-m-gap);
   }
   @media only screen and (max-width: 920px) {
     .grid {
