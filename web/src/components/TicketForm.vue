@@ -24,7 +24,10 @@ const calculateTotal = () => {
   let total = pass.price[currency?.value ?? defaultCurrency]
   total += Object.values(pass.options).reduce(
     (total, option) =>
-      (total += optionIds.value.includes(option.id) ? option.price[currency?.value ?? defaultCurrency] : 0),
+      (total += optionIds.value.includes(option.id)
+        ? option.price[currency?.value ?? defaultCurrency] *
+          (optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1)
+        : 0),
     0
   )
   return total
@@ -78,9 +81,11 @@ const submit = async () => {
         id: option.id,
         title: option.description,
         includes: [],
-        amount: 1,
+        amount: optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1,
         total: {
-          amount: option.price[currency?.value ?? defaultCurrency],
+          amount:
+            option.price[currency?.value ?? defaultCurrency] *
+            (optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1),
           currency: currency?.value ?? defaultCurrency,
         },
       }))

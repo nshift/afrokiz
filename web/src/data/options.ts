@@ -54,7 +54,7 @@ export const options: {
     id: 'said-mc-option',
     icon: 'fa-user-group',
     title: 'Said & Oksana Masterclass',
-    shortDescription: '2H masterclass',
+    shortDescription: '2H Masterclass',
     description: '2H Said & Oksana Masterclass',
     price: {
       USD: 7299,
@@ -62,12 +62,12 @@ export const options: {
       THB: 259900,
     },
   },
-  'henoco-mc-option': {
-    id: 'henoco-mc-option',
+  'heneco-mc-option': {
+    id: 'heneco-mc-option',
     icon: 'fa-user-group',
-    title: 'Henoco Masterclass',
-    shortDescription: '2H masterclass',
-    description: '2H Henoco Masterclass',
+    title: 'Heneco Masterclass',
+    shortDescription: '2H Masterclass',
+    description: '2H Heneco Masterclass',
     price: {
       USD: 7299,
       EUR: 6799,
@@ -78,8 +78,8 @@ export const options: {
     id: 'all-mc-option',
     icon: 'fa-user-group',
     title: 'All Masterclass',
-    shortDescription: '4H master clas',
-    description: '2H Said & Oksana Masterclass and 2H Henoco Masterclass',
+    shortDescription: '4H Masterclass',
+    description: '2H Said & Oksana Masterclass and 2H Heneco Masterclass',
     price: {
       USD: 9999,
       EUR: 9099,
