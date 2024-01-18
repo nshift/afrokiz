@@ -4,16 +4,15 @@ import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
 import Stripe from 'stripe'
 import { CheckingOut } from './checkout'
 import { EmailApi } from './email'
+import { Environment } from './environment'
 import { buildCreateOrderRequest, buildUpdateOrderPaymentRequest } from './lambda.request'
 import { buildOrderResponse } from './lambda.response'
 
-const stripe = new Stripe(
-  'sk_test_51MBYkWIoxYWCQwEMsloSpT6iCxutoN2rpEcAXowLNWRdZ0rhIUVFY3X6Q6UVzwOzZLEMPrSw9r23pJmHCc7oPqbm00rX3nWEtp'
-)
+const stripe = new Stripe(Environment.StripeSecretKey())
 const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
   marshallOptions: { removeUndefinedValues: true },
 })
-const emailApi = new EmailApi({ email: 'romain.a@nshift.co.th', name: 'Romain Asnar' })
+const emailApi = new EmailApi({ email: 'afrokiz.bkk@gmail.com', name: 'DJ Ploy' })
 
 export const createOrder = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body ?? '{}')
@@ -33,7 +32,6 @@ export const updateOrderPaymentStatus = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   const request = buildUpdateOrderPaymentRequest(event, stripe)
-  console.log(request)
   try {
     const checkout = new CheckingOut(stripe, dynamodb, emailApi)
     switch (request.type) {
@@ -101,4 +99,4 @@ export const internalServerErrorResponse = (error: any) => ({
   body: JSON.stringify({ message: error?.message ?? `Unknown error: ${error}` }),
 })
 
-const headers = { 'Content-Type': 'application/json' }
+const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
