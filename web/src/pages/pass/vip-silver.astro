@@ -6,7 +6,7 @@ import TicketForm from "../../components/TicketForm.vue";
 import { passes } from "../../data/pass";
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title={`${passes.vipSilver.name} | Afrokiz Bkk Festival Edition 2`}>
   <Header />
   <main>
     <TicketForm client:only pass={passes.vipSilver} />

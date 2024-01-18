@@ -53,7 +53,6 @@ export class PaymentAPI {
       },
     })
     const json = await response.json()
-    console.log({ json })
     if (response.status < 200 || response.status > 299) {
       throw new Error(`Failed to request ${path}: ${JSON.stringify(json)}`)
     }

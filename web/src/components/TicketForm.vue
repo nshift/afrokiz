@@ -6,6 +6,7 @@ import { loadStripe, Stripe, type StripeElements } from '../stripe'
 import type { Order } from '../payment-api/payment.api'
 
 const { pass } = defineProps<{ pass: Pass }>()
+const defaultCurrency = 'USD'
 let stripe: Stripe
 let elements: StripeElements
 const currency: Ref<'USD' | 'EUR' | 'THB'> | undefined = inject('currency')
@@ -20,9 +21,10 @@ let optionsFeatures: () => string[] = () =>
   optionIds.value.map((option) => pass.options[option].description).filter((x): x is string => x !== undefined)
 const optionIds = ref<string[]>([])
 const calculateTotal = () => {
-  let total = pass.price[currency?.value ?? 'THB']
+  let total = pass.price[currency?.value ?? defaultCurrency]
   total += Object.values(pass.options).reduce(
-    (total, option) => (total += optionIds.value.includes(option.id) ? option.price[currency?.value ?? 'THB'] : 0),
+    (total, option) =>
+      (total += optionIds.value.includes(option.id) ? option.price[currency?.value ?? defaultCurrency] : 0),
     0
   )
   return total
@@ -33,7 +35,7 @@ onMounted(async () => {
   stripe = await loadStripe()
   elements = stripe.elements({
     amount: calculateTotal(),
-    currency: (currency?.value ?? 'THB').toLowerCase(),
+    currency: (currency?.value ?? defaultCurrency).toLowerCase(),
   })
   stripe.mountElements(elements, '#payment-element')
 })
@@ -43,7 +45,7 @@ if (currency) {
     total.value = calculateTotal()
     elements = stripe.elements({
       amount: calculateTotal(),
-      currency: (currency?.value ?? 'THB').toLowerCase(),
+      currency: (currency?.value ?? defaultCurrency).toLowerCase(),
     })
     stripe.mountElements(elements, '#payment-element')
   })
@@ -69,7 +71,7 @@ const submit = async () => {
         title: pass.name,
         includes: pass.includes,
         amount: 1,
-        total: { amount: pass.price[currency?.value ?? 'THB'], currency: currency?.value ?? 'THB' },
+        total: { amount: pass.price[currency?.value ?? defaultCurrency], currency: currency?.value ?? defaultCurrency },
       },
     ].concat(
       options.map((option) => ({
@@ -77,7 +79,10 @@ const submit = async () => {
         title: option.title,
         includes: [],
         amount: 1,
-        total: { amount: option.price[currency?.value ?? 'THB'], currency: currency?.value ?? 'THB' },
+        total: {
+          amount: option.price[currency?.value ?? defaultCurrency],
+          currency: currency?.value ?? defaultCurrency,
+        },
       }))
     ),
   }
@@ -120,13 +125,13 @@ const shouldDisabled = (id: string) => {
           <p>
             <b>
               {{ currency }}
-              {{ (pass.price[currency ?? 'THB'] / 100).toFixed(2) }}
+              {{ (pass.price[currency ?? defaultCurrency] / 100).toFixed(2) }}
             </b>
           </p>
           <p>
             <s>
               {{ currency }}
-              {{ (pass.doorPrice[currency ?? 'THB'] / 100).toFixed(2) }}</s
+              {{ (pass.doorPrice[currency ?? defaultCurrency] / 100).toFixed(2) }}</s
             >
           </p>
         </div>
@@ -159,7 +164,7 @@ const shouldDisabled = (id: string) => {
             <div class="price">
               <p>
                 {{ currency }}
-                {{ (option.price[currency ?? 'THB'] / 100).toFixed(2) }}
+                {{ (option.price[currency ?? defaultCurrency] / 100).toFixed(2) }}
               </p>
             </div>
           </li>

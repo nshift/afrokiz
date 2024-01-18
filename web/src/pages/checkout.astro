@@ -13,11 +13,10 @@ if (!orderId) {
 }
 const paymentApi = new PaymentAPI()
 const order = await paymentApi.getOrderById(orderId)
-console.log({ order })
 const pass = Object.values(passes).filter((pass) => pass.id == order.passId)[0]
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Purchase confirmation | Afrokiz Bkk Festival Edition 2">
   <Header />
   <main>
     <div class="grid">

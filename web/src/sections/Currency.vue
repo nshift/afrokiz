@@ -1,35 +1,27 @@
 <script setup>
-import { onMounted, inject } from "vue";
+import { onMounted, inject } from 'vue'
 
-const { localStorage } = window;
-const currencies = ["THB", "USD", "EUR"];
-const defaultCurrency = currencies[0];
-const selectedCurrency = inject("currency");
+const { localStorage } = window
+const currencies = ['USD', 'THB', 'EUR']
+const defaultCurrency = currencies[0]
+const selectedCurrency = inject('currency')
 
 onMounted(() => {
-  const userLocale = localStorage.getItem("state.currency");
+  const userLocale = localStorage.getItem('state.currency')
   if (!userLocale) {
-    localStorage.setItem("state.currency", defaultCurrency);
+    localStorage.setItem('state.currency', defaultCurrency)
   }
-  selectedCurrency.value = userLocale ?? defaultCurrency;
-});
+  selectedCurrency.value = userLocale ?? defaultCurrency
+})
 
 const changeCurrency = () => {
-  localStorage.setItem("state.currency", selectedCurrency.value);
-};
+  localStorage.setItem('state.currency', selectedCurrency.value)
+}
 </script>
 
 <template>
-  <select
-    class="currencies form-control"
-    v-model="selectedCurrency"
-    @change="changeCurrency"
-  >
-    <option
-      v-for="currency in Object.values(currencies)"
-      :value="currency"
-      :key="currency"
-    >
+  <select class="currencies form-control" v-model="selectedCurrency" @change="changeCurrency">
+    <option v-for="currency in Object.values(currencies)" :value="currency" :key="currency">
       {{ currency }}
     </option>
   </select>

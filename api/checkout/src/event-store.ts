@@ -28,7 +28,6 @@ export class EventStore {
   }
 
   private async commit(commands: (PutCommand | DeleteCommand | BatchWriteCommand)[]): Promise<void> {
-    console.log({ requestItems: this.requestItems(commands) })
     await this.client.send(new BatchWriteCommand({ RequestItems: this.requestItems(commands) }))
   }
 

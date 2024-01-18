@@ -1,5 +1,6 @@
 import { createEndpoint, createSharedLayer } from '@nshift/cdk'
 import * as cdk from 'aws-cdk-lib'
+import { Environment } from './environment'
 import { CheckoutModule } from './path'
 
 export const makeCheckoutEndpoints = (props: {
@@ -10,10 +11,17 @@ export const makeCheckoutEndpoints = (props: {
 }) => {
   const sharedLayer = createSharedLayer('CheckoutSharedLayer', CheckoutModule('.build/layer'), props.stack)
   const codeUri = CheckoutModule('.build/src')
+  const stripeSecretKeyManager = cdk.aws_secretsmanager.Secret.fromSecretNameV2(
+    props.stack,
+    'aws/secretsmanager',
+    Environment.StripeSecretKeyName()
+  )
+  const stripeSecretKey = stripeSecretKeyManager.secretValueFromJson('stripe_secret_key').unsafeUnwrap()
+  const context = { sharedLayer, codeUri, stripeSecretKey }
   return [
-    makeCreateOrderEndpoint({ ...props, codeUri, sharedLayer }),
-    makeGetOrderEndpoint({ ...props, codeUri, sharedLayer }),
-    makeUpdateOrderPaymentStatusEndpoint({ ...props, codeUri, sharedLayer }),
+    makeCreateOrderEndpoint({ ...props, ...context }),
+    makeGetOrderEndpoint({ ...props, ...context }),
+    makeUpdateOrderPaymentStatusEndpoint({ ...props, ...context }),
   ]
 }
 
@@ -24,6 +32,7 @@ const makeCreateOrderEndpoint = (props: {
   sharedLayer: cdk.aws_lambda.LayerVersion
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
+  stripeSecretKey: string
 }) => {
   const endpoint = createEndpoint('CreateOrder', {
     handler: 'lambda.createOrder',
@@ -34,6 +43,7 @@ const makeCreateOrderEndpoint = (props: {
       LOG_LEVEL: 'info',
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
+      STRIPE_SECRET_KEY: props.stripeSecretKey,
     },
     memorySize: 2048,
     ...props,
@@ -49,6 +59,7 @@ const makeGetOrderEndpoint = (props: {
   api: cdk.aws_apigatewayv2.CfnApi
   sharedLayer: cdk.aws_lambda.LayerVersion
   orderTable: cdk.aws_dynamodb.Table
+  stripeSecretKey: string
 }) => {
   const endpoint = createEndpoint('GetOrder', {
     handler: 'lambda.getOrder',
@@ -58,6 +69,7 @@ const makeGetOrderEndpoint = (props: {
       NODE_ENV: 'PROD',
       LOG_LEVEL: 'info',
       ORDER_TABLE_NAME: props.orderTable.tableName,
+      STRIPE_SECRET_KEY: props.stripeSecretKey,
     },
     memorySize: 2048,
     ...props,
@@ -73,6 +85,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
   sharedLayer: cdk.aws_lambda.LayerVersion
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
+  stripeSecretKey: string
 }) => {
   const endpoint = createEndpoint('UpdateOrderPaymentStatus', {
     handler: 'lambda.updateOrderPaymentStatus',
@@ -83,6 +96,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
       LOG_LEVEL: 'info',
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
+      STRIPE_SECRET_KEY: props.stripeSecretKey,
     },
     memorySize: 2048,
     ...props,

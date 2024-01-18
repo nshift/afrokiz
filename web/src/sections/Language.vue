@@ -1,35 +1,30 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref } from 'vue'
 
-const { localStorage } = window;
+const { localStorage } = window
 const languages = {
-  fr: { id: "fr", icon: "🇫🇷" },
-  en: { id: "en", icon: "🇬🇧" },
-};
-const defaultLanguage = languages.en.id;
-const selectedLanguage = ref(defaultLanguage);
+  fr: { id: 'fr', icon: '🇫🇷' },
+  en: { id: 'en', icon: '🇬🇧' },
+}
+const defaultLanguage = languages.en.id
+const selectedLanguage = ref(defaultLanguage)
 
 onMounted(() => {
-  const userLocale = localStorage.getItem("language");
-  console.log({ userLocale });
+  const userLocale = localStorage.getItem('language')
   if (!userLocale) {
-    localStorage.setItem("language", defaultLanguage);
+    localStorage.setItem('language', defaultLanguage)
   }
-  selectedLanguage.value = userLocale ?? defaultLanguage;
-});
+  selectedLanguage.value = userLocale ?? defaultLanguage
+})
 
 const changeLanguage = () => {
-  localStorage.setItem("language", selectedLanguage.value);
-};
+  localStorage.setItem('language', selectedLanguage.value)
+}
 </script>
 
 <template>
   <select class="languages" v-model="selectedLanguage" @change="changeLanguage">
-    <option
-      v-for="language in Object.values(languages)"
-      :value="language.id"
-      :key="language.id"
-    >
+    <option v-for="language in Object.values(languages)" :value="language.id" :key="language.id">
       {{ language.icon }}
     </option>
   </select>
