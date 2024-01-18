@@ -9,7 +9,7 @@ import { passes } from "../../data/pass";
 <Layout title={`${passes.vipSilver.name} | Afrokiz Bkk Festival Edition 2`}>
   <Header />
   <main>
-    <TicketForm client:only pass={passes.vipSilver} />
+    <TicketForm client:load pass={passes.vipSilver} />
   </main>
   <Footer />
 </Layout>
