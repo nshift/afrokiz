@@ -1,5 +1,6 @@
 import { APIGatewayEvent } from 'aws-lambda'
 import Stripe from 'stripe'
+import { Environment } from './environment'
 
 export const buildCreateOrderRequest = (request: any) => ({
   email: request.email,
@@ -19,7 +20,8 @@ export const buildUpdateOrderPaymentRequest = (event: APIGatewayEvent, stripe: S
   const body = event.body
   const signature = event.headers['stripe-signature']
   if (!body || !signature) {
-    throw new Error('Boy and stripe signature are required.')
+    throw new Error('Body and stripe signature are required.')
   }
-  return stripe.webhooks.constructEvent(body, signature, 'whsec_jCvWJBwkk1wgli6Jog3nqwFK0WrQCF4u')
+  console.log({ signature, env: Environment.StripeWebhookSecretKey() })
+  return stripe.webhooks.constructEvent(body, signature, Environment.StripeWebhookSecretKey())
 }

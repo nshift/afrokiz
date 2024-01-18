@@ -11,13 +11,14 @@ export const makeCheckoutEndpoints = (props: {
 }) => {
   const sharedLayer = createSharedLayer('CheckoutSharedLayer', CheckoutModule('.build/layer'), props.stack)
   const codeUri = CheckoutModule('.build/src')
-  const stripeSecretKeyManager = cdk.aws_secretsmanager.Secret.fromSecretNameV2(
+  const secretKeyManager = cdk.aws_secretsmanager.Secret.fromSecretNameV2(
     props.stack,
     'aws/secretsmanager',
-    Environment.StripeSecretKeyName()
+    Environment.StripeSecretKeysName()
   )
-  const stripeSecretKey = stripeSecretKeyManager.secretValueFromJson('stripe_secret_key').unsafeUnwrap()
-  const context = { sharedLayer, codeUri, stripeSecretKey }
+  const stripeSecretKey = secretKeyManager.secretValueFromJson('stripe_secret_key').unsafeUnwrap()
+  const stripeWebhookSecretKey = secretKeyManager.secretValueFromJson('stripe_webhook_secret_key').unsafeUnwrap()
+  const context = { sharedLayer, codeUri, stripeSecretKey, stripeWebhookSecretKey }
   return [
     makeCreateOrderEndpoint({ ...props, ...context }),
     makeGetOrderEndpoint({ ...props, ...context }),
@@ -33,6 +34,7 @@ const makeCreateOrderEndpoint = (props: {
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
   stripeSecretKey: string
+  stripeWebhookSecretKey: string
 }) => {
   const endpoint = createEndpoint('CreateOrder', {
     handler: 'lambda.createOrder',
@@ -44,6 +46,7 @@ const makeCreateOrderEndpoint = (props: {
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
       STRIPE_SECRET_KEY: props.stripeSecretKey,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
     },
     memorySize: 2048,
     ...props,
@@ -60,6 +63,7 @@ const makeGetOrderEndpoint = (props: {
   sharedLayer: cdk.aws_lambda.LayerVersion
   orderTable: cdk.aws_dynamodb.Table
   stripeSecretKey: string
+  stripeWebhookSecretKey: string
 }) => {
   const endpoint = createEndpoint('GetOrder', {
     handler: 'lambda.getOrder',
@@ -70,6 +74,7 @@ const makeGetOrderEndpoint = (props: {
       LOG_LEVEL: 'info',
       ORDER_TABLE_NAME: props.orderTable.tableName,
       STRIPE_SECRET_KEY: props.stripeSecretKey,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
     },
     memorySize: 2048,
     ...props,
@@ -86,6 +91,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
   stripeSecretKey: string
+  stripeWebhookSecretKey: string
 }) => {
   const endpoint = createEndpoint('UpdateOrderPaymentStatus', {
     handler: 'lambda.updateOrderPaymentStatus',
@@ -97,6 +103,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
       STRIPE_SECRET_KEY: props.stripeSecretKey,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
       WEB_APP_HOST: Environment.WebAppHost(),
     },
     memorySize: 2048,
