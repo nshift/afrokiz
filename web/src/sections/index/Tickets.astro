@@ -37,8 +37,11 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
             { pass.price.EUR != pass.doorPrice.EUR && <p><s><Currency price={pass.doorPrice} client:only /></s></p> }
             <h3>{pass.name}</h3>
           </div>
-          { !pass.isSoldOut && <a href={"/pass/" + pass.id} class="button action">More Info</a> }
-          { pass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+          <div class="button-container">
+            { pass.id == 'vip-gold' && <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option</p> }
+            { !pass.isSoldOut && <a href={"/pass/" + pass.id} class="button action">More Info</a> }
+            { pass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+          </div>
         </div>
       </Card>
     ))
@@ -61,6 +64,10 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
   .ticket-card {
     min-height: var(--card-m-height);
     padding: var(--lg-padding);
+  }
+  .early-bird .option-available i {
+    font-size: calc(var(--h4-font-size) * 0.8) !important;
+    margin-right: 0.5rem !important;
   }
   @media only screen and (max-width: 920px) {
     .card.early-bird .container-row {
@@ -126,11 +133,21 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
     padding: var(--xs-padding);
   }
   .option-available i {
-    font-size: calc(var(--h4-font-size) * 0.8);
-    margin-right: 0.5rem;
+    font-size: calc(var(--text-font-size) * 0.8);
+    margin-right: 0.25rem;
   }
   .features {
     gap: var(--grid-m-gap);
+  }
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--grid-lg-gap);
+  }
+  .button-container .option-available {
+    padding: 0.75rem;
+    border-radius: 8px;
   }
   @media only screen and (max-width: 920px) {
     .grid {
