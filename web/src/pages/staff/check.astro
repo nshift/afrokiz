@@ -10,7 +10,8 @@ import Card from "../../components/Card.astro";
   <main>
     <div class="grid">
       <Card classes={["staff-check"]}>
-        This page is reserved to the staff.
+        <p>This page is reserved for the registration process.</p>
+        <p>Please show the QR Code you received by email at the registration counter.</p>
       </Card>
     </div>
   </main>
@@ -27,5 +28,6 @@ import Card from "../../components/Card.astro";
     display: flex;
     flex-direction: column;
     gap: var(--grid-lg-gap);
+    text-align: center;
   }
 </style>
