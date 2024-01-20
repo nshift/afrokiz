@@ -14,10 +14,12 @@ export const makeCheckoutEndpoints = (props: {
   const secretKeyManager = cdk.aws_secretsmanager.Secret.fromSecretNameV2(
     props.stack,
     'aws/secretsmanager',
-    Environment.StripeSecretKeysName()
+    Environment.SecretKeysName()
   )
-  const stripeSecretKey = secretKeyManager.secretValueFromJson('stripe_secret_key').unsafeUnwrap()
-  const stripeWebhookSecretKey = secretKeyManager.secretValueFromJson('stripe_webhook_secret_key').unsafeUnwrap()
+  const stripeSecretKey = secretKeyManager.secretValueFromJson(Environment.StripeSecretApiKeyName()).unsafeUnwrap()
+  const stripeWebhookSecretKey = secretKeyManager
+    .secretValueFromJson(Environment.StripeWebhookSecretApiKeyName())
+    .unsafeUnwrap()
   const context = { sharedLayer, codeUri, stripeSecretKey, stripeWebhookSecretKey }
   return [
     makeCreateOrderEndpoint({ ...props, ...context }),
