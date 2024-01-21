@@ -1,19 +1,18 @@
 import { Environment } from '../environment'
+import type { DiscountPromotion, GiveAwayPromotion, Promotion } from './promotion'
 export class PaymentAPI {
   async createOrder(
     newOrder: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'>
   ): Promise<{ order: Order; clientSecret: string }> {
-    const response = await fetch(Environment.PaymentApiHost() + '/checkout', {
+    const json = await this.request({
       method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      path: '/checkout',
       body: JSON.stringify({
         email: newOrder.email,
         fullname: newOrder.fullname,
         pass_id: newOrder.passId,
         date: newOrder.date,
+        promo_code: newOrder.promoCode,
         items: newOrder.items.map((item) => ({
           id: item.id,
           title: item.title,
@@ -23,7 +22,6 @@ export class PaymentAPI {
         })),
       }),
     })
-    const json = await response.json()
     const order: Order = {
       id: json.id,
       email: json.email,
@@ -44,18 +42,7 @@ export class PaymentAPI {
   }
 
   async getOrderById(id: string): Promise<Order> {
-    const path = '/checkout/' + id
-    const response = await fetch(Environment.PaymentApiHost() + path, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-    const json = await response.json()
-    if (response.status < 200 || response.status > 299) {
-      throw new Error(`Failed to request ${path}: ${JSON.stringify(json)}`)
-    }
+    const json = await this.request({ method: 'GET', path: '/checkout/' + id })
     return {
       id: json.id,
       email: json.email,
@@ -73,6 +60,43 @@ export class PaymentAPI {
       })),
     }
   }
+
+  async applyPromoCode(code: string): Promise<Promotion> {
+    const response = await this.request({ method: 'GET', path: '/promotion/' + code })
+    return {
+      id: response.id,
+      expirationDate: new Date(response.expirationDate),
+      discount: response.discount,
+      options: response.options
+        ? response.options.map((option: any) => ({
+            title: option.title,
+            description: option.description,
+          }))
+        : undefined,
+    } as DiscountPromotion | GiveAwayPromotion
+  }
+
+  async request(options: {
+    path: string
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    headers?: { [key: string]: any }
+    body?: BodyInit
+  }) {
+    const response = await fetch(Environment.PaymentApiHost() + options.path, {
+      method: options.method,
+      headers: {
+        ...options.headers,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: options.body,
+    })
+    const json = await response.json()
+    if (response.status < 200 || response.status > 299) {
+      throw new Error(`Failed to request ${options.path}: ${JSON.stringify(json)}`)
+    }
+    return json
+  }
 }
 
 export type Order = {
@@ -81,6 +105,7 @@ export type Order = {
   fullname: string
   passId: string
   date: Date
+  promoCode?: string
   paymentIntentId: string
   paymentStatus: 'pending' | 'success' | 'failed'
   items: {

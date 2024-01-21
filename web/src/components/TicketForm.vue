@@ -3,7 +3,8 @@ import { onMounted, ref, type Ref, inject, watch } from 'vue'
 import Card from '../components/Card.vue'
 import { type Pass } from '../data/pass'
 import { loadStripe, Stripe, type StripeElements } from '../stripe'
-import type { Order } from '../payment-api/payment.api'
+import { PaymentAPI, type Order } from '../payment-api/payment.api'
+import { type DiscountPromotion, type GiveAwayPromotion } from '../payment-api/promotion'
 
 const { pass } = defineProps<{ pass: Pass }>()
 const defaultCurrency = 'USD'
@@ -11,12 +12,17 @@ let stripe: Stripe
 let elements: StripeElements
 const currency: Ref<'USD' | 'EUR' | 'THB'> | undefined = inject('currency')
 const submitting = ref(false)
+const applying = ref(false)
+const applied = ref(false)
 const fullNameValidationError = ref(false)
 const fullName = ref('')
+const promoCode = ref<string | undefined>(undefined)
 const emailValidationError = ref(false)
 const cardDeclinedError = ref(false)
 const cardDeclinedErrorMessage = ref('')
 const email = ref('')
+const discount = ref(1)
+const giveAways = ref<string[]>([])
 let optionsFeatures: () => string[] = () =>
   optionIds.value.map((option) => pass.options[option].description).filter((x): x is string => x !== undefined)
 const optionIds = ref<string[]>([])
@@ -30,7 +36,7 @@ const calculateTotal = () => {
         : 0),
     0
   )
-  return total
+  return total * discount.value
 }
 const total = ref(calculateTotal())
 
@@ -54,6 +60,10 @@ if (currency) {
   })
 }
 
+watch(discount, () => {
+  total.value = calculateTotal()
+})
+
 watch(optionIds, () => {
   total.value = calculateTotal()
 })
@@ -68,6 +78,7 @@ const submit = async () => {
     fullname: fullName.value,
     passId: pass.id,
     date: new Date(),
+    promoCode: promoCode.value ?? undefined,
     items: [
       {
         id: pass.id,
@@ -77,7 +88,17 @@ const submit = async () => {
         total: { amount: pass.price[currency?.value ?? defaultCurrency], currency: currency?.value ?? defaultCurrency },
       },
     ].concat(
-      options.map((option) => ({
+      ...giveAways.value.map((item) => ({
+        id: 'give-away',
+        title: item,
+        includes: [],
+        amount: optionIds.value.includes('couple-option') ? 2 : 1,
+        total: {
+          amount: 0,
+          currency: currency?.value ?? defaultCurrency,
+        },
+      })),
+      ...options.map((option) => ({
         id: option.id,
         title: option.description,
         includes: [],
@@ -91,12 +112,37 @@ const submit = async () => {
       }))
     ),
   }
-  const { error } = await stripe.confirmPayment(elements, order)
+  console.log({ order, giveAways: giveAways.value })
+  // const { error } = await stripe.confirmPayment(elements, order)
   submitting.value = false
-  if (error) {
-    cardDeclinedError.value = true
-    cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
-    return console.error('Confirm payment error: ', error)
+  // if (error) {
+  //   cardDeclinedError.value = true
+  //   cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
+  //   return console.error('Confirm payment error: ', error)
+  // }
+}
+
+const applyPromoCode = async () => {
+  applying.value = true
+  const api = new PaymentAPI()
+  if (promoCode.value) {
+    try {
+      const promotion = await api.applyPromoCode(promoCode.value)
+      applying.value = false
+      const dicountPromotion = promotion as DiscountPromotion
+      const giveAwayPromotion = promotion as GiveAwayPromotion
+      applied.value = true
+      if (dicountPromotion.discount) {
+        discount.value = dicountPromotion.discount
+      } else if (giveAwayPromotion.options) {
+        giveAways.value = giveAwayPromotion.options.map((option) => option.description)
+      } else {
+        applied.value = false
+      }
+    } catch (error) {
+      applying.value = false
+      applied.value = false
+    }
   }
 }
 
@@ -150,6 +196,9 @@ const shouldDisabled = (id: string) => {
             </li>
           </ul>
           <ul class="option-features">
+            <li v-for="feature in giveAways" :key="feature">
+              {{ feature }}
+            </li>
             <li v-for="feature in optionsFeatures()" :key="feature">
               {{ feature }}
             </li>
@@ -183,7 +232,7 @@ const shouldDisabled = (id: string) => {
         </div>
         <div class="information-element">
           <label>Full name</label>
-          <div style="display: flex">
+          <div class="field-container">
             <input
               :class="['field', fullNameValidationError ? 'validation-error' : '']"
               type="text"
@@ -195,7 +244,7 @@ const shouldDisabled = (id: string) => {
         </div>
         <div class="information-element">
           <label>Email</label>
-          <div style="display: flex">
+          <div class="field-container">
             <input
               :class="['field', emailValidationError ? 'validation-error' : '']"
               type="text"
@@ -206,11 +255,25 @@ const shouldDisabled = (id: string) => {
           <p class="validation-error" v-if="emailValidationError">Your email is incomplete.</p>
         </div>
         <div id="payment-element"></div>
+        <div class="information-element">
+          <label>Promo Code</label>
+          <div class="field-container">
+            <input
+              :class="['field', emailValidationError ? 'validation-error' : '']"
+              type="text"
+              placeholder="Promo Code"
+              v-model="promoCode"
+              :disabled="applied"
+            />
+            <button class="button action" v-if="!applying && !applied" @click="applyPromoCode">Apply</button>
+            <button class="button action disabled" v-if="!applying && applied" disabled>Applied</button>
+            <button class="button action" v-if="applying" disabled><span class="loader"></span></button>
+          </div>
+          <p class="validation-error" v-if="emailValidationError">The promo code is not valid.</p>
+        </div>
         <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
-        <button id="payment-action" class="button action" v-if="!submitting && !pass.isSoldOut">Pay</button>
-        <button id="payment-action" class="button action disabled" v-if="!submitting && pass.isSoldOut" disabled>
-          Sold Out
-        </button>
+        <button class="button action" v-if="!submitting && !pass.isSoldOut">Pay</button>
+        <button class="button action disabled" v-if="!submitting && pass.isSoldOut" disabled>Sold Out</button>
         <p class="validation-error card-error" v-if="cardDeclinedError">{{ cardDeclinedErrorMessage }}</p>
       </div>
     </Card>
@@ -225,7 +288,7 @@ const shouldDisabled = (id: string) => {
   padding: var(--lg-padding);
   display: flex;
   flex-direction: column;
-  gap: var(--grid-lg-gap);
+  gap: var(--grid-m-gap);
 }
 
 .ticket {
@@ -377,7 +440,11 @@ p.validation-error {
 p.card-error {
   text-align: center;
 }
-
+.field-container {
+  display: flex;
+  flex-direction: row;
+  gap: var(--grid-m-gap);
+}
 @media only screen and (max-width: 920px) {
 }
 </style>

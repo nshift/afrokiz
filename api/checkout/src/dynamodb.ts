@@ -54,6 +54,7 @@ export const saveOrdersRequest = (orders: Order[]) =>
             fullname: order.fullname,
             passId: order.passId,
             date: order.date.toISOString(),
+            promoCode: order.promoCode,
             items: order.items.map((item) => ({
               id: item.id,
               title: item.title,
@@ -77,6 +78,7 @@ export const orderResponse = (response: any): Order[] =>
       fullname: item.fullname,
       passId: item.passId,
       date: new Date(item.date),
+      promoCode: item.promoCode,
       items: item.items.map((item: any) => ({
         id: item.id,
         title: item.title,

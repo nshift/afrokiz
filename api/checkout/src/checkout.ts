@@ -8,6 +8,7 @@ import { processCreateOrderEvent } from './event/create-order.event'
 import { processFailurePaymentEvent } from './event/failure-payment.event'
 import { processSuccessfulPaymentEvent } from './event/successful-payment.event'
 import { Order } from './order'
+import { Promotion, discountPromotion, massagePromotion } from './promotions'
 import { createPaymentIntent } from './stripe'
 
 export class CheckingOut {
@@ -56,5 +57,18 @@ export class CheckingOut {
       (order): Order => ({ ...order, paymentStatus: 'failed' })
     )
     await processFailurePaymentEvent(this.dynamodb, { orders, paymentIntentId: paymentIntent.id })
+  }
+
+  async applyPromoCode(code: string): Promise<Promotion | null> {
+    const promotions = {
+      [discountPromotion.code.toUpperCase()]: discountPromotion,
+      [massagePromotion.code.toUpperCase()]: massagePromotion,
+    }
+    const promotion = promotions[code.toUpperCase()]
+    const today = new Date()
+    if (!promotion || today.getTime() > promotion.expirationDate.getTime()) {
+      return null
+    }
+    return promotions[code] ?? null
   }
 }

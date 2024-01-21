@@ -7,6 +7,7 @@ export const buildCreateOrderRequest = (request: any) => ({
   passId: request.pass_id,
   fullname: request.fullname,
   date: new Date(request.date),
+  promoCode: request.promo_code,
   items: request.items.map((item: any) => ({
     id: item.id,
     title: item.title,

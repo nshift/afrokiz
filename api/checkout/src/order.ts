@@ -4,6 +4,7 @@ export type Order = {
   fullname: string
   passId: string
   date: Date
+  promoCode?: string
   paymentIntentId: string
   paymentStatus: 'pending' | 'success' | 'failed'
   items: {

@@ -6,7 +6,7 @@ import { CheckingOut } from './checkout'
 import { EmailApi } from './email'
 import { Environment } from './environment'
 import { buildCreateOrderRequest, buildUpdateOrderPaymentRequest } from './lambda.request'
-import { buildOrderResponse } from './lambda.response'
+import { buildOrderResponse, buildPromotionResponse } from './lambda.response'
 
 const stripe = new Stripe(Environment.StripeSecretKey())
 const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
@@ -63,6 +63,24 @@ export const getOrder = async (event: APIGatewayEvent, context: Context): Promis
       return notFoundErrorResponse(`Order (${orderId}) is not found.`)
     }
     return successResponse(buildOrderResponse(order))
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const getPromotion = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  const code = event.pathParameters?.code
+  if (!code) {
+    return notFoundErrorResponse(`Code is required in the request.`)
+  }
+  try {
+    const checkout = new CheckingOut(stripe, dynamodb, emailApi)
+    const promotion = await checkout.applyPromoCode(code)
+    if (!promotion || !promotion.isActive) {
+      return notFoundErrorResponse(`Promotion ${code} is not available.`)
+    }
+    return successResponse(buildPromotionResponse(promotion))
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)
