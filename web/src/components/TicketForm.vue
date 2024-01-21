@@ -93,6 +93,20 @@ const submit = async () => {
         total: { amount: pass.price[currency?.value ?? defaultCurrency], currency: currency?.value ?? defaultCurrency },
       },
     ].concat(
+      ...(discount.value != 1
+        ? [
+            {
+              id: 'dicount',
+              title: `Discount ${(100 - discount.value * 100).toFixed(0)}% off`,
+              includes: [],
+              amount: 1,
+              total: {
+                amount: Math.round((total.value / discount.value - total.value) * -1),
+                currency: currency?.value ?? defaultCurrency,
+              },
+            },
+          ]
+        : []),
       ...giveAways.value.map((item) => ({
         id: 'give-away',
         title: item,
