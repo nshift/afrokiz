@@ -69,6 +69,6 @@ export class CheckingOut {
     if (!promotion || today.getTime() > promotion.expirationDate.getTime()) {
       return null
     }
-    return promotions[code] ?? null
+    return promotion ?? null
   }
 }
