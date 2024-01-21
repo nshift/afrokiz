@@ -17,7 +17,10 @@ const applied = ref(false)
 const fullNameValidationError = ref(false)
 const fullName = ref('')
 const promoCode = ref<string | undefined>(undefined)
+const promoCodeValidationError = ref(false)
 const emailValidationError = ref(false)
+const dancerTypeValidationError = ref(false)
+const dancerType = ref<('leader' | 'follower')[]>([])
 const cardDeclinedError = ref(false)
 const cardDeclinedErrorMessage = ref('')
 const email = ref('')
@@ -72,10 +75,12 @@ const submit = async () => {
   submitting.value = true
   fullNameValidationError.value = !fullName.value
   emailValidationError.value = !email.value
+  dancerTypeValidationError.value = dancerType.value.length == 0
   const options = optionIds.value.map((option) => pass.options[option])
   const order: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'> = {
     email: email.value,
     fullname: fullName.value,
+    dancerType: optionIds.value.includes('couple-option') ? 'couple' : dancerType.value[0],
     passId: pass.id,
     date: new Date(),
     promoCode: promoCode.value ?? undefined,
@@ -112,14 +117,13 @@ const submit = async () => {
       }))
     ),
   }
-  console.log({ order, giveAways: giveAways.value })
-  // const { error } = await stripe.confirmPayment(elements, order)
+  const { error } = await stripe.confirmPayment(elements, order)
   submitting.value = false
-  // if (error) {
-  //   cardDeclinedError.value = true
-  //   cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
-  //   return console.error('Confirm payment error: ', error)
-  // }
+  if (error) {
+    cardDeclinedError.value = true
+    cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
+    return console.error('Confirm payment error: ', error)
+  }
 }
 
 const applyPromoCode = async () => {
@@ -128,6 +132,7 @@ const applyPromoCode = async () => {
   if (promoCode.value) {
     try {
       const promotion = await api.applyPromoCode(promoCode.value)
+      promoCodeValidationError.value = false
       applying.value = false
       const dicountPromotion = promotion as DiscountPromotion
       const giveAwayPromotion = promotion as GiveAwayPromotion
@@ -142,6 +147,7 @@ const applyPromoCode = async () => {
     } catch (error) {
       applying.value = false
       applied.value = false
+      promoCodeValidationError.value = true
     }
   }
 }
@@ -230,6 +236,36 @@ const shouldDisabled = (id: string) => {
         <div class="total">
           <h2>Total: {{ currency }} {{ (total / 100).toFixed(2) }}</h2>
         </div>
+        <div class="information-element" v-if="!optionIds.includes('couple-option')">
+          <div class="dancer-type-options">
+            <div
+              :class="[
+                'dancer-type-option',
+                'field',
+                dancerTypeValidationError ? 'validation-error' : '',
+                dancerType.includes('leader') ? 'selected' : '',
+              ]"
+              @click="dancerType = ['leader']"
+            >
+              <input type="checkbox" value="leader" v-model="dancerType" />
+              <div class="option"><p>Leader</p></div>
+            </div>
+            <div
+              :class="[
+                'dancer-type-option',
+                'field',
+                dancerTypeValidationError ? 'validation-error' : '',
+                dancerType.includes('follower') ? 'selected' : '',
+              ]"
+              @click="dancerType = ['follower']"
+            >
+              <input type="checkbox" value="follower" v-model="dancerType" />
+              <div class="option"><p>Follower</p></div>
+            </div>
+          </div>
+          <p v-if="!dancerTypeValidationError">We are aiming for a reasonable balance between leaders and followers.</p>
+          <p class="validation-error" v-if="dancerTypeValidationError">Your dancer type is incomplete.</p>
+        </div>
         <div class="information-element">
           <label>Full name</label>
           <div class="field-container">
@@ -247,7 +283,7 @@ const shouldDisabled = (id: string) => {
           <div class="field-container">
             <input
               :class="['field', emailValidationError ? 'validation-error' : '']"
-              type="text"
+              type="email"
               placeholder="Email"
               v-model="email"
             />
@@ -259,7 +295,7 @@ const shouldDisabled = (id: string) => {
           <label>Promo Code</label>
           <div class="field-container">
             <input
-              :class="['field', emailValidationError ? 'validation-error' : '']"
+              :class="['field', promoCodeValidationError ? 'validation-error' : '']"
               type="text"
               placeholder="Promo Code"
               v-model="promoCode"
@@ -269,7 +305,7 @@ const shouldDisabled = (id: string) => {
             <button class="button action disabled" v-if="!applying && applied" disabled>Applied</button>
             <button class="button action" v-if="applying" disabled><span class="loader"></span></button>
           </div>
-          <p class="validation-error" v-if="emailValidationError">The promo code is not valid.</p>
+          <p class="validation-error" v-if="promoCodeValidationError">The promo code is not valid.</p>
         </div>
         <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
         <button class="button action" v-if="!submitting && !pass.isSoldOut">Pay</button>
@@ -444,6 +480,19 @@ p.card-error {
   display: flex;
   flex-direction: row;
   gap: var(--grid-m-gap);
+}
+.dancer-type-options {
+  display: flex;
+  flex-direction: row;
+  gap: var(--grid-m-gap);
+  cursor: pointer;
+}
+.dancer-type-option p {
+  text-align: center;
+}
+.dancer-type-option input[type='checkbox'] {
+  position: absolute;
+  transform: translate(-18px, -18px) scale(1.3);
 }
 @media only screen and (max-width: 920px) {
 }

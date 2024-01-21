@@ -7,6 +7,8 @@ export const buildOrderResponse = (order: Order) => ({
   paymentStatus: order.paymentStatus,
   email: order.email,
   fullname: order.fullname,
+  dancer_type: order.dancerType,
+  promo_code: order.promoCode,
   pass_id: order.passId,
   date: order.date.toISOString(),
   items: order.items.map((item) => ({

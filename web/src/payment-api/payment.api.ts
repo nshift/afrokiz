@@ -10,6 +10,7 @@ export class PaymentAPI {
       body: JSON.stringify({
         email: newOrder.email,
         fullname: newOrder.fullname,
+        dancer_type: newOrder.dancerType,
         pass_id: newOrder.passId,
         date: newOrder.date,
         promo_code: newOrder.promoCode,
@@ -26,7 +27,8 @@ export class PaymentAPI {
       id: json.id,
       email: json.email,
       fullname: json.fullname,
-      passId: json.passId,
+      dancerType: json.dancer_type,
+      passId: json.pass_id,
       date: json.date,
       paymentIntentId: json.paymentIntentId,
       paymentStatus: json.paymentStatus,
@@ -47,6 +49,7 @@ export class PaymentAPI {
       id: json.id,
       email: json.email,
       fullname: json.fullname,
+      dancerType: json.dancer_type,
       passId: json.pass_id,
       date: json.date,
       paymentIntentId: json.paymentIntentId,
@@ -103,6 +106,7 @@ export type Order = {
   id: string
   email: string
   fullname: string
+  dancerType: 'leader' | 'follower' | 'couple'
   passId: string
   date: Date
   promoCode?: string
