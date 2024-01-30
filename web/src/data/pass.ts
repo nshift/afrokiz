@@ -37,27 +37,27 @@ export const passes: { [key: string]: Pass } = {
         makePromotion({
           price: { USD: 7599, EUR: 6999, THB: 269900 },
           start: new Date('2024-01-01'),
-          end: new Date('2024-01-31'),
+          end: new Date('2024-02-01'),
         }),
         makePromotion({
           price: { USD: 9299, EUR: 8399, THB: 319900 },
           start: new Date('2024-02-01'),
-          end: new Date('2024-02-28'),
+          end: new Date('2024-03-01'),
         }),
         makePromotion({
           price: { USD: 9899, EUR: 8999, THB: 339900 },
           start: new Date('2024-03-01'),
-          end: new Date('2024-04-30'),
+          end: new Date('2024-05-01'),
         }),
         makePromotion({
           price: { USD: 10599, EUR: 9699, THB: 369900 },
           start: new Date('2024-05-01'),
-          end: new Date('2024-06-30'),
+          end: new Date('2024-07-01'),
         }),
         makePromotion({
           price: { USD: 11299, EUR: 10299, THB: 389900 },
           start: new Date('2024-07-01'),
-          end: new Date('2024-08-31'),
+          end: new Date('2024-09-01'),
         }),
       ]
       const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
@@ -85,27 +85,27 @@ export const passes: { [key: string]: Pass } = {
         makePromotion({
           price: { USD: 9499, EUR: 8499, THB: 319900 },
           start: new Date('2024-01-01'),
-          end: new Date('2024-01-31'),
+          end: new Date('2024-02-01'),
         }),
         makePromotion({
           price: { USD: 9999, EUR: 8999, THB: 339900 },
           start: new Date('2024-02-01'),
-          end: new Date('2024-02-28'),
+          end: new Date('2024-03-01'),
         }),
         makePromotion({
           price: { USD: 10599, EUR: 9699, THB: 369900 },
           start: new Date('2024-03-01'),
-          end: new Date('2024-04-30'),
+          end: new Date('2024-05-01'),
         }),
         makePromotion({
           price: { USD: 11499, EUR: 10499, THB: 399900 },
           start: new Date('2024-05-01'),
-          end: new Date('2024-06-30'),
+          end: new Date('2024-07-01'),
         }),
         makePromotion({
           price: { USD: 12399, EUR: 11299, THB: 429900 },
           start: new Date('2024-07-01'),
-          end: new Date('2024-08-31'),
+          end: new Date('2024-09-01'),
         }),
       ]
       const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
@@ -133,27 +133,27 @@ export const passes: { [key: string]: Pass } = {
         makePromotion({
           price: { USD: 25999, EUR: 22999, THB: 899000 },
           start: new Date('2024-01-01'),
-          end: new Date('2024-01-31'),
+          end: new Date('2024-02-01'),
         }),
         makePromotion({
           price: { USD: 27999, EUR: 24999, THB: 939900 },
           start: new Date('2024-02-01'),
-          end: new Date('2024-02-28'),
+          end: new Date('2024-03-01'),
         }),
         makePromotion({
           price: { USD: 30099, EUR: 27499, THB: 1049900 },
           start: new Date('2024-03-01'),
-          end: new Date('2024-04-30'),
+          end: new Date('2024-05-01'),
         }),
         makePromotion({
           price: { USD: 32999, EUR: 30099, THB: 1149900 },
           start: new Date('2024-05-01'),
-          end: new Date('2024-06-30'),
+          end: new Date('2024-07-01'),
         }),
         makePromotion({
           price: { USD: 38699, EUR: 35299, THB: 1349900 },
           start: new Date('2024-07-01'),
-          end: new Date('2024-08-31'),
+          end: new Date('2024-09-01'),
         }),
       ]
       const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
@@ -181,27 +181,27 @@ export const passes: { [key: string]: Pass } = {
             makePromotion({
               price: { USD: 12900, EUR: 11800, THB: 450000 },
               start: new Date('2024-01-01'),
-              end: new Date('2024-01-31'),
+              end: new Date('2024-02-01'),
             }),
             makePromotion({
               price: { USD: 13800, EUR: 12600, THB: 480000 },
               start: new Date('2024-02-01'),
-              end: new Date('2024-02-28'),
+              end: new Date('2024-03-01'),
             }),
             makePromotion({
               price: { USD: 14600, EUR: 13400, THB: 510000 },
               start: new Date('2024-03-01'),
-              end: new Date('2024-04-30'),
+              end: new Date('2024-05-01'),
             }),
             makePromotion({
               price: { USD: 15500, EUR: 14200, THB: 540000 },
               start: new Date('2024-05-01'),
-              end: new Date('2024-06-30'),
+              end: new Date('2024-07-01'),
             }),
             makePromotion({
               price: { USD: 16600, EUR: 15200, THB: 580000 },
               start: new Date('2024-07-01'),
-              end: new Date('2024-08-31'),
+              end: new Date('2024-09-01'),
             }),
           ]
           const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
@@ -224,27 +224,27 @@ export const passes: { [key: string]: Pass } = {
         makePromotion({
           price: { USD: 34399, EUR: 31299, THB: 1199000 },
           start: new Date('2024-01-01'),
-          end: new Date('2024-01-31'),
+          end: new Date('2024-02-01'),
         }),
         makePromotion({
           price: { USD: 37999, EUR: 34999, THB: 1399000 },
           start: new Date('2024-02-01'),
-          end: new Date('2024-02-28'),
+          end: new Date('2024-03-01'),
         }),
         makePromotion({
           price: { USD: 42999, EUR: 39299, THB: 1499000 },
           start: new Date('2024-03-01'),
-          end: new Date('2024-04-30'),
+          end: new Date('2024-05-01'),
         }),
         makePromotion({
           price: { USD: 45799, EUR: 41799, THB: 1599000 },
           start: new Date('2024-05-01'),
-          end: new Date('2024-06-30'),
+          end: new Date('2024-07-01'),
         }),
         makePromotion({
           price: { USD: 50099, EUR: 45699, THB: 1749900 },
           start: new Date('2024-07-01'),
-          end: new Date('2024-08-31'),
+          end: new Date('2024-09-01'),
         }),
       ]
       const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
@@ -275,27 +275,27 @@ export const passes: { [key: string]: Pass } = {
             makePromotion({
               price: { USD: 17500, EUR: 16000, THB: 610000 },
               start: new Date('2024-01-01'),
-              end: new Date('2024-01-31'),
+              end: new Date('2024-02-01'),
             }),
             makePromotion({
               price: { USD: 18600, EUR: 17000, THB: 650000 },
               start: new Date('2024-02-01'),
-              end: new Date('2024-02-28'),
+              end: new Date('2024-03-01'),
             }),
             makePromotion({
               price: { USD: 20000, EUR: 18200, THB: 700000 },
               start: new Date('2024-03-01'),
-              end: new Date('2024-04-30'),
+              end: new Date('2024-05-01'),
             }),
             makePromotion({
               price: { USD: 21400, EUR: 19500, THB: 750000 },
               start: new Date('2024-05-01'),
-              end: new Date('2024-06-30'),
+              end: new Date('2024-07-01'),
             }),
             makePromotion({
               price: { USD: 22900, EUR: 20900, THB: 800000 },
               start: new Date('2024-07-01'),
-              end: new Date('2024-08-31'),
+              end: new Date('2024-09-01'),
             }),
           ]
           const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
