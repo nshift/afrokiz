@@ -1,5 +1,5 @@
 {
-  "exclude": [".build", "node_modules", "**/*.spec.ts", "src/_fixture", "chrome-aws-lambda"],
+  "exclude": [".build", "coverage", "node_modules", "**/*.spec.ts", "src/doubles"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 

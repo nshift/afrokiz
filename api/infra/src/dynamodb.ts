@@ -23,3 +23,6 @@ export const createOrderTable = (stack: cdk.Stack) =>
     ],
     stack,
   })
+
+export const createSalesTable = (stack: cdk.Stack) =>
+  createDynamoDbTable('SalesTable', { partitionKey: { name: 'id', type: STRING }, stack })

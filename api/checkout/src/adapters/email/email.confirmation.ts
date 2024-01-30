@@ -1,9 +1,17 @@
-import { Environment } from './environment'
-import { Order } from './order'
-import { generate } from './qrCode'
+import { Customer } from '../../types/customer'
+import { Order } from '../../types/order'
+import { Email } from './email'
 
-export const confirmationEmail = async (order: Order) => ({
-  destinations: [order.email],
+export const confirmationEmail = async ({
+  order,
+  customer,
+  qrCode,
+}: {
+  order: Order
+  customer: Customer
+  qrCode: Buffer
+}): Promise<Email> => ({
+  destinations: [customer.email],
   cc: [],
   subject: 'Confirmation - AfroKiz Bangkok #2 - Early Bird Ticket',
   html: `
@@ -21,7 +29,7 @@ export const confirmationEmail = async (order: Order) => ({
     </style>
   </head>
   <body>
-    Dear ${order.fullname},
+    Dear ${customer.fullname},
     <br />
     <br />Thank you for choosing AfroKiz Bangkok Edition 2 as your festival destination! We are thrilled to confirm your purchase of Early Bird tickets for the upcoming event. Your support means the world to us, and we can't wait to celebrate the vibrant world of AfroKiz with you.
     <br />
@@ -31,7 +39,7 @@ export const confirmationEmail = async (order: Order) => ({
     )}
     <br />
     ${
-      order.passId == 'vip-gold' || order.passId == 'vip-silver'
+      order.items[0].id == 'vip-gold' || order.items[0].id == 'vip-silver'
         ? `
       <br />Hotel information:
       <br />Check in 6th September and check out 9th September.
@@ -71,10 +79,5 @@ export const confirmationEmail = async (order: Order) => ({
     <br />Whatsapp +66991166561
   </body>
 </html>`,
-  attachments: [
-    {
-      filename: 'qr_code.png',
-      content: await generate(Environment.WebAppHost() + '/staff/check?order_id=' + order.id),
-    },
-  ],
+  attachments: [{ filename: 'qr_code.png', content: qrCode }],
 })

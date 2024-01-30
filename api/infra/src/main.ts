@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv'
 import * as path from 'path'
 import 'source-map-support/register'
 import { makeCheckoutEndpoints } from './checkout.endpoint'
-import { createEventTable, createOrderTable } from './dynamodb'
+import { createEventTable, createOrderTable, createSalesTable } from './dynamodb'
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') })
 
@@ -14,11 +14,13 @@ const stack = createStack(makeId(Environment.projectName(), Environment.environm
 const api = createApi(stack, ['stripe-signature'])
 const eventTable = createEventTable(stack)
 const orderTable = createOrderTable(stack)
+const salesTable = createSalesTable(stack)
 const context = {
   stack,
   api,
   eventTable,
   orderTable,
+  salesTable,
 }
 const endpoints: cdk.CfnResource[] = [...makeCheckoutEndpoints(context).map((endpoint) => endpoint.route)]
 deployApi(stack, api, endpoints)

@@ -2,25 +2,36 @@ import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
 import Stripe from 'stripe'
-import { CheckingOut } from './checkout'
-import { EmailApi } from './email'
-import { Environment } from './environment'
-import { buildCreateOrderRequest, buildUpdateOrderPaymentRequest } from './lambda.request'
-import { buildOrderResponse, buildPromotionResponse } from './lambda.response'
+import { v4 as uuid } from 'uuid'
+import { Checkout } from '../../checkout'
+import { Environment } from '../../environment'
+import { SESEmailService } from '../email/ses'
+import { StripePaymentAdapter } from '../payment/stripe'
+import { QrCodeGenerator } from '../qr-code/qr-code.generator'
+import { DynamoDbRepository } from '../repository/dynamodb'
+import { buildProceedToCheckoutRequest, buildUpdateOrderPaymentRequest } from './request'
+import { buildOrderResponse, buildPromotionResponse } from './response'
 
-const stripe = new Stripe(Environment.StripeSecretKey())
 const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
   marshallOptions: { removeUndefinedValues: true },
 })
-const emailApi = new EmailApi({ email: 'afrokiz.bkk@gmail.com', name: 'DJ Ploy' })
+const dateGenerator = { today: () => new Date() }
+const repository = new DynamoDbRepository(dynamodb, { generate: uuid }, dateGenerator)
+const stripe = new Stripe(Environment.StripeSecretKey())
+const paymentAdapter = new StripePaymentAdapter(stripe)
+const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'DJ Ploy' })
+const qrCodeGenerator = new QrCodeGenerator()
+const checkout = new Checkout(repository, paymentAdapter, emailApi, qrCodeGenerator, dateGenerator)
 
-export const createOrder = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+export const proceedToCheckout = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body ?? '{}')
-  const request = buildCreateOrderRequest(body)
+  const request = buildProceedToCheckoutRequest(body)
   try {
-    const checkout = new CheckingOut(stripe, dynamodb, emailApi)
-    const { order, clientSecret } = await checkout.createOrder(request)
-    return successResponse({ ...buildOrderResponse(order), clientSecret })
+    const { order, customer, promoCode, payment } = await checkout.proceed(request)
+    return successResponse({
+      ...buildOrderResponse({ order, customer, promoCode, payment }),
+      clientSecret: payment.intent.secret,
+    })
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)
@@ -33,13 +44,12 @@ export const updateOrderPaymentStatus = async (
 ): Promise<APIGatewayProxyResult> => {
   const request = buildUpdateOrderPaymentRequest(event, stripe)
   try {
-    const checkout = new CheckingOut(stripe, dynamodb, emailApi)
     switch (request.type) {
       case 'payment_intent.succeeded':
-        await checkout.handleSuccessfulPayment(request.data.object)
+        await checkout.handlePayment({ orderId: request.orderId, payment: { status: 'success' } })
         break
       case 'payment_intent.payment_failed':
-        await checkout.handleFailurePayment(request.data.object)
+        await checkout.handlePayment({ orderId: request.orderId, payment: { status: 'failed' } })
         break
       default:
         break
@@ -57,7 +67,6 @@ export const getOrder = async (event: APIGatewayEvent, context: Context): Promis
     return notFoundErrorResponse('Order id is required.')
   }
   try {
-    const checkout = new CheckingOut(stripe, dynamodb, emailApi)
     const order = await checkout.getOrder(orderId)
     if (!order) {
       return notFoundErrorResponse(`Order (${orderId}) is not found.`)
@@ -75,8 +84,7 @@ export const getPromotion = async (event: APIGatewayEvent, context: Context): Pr
     return notFoundErrorResponse(`Code is required in the request.`)
   }
   try {
-    const checkout = new CheckingOut(stripe, dynamodb, emailApi)
-    const promotion = await checkout.applyPromoCode(code)
+    const promotion = await checkout.getPromotion(code)
     if (!promotion || !promotion.isActive) {
       return notFoundErrorResponse(`Promotion ${code} is not available.`)
     }

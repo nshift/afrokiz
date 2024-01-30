@@ -1,25 +1,10 @@
 import { SES } from '@aws-sdk/client-ses'
+import { Email } from './email'
+import { SendingBulkEmails, SendingEmail } from './email.gateway'
+import { EmailTemplate } from './email.template'
 import MailComposer = require('nodemailer/lib/mail-composer')
 
-export type Email = {
-  destinations: string[]
-  cc: string[]
-  subject: string
-  html: string
-  attachments: { filename: string; content: Buffer }[]
-}
-
-export type EmailTemplate = {
-  name: string
-  subject: string
-  html: string
-  destinations: {
-    toAddresses: string[]
-    data: { [key: string]: any }
-  }[]
-}
-
-export class EmailApi {
+export class SESEmailService implements SendingBulkEmails, SendingEmail {
   private client: SES = new SES({})
   constructor(private source: { email: string; name: string }) {}
 

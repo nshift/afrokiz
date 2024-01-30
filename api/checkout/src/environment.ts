@@ -1,6 +1,7 @@
 export class Environment {
   static EventTableName = () => required('EVENT_TABLE_NAME')
   static OrderTableName = () => required('ORDER_TABLE_NAME')
+  static SalesTableName = () => required('SALES_TABLE_NAME')
   static StripeSecretKey = () => required('STRIPE_SECRET_KEY')
   static StripeWebhookSecretKey = () => required('STRIPE_WEBHOOK_SECRET_KEY')
   static WebAppHost = () => required('WEB_APP_HOST')

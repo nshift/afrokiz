@@ -8,6 +8,7 @@ export const makeCheckoutEndpoints = (props: {
   api: cdk.aws_apigatewayv2.CfnApi
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
+  salesTable: cdk.aws_dynamodb.Table
 }) => {
   const sharedLayer = createSharedLayer('CheckoutSharedLayer', CheckoutModule('.build/layer'), props.stack)
   const codeUri = CheckoutModule('.build/src')
@@ -22,14 +23,14 @@ export const makeCheckoutEndpoints = (props: {
     .unsafeUnwrap()
   const context = { sharedLayer, codeUri, stripeSecretKey, stripeWebhookSecretKey }
   return [
-    makeCreateOrderEndpoint({ ...props, ...context }),
+    makeProceedToCheckoutEndpoint({ ...props, ...context }),
     makeGetOrderEndpoint({ ...props, ...context }),
     makeUpdateOrderPaymentStatusEndpoint({ ...props, ...context }),
     makeGetPromotionEndpoint({ ...props, ...context }),
   ]
 }
 
-const makeCreateOrderEndpoint = (props: {
+const makeProceedToCheckoutEndpoint = (props: {
   stack: cdk.Stack
   codeUri: string
   api: cdk.aws_apigatewayv2.CfnApi
@@ -39,8 +40,8 @@ const makeCreateOrderEndpoint = (props: {
   stripeSecretKey: string
   stripeWebhookSecretKey: string
 }) => {
-  const endpoint = createEndpoint('CreateOrder', {
-    handler: 'lambda.createOrder',
+  const endpoint = createEndpoint('ProceedToCheckout', {
+    handler: 'adapters/lambda/lambda.proceedToCheckout',
     method: 'POST',
     path: '/checkout',
     environment: {
@@ -54,7 +55,7 @@ const makeCreateOrderEndpoint = (props: {
     memorySize: 2048,
     ...props,
   })
-  props.eventTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
+  props.eventTable.grant(endpoint.lambda, 'dynamodb:PutItem')
   props.orderTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
   return endpoint
 }
@@ -69,7 +70,7 @@ const makeGetOrderEndpoint = (props: {
   stripeWebhookSecretKey: string
 }) => {
   const endpoint = createEndpoint('GetOrder', {
-    handler: 'lambda.getOrder',
+    handler: 'adapters/lambda/lambda.getOrder',
     method: 'GET',
     path: '/checkout/{id}',
     environment: {
@@ -93,11 +94,12 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
   sharedLayer: cdk.aws_lambda.LayerVersion
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
+  salesTable: cdk.aws_dynamodb.Table
   stripeSecretKey: string
   stripeWebhookSecretKey: string
 }) => {
   const endpoint = createEndpoint('UpdateOrderPaymentStatus', {
-    handler: 'lambda.updateOrderPaymentStatus',
+    handler: 'adapters/lambda/lambda.updateOrderPaymentStatus',
     method: 'POST',
     path: '/checkout/webhook',
     environment: {
@@ -105,6 +107,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
       LOG_LEVEL: 'info',
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
+      SALES_TABLE_NAME: props.salesTable.tableName,
       STRIPE_SECRET_KEY: props.stripeSecretKey,
       STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
       WEB_APP_HOST: Environment.WebAppHost(),
@@ -119,8 +122,9 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
       effect: cdk.aws_iam.Effect.ALLOW,
     })
   )
-  props.eventTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
-  props.orderTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem', 'dynamodb:Query')
+  props.eventTable.grant(endpoint.lambda, 'dynamodb:PutItem')
+  props.orderTable.grant(endpoint.lambda, 'dynamodb:UpdateItem', 'dynamodb:Query')
+  props.salesTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
   return endpoint
 }
 
@@ -133,7 +137,7 @@ const makeGetPromotionEndpoint = (props: {
   stripeWebhookSecretKey: string
 }) => {
   const endpoint = createEndpoint('GetPromotion', {
-    handler: 'lambda.getPromotion',
+    handler: 'adapters/lambda/lambda.getPromotion',
     method: 'GET',
     path: '/promotion/{code}',
     environment: {

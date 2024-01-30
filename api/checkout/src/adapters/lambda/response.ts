@@ -1,15 +1,28 @@
-import { Order } from './order'
-import { DiscountPromotion, GiveAwayPromotion, Promotion } from './promotions'
+import { Customer } from '../../types/customer'
+import { Order } from '../../types/order'
+import { PaymentStatus } from '../../types/payment'
+import { PaymentIntent } from '../../types/payment-intent'
+import { DiscountPromotion, GiveAwayPromotion, Promotion } from '../../types/promotion'
 
-export const buildOrderResponse = (order: Order) => ({
+export const buildOrderResponse = ({
+  order,
+  customer,
+  promoCode,
+  payment,
+}: {
+  order: Order
+  customer: Customer
+  promoCode?: string
+  payment: { status: PaymentStatus; intent: PaymentIntent }
+}) => ({
   id: order.id,
-  paymentIntentId: order.paymentIntentId,
-  paymentStatus: order.paymentStatus,
-  email: order.email,
-  fullname: order.fullname,
-  dancer_type: order.dancerType,
-  promo_code: order.promoCode,
-  pass_id: order.passId,
+  paymentIntentId: payment.intent.id,
+  paymentStatus: payment.status,
+  email: customer.email,
+  fullname: customer.fullname,
+  dancer_type: customer.type,
+  promo_code: promoCode,
+  pass_id: order.items[0].id,
   date: order.date.toISOString(),
   items: order.items.map((item) => ({
     id: item.id,
