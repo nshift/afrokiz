@@ -15,22 +15,22 @@ const promotions = [
     end: new Date('2024-02-01'),
   }),
   makePromotion({
-    name: '30% off',
+    name: '25% off',
     start: new Date('2024-02-01'),
     end: new Date('2024-03-01'),
   }),
   makePromotion({
-    name: '25% off',
+    name: '20% off',
     start: new Date('2024-03-01'),
     end: new Date('2024-05-01'),
   }),
   makePromotion({
-    name: '18% off',
+    name: '12% off',
     start: new Date('2024-07-01'),
     end: new Date('2024-06-30'),
   }),
   makePromotion({
-    name: '5% off',
+    name: '8% off',
     start: new Date('2024-07-01'),
     end: new Date('2024-09-01'),
   }),
