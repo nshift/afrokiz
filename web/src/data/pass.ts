@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { options, type Option } from './options'
 
 export type Pass = {
@@ -22,9 +21,7 @@ export type Pass = {
 
 const makePromotion = (promotion: { price: Pass['price']; start: Date; end: Date }) => ({
   price: promotion.price,
-  isActive:
-    moment(moment(new Date())).diff(promotion.start, 'days') > 0 &&
-    moment(promotion.end).diff(moment(new Date()), 'days') > 0,
+  isActive: new Date().getTime() > promotion.start.getTime() && new Date().getTime() < promotion.end.getTime(),
 })
 
 export const passes: { [key: string]: Pass } = {
