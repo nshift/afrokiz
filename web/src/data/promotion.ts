@@ -3,7 +3,8 @@ import moment from 'moment'
 const makePromotion = (promotion: { name: string; start: Date; end: Date }) => {
   const days = moment(promotion.end).diff(moment(new Date()), 'days')
   return {
-    text: promotion.name + ' promotion ends in ' + (days > 0 ? days + ' days.' : 'today.'),
+    // text: promotion.name + ' promotion ends in ' + (days > 0 ? days + ' days.' : 'today.'),
+    text: `Get your ticket with exclusive prices before ${moment(promotion.end).format('MMMM YYYY')}.`,
     isActive: new Date().getTime() > promotion.start.getTime() && new Date().getTime() < promotion.end.getTime(),
   }
 }
@@ -15,13 +16,8 @@ const promotions = [
     end: new Date('2024-02-01'),
   }),
   makePromotion({
-    name: '25% off',
-    start: new Date('2024-02-01'),
-    end: new Date('2024-03-01'),
-  }),
-  makePromotion({
     name: '20% off',
-    start: new Date('2024-03-01'),
+    start: new Date('2024-02-01'),
     end: new Date('2024-05-01'),
   }),
   makePromotion({

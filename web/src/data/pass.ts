@@ -37,13 +37,8 @@ export const passes: { [key: string]: Pass } = {
           end: new Date('2024-02-01'),
         }),
         makePromotion({
-          price: { USD: 9499, EUR: 8499, THB: 319900 },
-          start: new Date('2024-02-01'),
-          end: new Date('2024-03-01'),
-        }),
-        makePromotion({
           price: { USD: 9899, EUR: 8999, THB: 339900 },
-          start: new Date('2024-03-01'),
+          start: new Date('2024-02-01'),
           end: new Date('2024-05-01'),
         }),
         makePromotion({
@@ -85,13 +80,8 @@ export const passes: { [key: string]: Pass } = {
           end: new Date('2024-02-01'),
         }),
         makePromotion({
-          price: { USD: 10799, EUR: 9799, THB: 374900 },
-          start: new Date('2024-02-01'),
-          end: new Date('2024-03-01'),
-        }),
-        makePromotion({
           price: { USD: 12199, EUR: 11099, THB: 423900 },
-          start: new Date('2024-03-01'),
+          start: new Date('2024-02-01'),
           end: new Date('2024-05-01'),
         }),
         makePromotion({
@@ -133,13 +123,8 @@ export const passes: { [key: string]: Pass } = {
           end: new Date('2024-02-01'),
         }),
         makePromotion({
-          price: { USD: 33999, EUR: 31399, THB: 1199900 },
-          start: new Date('2024-02-01'),
-          end: new Date('2024-03-01'),
-        }),
-        makePromotion({
           price: { USD: 36399, EUR: 33399, THB: 1279900 },
-          start: new Date('2024-03-01'),
+          start: new Date('2024-02-01'),
           end: new Date('2024-05-01'),
         }),
         makePromotion({
@@ -181,13 +166,8 @@ export const passes: { [key: string]: Pass } = {
               end: new Date('2024-02-01'),
             }),
             makePromotion({
-              price: { USD: 13800, EUR: 12600, THB: 480000 },
-              start: new Date('2024-02-01'),
-              end: new Date('2024-03-01'),
-            }),
-            makePromotion({
               price: { USD: 14600, EUR: 13400, THB: 510000 },
-              start: new Date('2024-03-01'),
+              start: new Date('2024-02-01'),
               end: new Date('2024-05-01'),
             }),
             makePromotion({
@@ -224,13 +204,8 @@ export const passes: { [key: string]: Pass } = {
           end: new Date('2024-02-01'),
         }),
         makePromotion({
-          price: { USD: 42299, EUR: 39099, THB: 1499000 },
-          start: new Date('2024-02-01'),
-          end: new Date('2024-03-01'),
-        }),
-        makePromotion({
           price: { USD: 45299, EUR: 41699, THB: 1599000 },
-          start: new Date('2024-03-01'),
+          start: new Date('2024-02-01'),
           end: new Date('2024-05-01'),
         }),
         makePromotion({
@@ -275,13 +250,8 @@ export const passes: { [key: string]: Pass } = {
               end: new Date('2024-02-01'),
             }),
             makePromotion({
-              price: { USD: 18600, EUR: 17000, THB: 650000 },
-              start: new Date('2024-02-01'),
-              end: new Date('2024-03-01'),
-            }),
-            makePromotion({
               price: { USD: 20000, EUR: 18200, THB: 700000 },
-              start: new Date('2024-03-01'),
+              start: new Date('2024-02-01'),
               end: new Date('2024-05-01'),
             }),
             makePromotion({
