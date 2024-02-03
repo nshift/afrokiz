@@ -21,9 +21,9 @@ export const options: {
     shortDescription: '1H foot massage',
     description: '1H Foot Massage at Lek Massage',
     price: {
-      USD: 1199,
-      EUR: 1099,
-      THB: 39900,
+      USD: 1200,
+      EUR: 1000,
+      THB: 39000,
     },
   },
   'muay-thai-option': {
@@ -33,9 +33,9 @@ export const options: {
     shortDescription: '1H class',
     description: '1H introduction of Muay Thai',
     price: {
-      USD: 1799,
-      EUR: 1599,
-      THB: 59900,
+      USD: 1700,
+      EUR: 1500,
+      THB: 59000,
     },
   },
   'cruise-option': {
@@ -45,9 +45,9 @@ export const options: {
     shortDescription: '3H party & buffet',
     description: 'Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)',
     price: {
-      USD: 4599,
-      EUR: 4299,
-      THB: 159900,
+      USD: 5500,
+      EUR: 5000,
+      THB: 191000,
     },
   },
   'said-mc-option': {
@@ -57,9 +57,9 @@ export const options: {
     shortDescription: '2H Masterclass',
     description: '2H Said & Oksana Masterclass',
     price: {
-      USD: 7299,
-      EUR: 6799,
-      THB: 259900,
+      USD: 7200,
+      EUR: 6800,
+      THB: 259000,
     },
   },
   'heneco-mc-option': {
@@ -69,9 +69,9 @@ export const options: {
     shortDescription: '2H Masterclass',
     description: '2H Heneco Masterclass',
     price: {
-      USD: 7299,
-      EUR: 6799,
-      THB: 259900,
+      USD: 7200,
+      EUR: 6700,
+      THB: 259000,
     },
   },
   'all-mc-option': {
@@ -81,9 +81,9 @@ export const options: {
     shortDescription: '4H Masterclass',
     description: '2H Said & Oksana Masterclass and 2H Heneco Masterclass',
     price: {
-      USD: 9999,
-      EUR: 9099,
-      THB: 349900,
+      USD: 10000,
+      EUR: 9200,
+      THB: 349000,
     },
   },
 }
