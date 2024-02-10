@@ -4,7 +4,7 @@ import Header from "../sections/Header.astro";
 import Footer from "../sections/Footer.astro";
 import Card from "../components/Card.astro";
 import { PaymentAPI } from "../payment-api/payment.api";
-import { passes } from "../data/pass";
+import { passes } from "../data/promotion";
 
 const queryParams = Astro.url.searchParams
 const orderId = queryParams.get('order_id')

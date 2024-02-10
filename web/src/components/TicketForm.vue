@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref, inject, watch } from 'vue'
 import Card from '../components/Card.vue'
-import { type Pass } from '../data/pass'
+import { type Pass, calculateTotal } from '../data/pass'
 import { loadStripe, Stripe, type StripeElements } from '../stripe'
 import { PaymentAPI, type Order } from '../payment-api/payment.api'
 import { type DiscountPromotion, type GiveAwayPromotion } from '../payment-api/promotion'
@@ -27,26 +27,21 @@ const email = ref('')
 const discount = ref(1)
 const giveAways = ref<string[]>([])
 let optionsFeatures: () => string[] = () =>
-  optionIds.value.map((option) => pass.options[option].description).filter((x): x is string => x !== undefined)
-const optionIds = ref<string[]>([])
-const calculateTotal = () => {
-  let total = pass.price[currency?.value ?? defaultCurrency]
-  total += Object.values(pass.options).reduce(
-    (total, option) =>
-      (total += optionIds.value.includes(option.id)
-        ? option.price[currency?.value ?? defaultCurrency] *
-          (optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1)
-        : 0),
-    0
-  )
-  return total * discount.value
+  optionIds.value.flatMap((option) => pass.options[option].includes).filter((x): x is string => x !== undefined)
+const optionIds = ref<string[]>(
+  Object.values(pass.options)
+    .filter((option) => option.selected)
+    .map((option) => option.id)
+)
+const calculatePrice = () => {
+  return calculateTotal(pass, optionIds.value, discount.value)[currency?.value ?? defaultCurrency]
 }
-const total = ref(calculateTotal())
+const total = ref(calculatePrice())
 
 onMounted(async () => {
   stripe = await loadStripe()
   elements = stripe.elements({
-    amount: calculateTotal(),
+    amount: calculatePrice(),
     currency: (currency?.value ?? defaultCurrency).toLowerCase(),
   })
   stripe.mountElements(elements, '#payment-element')
@@ -54,9 +49,9 @@ onMounted(async () => {
 
 if (currency) {
   watch(currency, () => {
-    total.value = calculateTotal()
+    total.value = calculatePrice()
     elements = stripe.elements({
-      amount: calculateTotal(),
+      amount: calculatePrice(),
       currency: (currency?.value ?? defaultCurrency).toLowerCase(),
     })
     stripe.mountElements(elements, '#payment-element')
@@ -64,11 +59,11 @@ if (currency) {
 }
 
 watch(discount, () => {
-  total.value = calculateTotal()
+  total.value = calculatePrice()
 })
 
 watch(optionIds, () => {
-  total.value = calculateTotal()
+  total.value = calculatePrice()
 })
 
 const submit = async () => {
@@ -117,18 +112,20 @@ const submit = async () => {
           currency: currency?.value ?? defaultCurrency,
         },
       })),
-      ...options.map((option) => ({
-        id: option.id,
-        title: option.description,
-        includes: [],
-        amount: optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1,
-        total: {
-          amount:
-            option.price[currency?.value ?? defaultCurrency] *
-            (optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1),
-          currency: currency?.value ?? defaultCurrency,
-        },
-      }))
+      ...options.flatMap((option) =>
+        option.includes.map((include) => ({
+          id: option.id,
+          title: include,
+          includes: [include],
+          amount: optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1,
+          total: {
+            amount:
+              option.price[currency?.value ?? defaultCurrency] *
+              (optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1),
+            currency: currency?.value ?? defaultCurrency,
+          },
+        }))
+      )
     ),
   }
   const { error } = await stripe.confirmPayment(elements, order)
@@ -191,7 +188,7 @@ const shouldDisabled = (id: string) => {
   <form class="grid" @submit.prevent="submit">
     <Card :class="['ticket']">
       <div class="title">
-        <h2>{{ pass.name }}</h2>
+        <h2>{{ optionIds.includes('couple-option') ? 'Couple ' + pass.name : 'Single ' + pass.name }}</h2>
         <div class="promotion-price" v-if="pass.price.EUR != pass.doorPrice.EUR">
           <p>
             <b>
@@ -232,7 +229,7 @@ const shouldDisabled = (id: string) => {
               <div class="option">
                 <i :class="['fa-solid', option.icon]"></i>
                 <h4>{{ option.title }}</h4>
-                <p>{{ option.shortDescription }}</p>
+                <p v-for="description in option.includesInShortDescription ?? option.includes">{{ description }}</p>
               </div>
             </div>
             <div class="price">
@@ -456,7 +453,7 @@ ul {
   text-align: center;
   gap: 0.5rem;
   padding: var(--m-padding);
-  background-color: black;
+  background-color: var(--primary-very-dark-color);
   border-radius: 8px;
   border: 1px solid white;
   width: 100px;

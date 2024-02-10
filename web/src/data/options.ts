@@ -2,8 +2,9 @@ export type Option = {
   id: string
   icon: string
   title: string
-  shortDescription?: string
-  description: string
+  includesInShortDescription?: string[]
+  includes: string[]
+  selected: boolean
   price: {
     USD: number
     EUR: number
@@ -18,8 +19,9 @@ export const options: {
     id: 'massage-option',
     icon: 'fa-spa',
     title: 'Massage',
-    shortDescription: '1H foot massage',
-    description: '1H Foot Massage at Lek Massage',
+    includesInShortDescription: ['1H foot massage'],
+    includes: ['1H Foot Massage at Lek Massage'],
+    selected: false,
     price: {
       USD: 1200,
       EUR: 1000,
@@ -30,8 +32,9 @@ export const options: {
     id: 'muay-thai-option',
     icon: 'fa-dumbbell',
     title: 'Muay Thai',
-    shortDescription: '1H class',
-    description: '1H introduction of Muay Thai',
+    includesInShortDescription: ['1H class'],
+    includes: ['1H introduction of Muay Thai'],
+    selected: false,
     price: {
       USD: 1700,
       EUR: 1500,
@@ -42,8 +45,9 @@ export const options: {
     id: 'cruise-option',
     icon: 'fa-ship',
     title: 'Cruise Party',
-    shortDescription: '3H party & buffet',
-    description: 'Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)',
+    includesInShortDescription: ['3H party & buffet'],
+    includes: ['Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)'],
+    selected: false,
     price: {
       USD: 5500,
       EUR: 5000,
@@ -54,8 +58,9 @@ export const options: {
     id: 'said-mc-option',
     icon: 'fa-user-group',
     title: 'Said & Oksana Masterclass',
-    shortDescription: '2H Masterclass',
-    description: '2H Said & Oksana Masterclass',
+    includesInShortDescription: ['2H Masterclass'],
+    includes: ['2H Said & Oksana Masterclass'],
+    selected: false,
     price: {
       USD: 7200,
       EUR: 6800,
@@ -66,8 +71,9 @@ export const options: {
     id: 'heneco-mc-option',
     icon: 'fa-user-group',
     title: 'Heneco Masterclass',
-    shortDescription: '2H Masterclass',
-    description: '2H Heneco Masterclass',
+    includesInShortDescription: ['2H Masterclass'],
+    includes: ['2H Heneco Masterclass'],
+    selected: false,
     price: {
       USD: 7200,
       EUR: 6700,
@@ -78,8 +84,9 @@ export const options: {
     id: 'all-mc-option',
     icon: 'fa-user-group',
     title: 'All Masterclass',
-    shortDescription: '4H Masterclass',
-    description: '2H Said & Oksana Masterclass and 2H Heneco Masterclass',
+    includesInShortDescription: ['4H Masterclass'],
+    includes: ['2H Said & Oksana Masterclass and 2H Heneco Masterclass'],
+    selected: false,
     price: {
       USD: 10000,
       EUR: 9200,

@@ -34,7 +34,7 @@ const changeCurrency = () => {
   border: 0;
   border-radius: 0;
   text-align: center;
-  background-color: var(--primary-color);
+  background-color: var(--background-color);
   color: var(--text-primary-color);
   padding: calc(var(--m-padding) / 2) var(--m-padding);
 }
@@ -45,5 +45,8 @@ const changeCurrency = () => {
 .currencies option {
   padding: 2rem;
   text-align: center;
+}
+.form-control {
+  width: auto;
 }
 </style>

@@ -1,5 +1,7 @@
 import { options, type Option } from './options'
 
+export type Currency = 'USD' | 'EUR' | 'THB'
+
 export type Pass = {
   id: string
   name: string
@@ -14,6 +16,7 @@ export type Pass = {
     THB: number
   }
   includes: string[]
+  giveAways: string[]
   isPromoted: boolean
   isSoldOut: boolean
   options: { [key: string]: Option }
@@ -24,7 +27,7 @@ const makePromotion = (promotion: { price: Pass['price']; start: Date; end: Date
   isActive: new Date().getTime() > promotion.start.getTime() && new Date().getTime() < promotion.end.getTime(),
 })
 
-export const passes: { [key: string]: Pass } = {
+export const defaultPasses: { [key: string]: Pass } = {
   party: {
     id: 'party',
     name: 'Party Pass',
@@ -57,7 +60,8 @@ export const passes: { [key: string]: Pass } = {
       return activePromotion?.price ?? doorPrice
     })(),
     doorPrice: { USD: 12500, EUR: 11500, THB: 429000 },
-    includes: ['All parties in main venue', '3 welcome drinks'],
+    includes: ['All parties in main venue', '3 welcome drinks per person'],
+    giveAways: [],
     isPromoted: false,
     options: {
       'massage-option': options['massage-option'],
@@ -100,7 +104,8 @@ export const passes: { [key: string]: Pass } = {
       return activePromotion?.price ?? doorPrice
     })(),
     doorPrice: { USD: 14900, EUR: 13900, THB: 529000 },
-    includes: ['All workshops', 'All parties in main venue', '3 welcome drinks'],
+    includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
+    giveAways: [],
     isPromoted: false,
     options: {
       'massage-option': options['massage-option'],
@@ -146,18 +151,20 @@ export const passes: { [key: string]: Pass } = {
     includes: [
       'All Workshops',
       'All parties in main venue',
-      '3 welcome drinks',
+      '3 welcome drinks per person',
       '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)',
       'Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)',
-      '1H Foot Massage at Lek Massage',
+      '1H Foot Massage at Lek Massage per person',
     ],
+    giveAways: [],
     isPromoted: true,
     options: {
       'couple-option': {
         id: 'couple-option',
         icon: 'fa-user-group',
         title: 'Couple',
-        description: '1 couple ticket',
+        includes: ['1 couple ticket'],
+        selected: false,
         price: (() => {
           const promotions = [
             makePromotion({
@@ -229,19 +236,21 @@ export const passes: { [key: string]: Pass } = {
       '2H Masterclass by Said & Oksana',
       '2H Masterclass by Heneco',
       'All parties in main venue',
-      '3 welcome drinks',
+      '3 welcome drinks per person',
       '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)',
       'Airport Pick up',
       'Exclusive Dinner Cruise Party',
-      '1H Foot Massage at Lek Massage',
+      '1H Foot Massage at Lek Massage per person',
     ],
+    giveAways: [],
     isPromoted: false,
     options: {
       'couple-option': {
         id: 'couple-option',
         icon: 'fa-user-group',
         title: 'Couple',
-        description: '1 couple ticket',
+        includes: ['1 couple ticket'],
+        selected: false,
         price: (() => {
           const promotions = [
             makePromotion({
@@ -273,4 +282,25 @@ export const passes: { [key: string]: Pass } = {
       'muay-thai-option': options['muay-thai-option'],
     },
   },
+}
+
+export function calculateTotal(
+  pass: Pass,
+  selectedOptionIds: string[],
+  discount: number = 1
+): { USD: number; EUR: number; THB: number } {
+  return Object.keys(pass.price).reduce((prices, currency) => {
+    let total = pass.price[currency as Currency]
+    total += Object.values(pass.options).reduce(
+      (total, option) =>
+        (total += selectedOptionIds.includes(option.id)
+          ? option.price[currency as Currency] *
+            (selectedOptionIds.includes('couple-option') && option.id != 'couple-option' ? 2 : 1)
+          : 0),
+      0
+    )
+    total *= discount
+    prices[currency] = total
+    return prices
+  }, {} as any)
 }

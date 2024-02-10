@@ -1,10 +1,15 @@
 ---
 import Card from "../../components/Card.astro";
 import Currency from "../../components/Currency.vue"
-import { passes } from "../../data/pass";
-import { promotionText } from "../../data/promotion";
+import { passes, promotionText } from "../../data/promotion";
+import { type Pass, calculateTotal } from "../../data/pass";
+import { valentinePromotion } from "../../data/promotion";
 
 const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
+
+function calculatePrice(pass: Pass) {
+  return calculateTotal(pass, Object.values(pass.options).filter((option) => option.selected).map((option) => option.id))
+}
 ---
 
 <div id="tickets" class="grid">
@@ -15,16 +20,16 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
     <div class="container-row">
       <div class="container-column ticket">
         <div>
-          <h1><Currency price={promotedPass.price} client:only /></h1>
+          <h1><Currency price={calculatePrice(promotedPass)} client:only /></h1>
           { promotedPass.price.EUR != promotedPass.doorPrice.EUR && <p><s><Currency price={promotedPass.doorPrice} client:only /></s></p> }
-          <h2>{promotedPass.name}</h2>
+          <h2>{promotedPass.options['couple-option'].selected ? 'Couple ' + promotedPass.name : promotedPass.name}</h2>
         </div>
         { !promotedPass.isSoldOut && <a href={"/pass/" + promotedPass.id} class="button action">Buy</a> }
         { promotedPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
       </div>
       <div class="container-column features">
-        <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option avalaible</p>
-        <ul>{promotedPass.includes.map((feature) => <li>{feature}</li>)}</ul>
+        { valentinePromotion.isActive ? '' : <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option avalaible</p> }
+        <ul>{promotedPass.includes.concat(promotedPass.giveAways.map((giveAway) => '+ ' + giveAway)).map((feature) => <li>{promotedPass.giveAways.map((giveAway) => '+ ' + giveAway).includes(feature) ? <b>{feature}</b> : feature}</li>)}</ul>
       </div>
     </div>
   </Card>
@@ -32,13 +37,17 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
     Object.values(passes).filter((pass) => !pass.isPromoted).map((pass) => (
       <Card classes={["ticket-card", "ticket"]}>
         <div class="container-column">
+          { valentinePromotion.isActive ? '' : <div class="couple-option-desktop">
+            { Object.keys(pass.options).includes('couple-option') && <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option</p> }
+          </div>}
           <div>
-            <h2><Currency price={pass.price} client:only /></h2>
+            <h2><Currency price={calculatePrice(pass)} client:only /></h2>
             { pass.price.EUR != pass.doorPrice.EUR && <p><s><Currency price={pass.doorPrice} client:only /></s></p> }
-            <h3>{pass.name}</h3>
+            { pass.giveAways.length > 0 && <p style={{ marginBottom: '1rem'}}>{pass.giveAways.map((giveAway) => '+ ' + giveAway).join('<br />')}</p>}
+            <h3>{pass.options['couple-option']?.selected ? 'Couple ' + pass.name : pass.name}</h3>
           </div>
           <div class="button-container">
-            { pass.id == 'vip-gold' && <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option</p> }
+            { valentinePromotion.isActive ? '' : <div class="couple-option-mobile">{ Object.keys(pass.options).includes('couple-option') && <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option</p> }</div> }
             { !pass.isSoldOut && <a href={"/pass/" + pass.id} class="button action">More Info</a> }
             { pass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
           </div>
@@ -149,6 +158,12 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
     padding: 0.75rem;
     border-radius: 8px;
   }
+  .couple-option-desktop {
+    display: block;
+  }
+  .couple-option-mobile {
+    display: none;
+  }
   @media only screen and (max-width: 920px) {
     .grid {
       grid-template-areas:
@@ -158,6 +173,12 @@ const promotedPass = Object.values(passes).filter((pass) => pass.isPromoted)[0]
     .button.action {
       min-width: 90px;
       max-width: 100px;
+    }
+    .couple-option-desktop {
+      display: none;
+    }
+    .couple-option-mobile {
+      display: block;
     }
   }
 </style>
