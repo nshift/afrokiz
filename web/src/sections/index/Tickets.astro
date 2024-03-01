@@ -22,7 +22,7 @@ function calculatePrice(pass: Pass) {
         <div>
           <h1><Currency price={calculatePrice(promotedPass)} client:only /></h1>
           { promotedPass.price.EUR != promotedPass.doorPrice.EUR && <p><s><Currency price={promotedPass.doorPrice} client:only /></s></p> }
-          <h2>{promotedPass.options['couple-option'].selected ? 'Couple ' + promotedPass.name : promotedPass.name}</h2>
+          <h2>{promotedPass.options['couple-option']?.selected ? 'Couple ' + promotedPass.name : promotedPass.name}</h2>
         </div>
         { !promotedPass.isSoldOut && <a href={"/pass/" + promotedPass.id} class="button action">Buy</a> }
         { promotedPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }

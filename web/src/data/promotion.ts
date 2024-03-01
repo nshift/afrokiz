@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { options } from './options'
 import { defaultPasses, type Pass } from './pass'
 
 export type Promotion = {
@@ -77,6 +78,34 @@ const makeValentinePromotion = (promotion: { start: Date; end: Date }): Promotio
   }
 }
 
+const makeSaidPromotion = (promotion: { start: Date; end: Date }): Promotion => {
+  return {
+    text: `Get special promotion with Said & Oksana package before ${moment(promotion.end).format('MMMM Do')}.`,
+    isActive: new Date().getTime() > promotion.start.getTime() && new Date().getTime() < promotion.end.getTime(),
+    passes: {
+      said: {
+        ...defaultPasses.fullPass,
+        id: 'said',
+        isPromoted: true,
+        name: 'Said & Oksana Package',
+        price: { USD: 21000, EUR: 19500, THB: 750000 },
+        doorPrice: { USD: 25200, EUR: 23300, THB: 900000 },
+        giveAways: options['cruise-option'].includes.concat(options['said-mc-option'].includes),
+        options: {
+          ...defaultPasses.fullPass.options,
+          'cruise-option': { ...options['cruise-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+          'said-mc-option': { ...options['said-mc-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+        },
+      },
+      fullPass: defaultPasses.fullPass,
+      vipSilver: { ...defaultPasses.vipSilver, isPromoted: false },
+      vipGold: defaultPasses.vipGold,
+      party: defaultPasses.party,
+      // dj: defaultPasses.dj,
+    },
+  }
+}
+
 const makePromotion = (promotion: { name: string; start: Date; end: Date }): Promotion => {
   const days = moment(promotion.end).diff(moment(new Date()), 'days')
   return {
@@ -90,6 +119,11 @@ export const valentinePromotion = makeValentinePromotion({
   end: new Date('2024-02-17'),
 })
 
+export const saidPromotion = makeSaidPromotion({
+  start: new Date('2024-03-01'),
+  end: new Date('2024-03-14'),
+})
+
 const promotions: Promotion[] = [
   makePromotion({
     name: 'Early bird',
@@ -97,6 +131,7 @@ const promotions: Promotion[] = [
     end: new Date('2024-02-01'),
   }),
   valentinePromotion,
+  saidPromotion,
   makeSpecialPricePromotion({
     start: new Date('2024-02-01'),
     end: new Date('2024-05-01'),

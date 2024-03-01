@@ -7,6 +7,7 @@ import { PaymentAPI, type Order } from '../payment-api/payment.api'
 import { type DiscountPromotion, type GiveAwayPromotion } from '../payment-api/promotion'
 
 const { pass } = defineProps<{ pass: Pass }>()
+console.log({ pass })
 const defaultCurrency = 'USD'
 let stripe: Stripe
 let elements: StripeElements
@@ -180,7 +181,10 @@ const selectOption = (id: string) => {
 }
 
 const shouldDisabled = (id: string) => {
-  return optionIds.value.includes('all-mc-option') && ['said-mc-option', 'heneco-mc-option'].includes(id)
+  return (
+    (optionIds.value.includes('all-mc-option') && ['said-mc-option', 'heneco-mc-option'].includes(id)) ||
+    pass.options[id].selected == true
+  )
 }
 </script>
 
@@ -247,7 +251,7 @@ const shouldDisabled = (id: string) => {
         <div class="total">
           <h2>Total: {{ currency }} {{ (total / 100).toFixed(2) }}</h2>
         </div>
-        <div class="information-element" v-if="!optionIds.includes('couple-option')">
+        <div class="information-element" v-if="!optionIds.includes('couple-option') && pass.id != 'dj'">
           <div class="dancer-type-options">
             <div
               :class="[

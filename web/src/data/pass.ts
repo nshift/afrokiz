@@ -282,6 +282,17 @@ export const defaultPasses: { [key: string]: Pass } = {
       'muay-thai-option': options['muay-thai-option'],
     },
   },
+  // dj: {
+  //   id: 'dj',
+  //   name: 'DJ Master Class By DJ Lenny',
+  //   isSoldOut: false,
+  //   price: { USD: 9900, EUR: 8900, THB: 339000 },
+  //   doorPrice: { USD: 9900, EUR: 8900, THB: 339000 },
+  //   includes: [],
+  //   giveAways: [],
+  //   isPromoted: false,
+  //   options: {},
+  // },
 }
 
 export function calculateTotal(
