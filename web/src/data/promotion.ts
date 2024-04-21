@@ -8,6 +8,93 @@ export type Promotion = {
   passes?: { [key: string]: Pass }
 }
 
+const makeHenecoMasterclassPromotion = (promotion: { start: Date; end: Date }): Promotion => {
+  return {
+    text: `Get special promotion for Heneco Masterclass before ${moment(promotion.end).format('MMMM Do')}.`,
+    isActive: new Date().getTime() > promotion.start.getTime() && new Date().getTime() < promotion.end.getTime(),
+    passes: {
+      heneco: {
+        ...defaultPasses.fullPass,
+        id: 'heneco',
+        isPromoted: true,
+        name: 'Heneco Masterclass',
+        price: { USD: 5500, EUR: 5000, THB: 200000 },
+        doorPrice: { USD: 7200, EUR: 6700, THB: 259000 },
+        includes: ['2H Heneco Masterclass'],
+        giveAways: [],
+        options: {
+          'couple-option': {
+            id: 'couple-option',
+            icon: 'fa-user-group',
+            title: 'Couple',
+            includes: [],
+            selected: false,
+            price: { USD: 5500, EUR: 5000, THB: 200000 },
+          },
+        },
+      },
+      fullPass: {
+        ...defaultPasses.fullPass,
+        options: {
+          ...defaultPasses.fullPass.options,
+          'heneco-mc-option': {
+            ...options['heneco-mc-option'],
+            price: {
+              USD: 5500,
+              EUR: 5000,
+              THB: 200000,
+            },
+          },
+        },
+      },
+      vipSilver: {
+        ...defaultPasses.vipSilver,
+        isPromoted: false,
+        options: {
+          ...defaultPasses.fullPass.options,
+          'heneco-mc-option': {
+            ...options['heneco-mc-option'],
+            price: {
+              USD: 5500,
+              EUR: 5000,
+              THB: 200000,
+            },
+          },
+        },
+      },
+      vipGold: {
+        ...defaultPasses.vipGold,
+        options: {
+          ...defaultPasses.fullPass.options,
+          'heneco-mc-option': {
+            ...options['heneco-mc-option'],
+            price: {
+              USD: 5500,
+              EUR: 5000,
+              THB: 200000,
+            },
+          },
+        },
+      },
+      party: {
+        ...defaultPasses.party,
+        options: {
+          ...defaultPasses.fullPass.options,
+          'heneco-mc-option': {
+            ...options['heneco-mc-option'],
+            price: {
+              USD: 5500,
+              EUR: 5000,
+              THB: 200000,
+            },
+          },
+        },
+      },
+      // dj: defaultPasses.dj,
+    },
+  }
+}
+
 const makeSpecialPricePromotion = (promotion: { start: Date; end: Date }): Promotion => {
   return {
     text: `Get your ticket with special prices before ${moment(promotion.end).format('MMMM YYYY')}.`,
@@ -124,6 +211,11 @@ export const saidPromotion = makeSaidPromotion({
   end: new Date('2024-03-14'),
 })
 
+export const henecoPromotion = makeHenecoMasterclassPromotion({
+  start: new Date('2024-04-15'),
+  end: new Date('2025-05-01'),
+})
+
 const promotions: Promotion[] = [
   makePromotion({
     name: 'Early bird',
@@ -132,6 +224,7 @@ const promotions: Promotion[] = [
   }),
   valentinePromotion,
   saidPromotion,
+  henecoPromotion,
   makeSpecialPricePromotion({
     start: new Date('2024-02-01'),
     end: new Date('2024-05-01'),
