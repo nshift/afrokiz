@@ -42,3 +42,29 @@ export const makeGiveAwayPromotion = (promotion: Omit<GiveAwayPromotion, 'apply'
     ),
   }),
 })
+
+export const makePromoterDiscount = (code: string) =>
+  makeDiscountPromotion({
+    id: `promoter-${code.toLowerCase()}`,
+    isActive: true,
+    code: code.toUpperCase(),
+    expirationDate: new Date('2024-09-01'),
+    discount: 0.95,
+  })
+
+export const massagePromotion: GiveAwayPromotion = makeGiveAwayPromotion({
+  id: 'referal-dicount-promotion',
+  isActive: true,
+  code: 'MASSAGE',
+  expirationDate: new Date('2024-01-01'),
+  options: [
+    {
+      title: '1H Free Traditional Massage',
+      description: '1H Free Traditional Massage',
+    },
+    {
+      title: '1H Free Traditional Massage',
+      description: '1H Free Traditional Massage',
+    },
+  ],
+})

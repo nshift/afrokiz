@@ -4,7 +4,7 @@ import { Customer } from '../../types/customer'
 import { Order } from '../../types/order'
 import { PaymentStatus } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
-import { DiscountPromotion, GiveAwayPromotion, Promotion } from '../../types/promotion'
+import { Promotion } from '../../types/promotion'
 import { DateGenerator } from '../date.generator'
 import { UUIDGenerator } from '../uuid.generator'
 import { EventStore } from './event-store'
@@ -12,7 +12,7 @@ import { Event } from './events/event'
 import { processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event'
 import { transformCreateOrderEvent, transformFailedPaymentEvent, transformSuccessfulPaymentEvent } from './migration'
-import { makeDiscountPromotion, makeGiveAwayPromotion } from './promotions'
+import { makePromoterDiscount } from './promotions'
 import { Repository } from './repository'
 import {
   OrderSchema,
@@ -64,32 +64,22 @@ export class DynamoDbRepository implements Repository {
   }
 
   async getAllPromotions(): Promise<{ [key: string]: Promotion }> {
-    const discountPromotion: DiscountPromotion = makeDiscountPromotion({
-      id: 'referal-dicount-promotion',
-      isActive: true,
-      code: '5OFF',
-      expirationDate: new Date('2024-09-01'),
-      discount: 0.5,
-    })
-    const massagePromotion: GiveAwayPromotion = makeGiveAwayPromotion({
-      id: 'referal-dicount-promotion',
-      isActive: true,
-      code: 'MASSAGE',
-      expirationDate: new Date('2024-09-01'),
-      options: [
-        {
-          title: '1H Free Traditional Massage',
-          description: '1H Free Traditional Massage',
-        },
-        {
-          title: '1H Free Traditional Massage',
-          description: '1H Free Traditional Massage',
-        },
-      ],
-    })
     return {
-      [discountPromotion.code.toUpperCase()]: discountPromotion,
-      [massagePromotion.code.toUpperCase()]: massagePromotion,
+      SANJAYA: makePromoterDiscount('SANJAYA'),
+      SATOMI: makePromoterDiscount('SATOMI'),
+      ARIEL: makePromoterDiscount('ARIEL'),
+      SIRI: makePromoterDiscount('SIRI'),
+      THEO: makePromoterDiscount('THEO'),
+      RITA: makePromoterDiscount('RITA'),
+      ZIKIMMY: makePromoterDiscount('ZIKIMMY'),
+      LUCERNE: makePromoterDiscount('LUCERNE'),
+      AIDANCE: makePromoterDiscount('AIDANCE'),
+      NARUTONYA: makePromoterDiscount('NARUTONYA'),
+      MANLUO: makePromoterDiscount('MANLUO'),
+      ZAK: makePromoterDiscount('ZAK'),
+      JAY: makePromoterDiscount('JAY'),
+      RAJ: makePromoterDiscount('RAJ'),
+      HITOMI: makePromoterDiscount('HITOMI'),
     }
   }
 
