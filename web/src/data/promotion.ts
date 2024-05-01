@@ -213,7 +213,7 @@ export const saidPromotion = makeSaidPromotion({
 
 export const henecoPromotion = makeHenecoMasterclassPromotion({
   start: new Date('2024-04-15'),
-  end: new Date('2025-05-01'),
+  end: new Date('2024-05-01'),
 })
 
 const promotions: Promotion[] = [
