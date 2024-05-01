@@ -7,7 +7,6 @@ import { PaymentAPI, type Order } from '../payment-api/payment.api'
 import { type DiscountPromotion, type GiveAwayPromotion } from '../payment-api/promotion'
 
 const { pass } = defineProps<{ pass: Pass }>()
-console.log({ pass })
 const defaultCurrency = 'USD'
 let stripe: Stripe
 let elements: StripeElements
@@ -306,7 +305,7 @@ const shouldDisabled = (id: string) => {
           <p class="validation-error" v-if="emailValidationError">Your email is incomplete.</p>
         </div>
         <div id="payment-element"></div>
-        <div class="information-element">
+        <div v-if="pass.id == 'fullpass'" class="information-element">
           <label>Promo Code</label>
           <div class="field-container">
             <input

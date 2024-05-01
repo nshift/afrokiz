@@ -253,4 +253,4 @@ export const promotionText = (() => {
   return promotion.text
 })()
 
-export const passes = activePromotion.passes ?? defaultPasses
+export const passes = activePromotion?.passes ?? defaultPasses

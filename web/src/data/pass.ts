@@ -106,7 +106,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     doorPrice: { USD: 14900, EUR: 13900, THB: 529000 },
     includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
     giveAways: [],
-    isPromoted: false,
+    isPromoted: true,
     options: {
       'massage-option': options['massage-option'],
       'muay-thai-option': options['muay-thai-option'],
@@ -157,7 +157,7 @@ export const defaultPasses: { [key: string]: Pass } = {
       '1H Foot Massage at Lek Massage per person',
     ],
     giveAways: [],
-    isPromoted: true,
+    isPromoted: false,
     options: {
       'couple-option': {
         id: 'couple-option',
