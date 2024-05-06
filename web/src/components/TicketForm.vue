@@ -142,7 +142,7 @@ const applyPromoCode = async () => {
   const api = new PaymentAPI()
   if (promoCode.value) {
     try {
-      const promotion = await api.applyPromoCode(promoCode.value)
+      const promotion = await api.applyPromoCode(pass.id, promoCode.value)
       promoCodeValidationError.value = false
       applying.value = false
       const dicountPromotion = promotion as DiscountPromotion
@@ -305,7 +305,7 @@ const shouldDisabled = (id: string) => {
           <p class="validation-error" v-if="emailValidationError">Your email is incomplete.</p>
         </div>
         <div id="payment-element"></div>
-        <div v-if="pass.id == 'fullpass'" class="information-element">
+        <div class="information-element">
           <label>Promo Code</label>
           <div class="field-container">
             <input

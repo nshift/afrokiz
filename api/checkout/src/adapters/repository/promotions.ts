@@ -50,7 +50,17 @@ export const makePromoterDiscount = (code: string) =>
     code: code.toUpperCase(),
     expirationDate: new Date('2024-09-01'),
     discount: 0.95,
+    isAppliable: (passId: string) => ['fullpass'].includes(passId),
   })
+
+export const makeTarrakizSGDiscount = makeDiscountPromotion({
+  id: 'tarrakizSG',
+  isActive: true,
+  code: 'tarrakizSG'.toUpperCase(),
+  expirationDate: new Date('2024-05-11'),
+  discount: 0.9,
+  isAppliable: (passId: string) => ['fullpass', 'vip-silver', 'vip-gold'].includes(passId),
+})
 
 export const massagePromotion: GiveAwayPromotion = makeGiveAwayPromotion({
   id: 'referal-dicount-promotion',
@@ -67,4 +77,5 @@ export const massagePromotion: GiveAwayPromotion = makeGiveAwayPromotion({
       description: '1H Free Traditional Massage',
     },
   ],
+  isAppliable: () => false,
 })

@@ -12,7 +12,7 @@ import { Event } from './events/event'
 import { processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event'
 import { transformCreateOrderEvent, transformFailedPaymentEvent, transformSuccessfulPaymentEvent } from './migration'
-import { makePromoterDiscount } from './promotions'
+import { makePromoterDiscount, makeTarrakizSGDiscount } from './promotions'
 import { Repository } from './repository'
 import {
   OrderSchema,
@@ -65,6 +65,7 @@ export class DynamoDbRepository implements Repository {
 
   async getAllPromotions(): Promise<{ [key: string]: Promotion }> {
     return {
+      TARRAKIZSG: makeTarrakizSGDiscount,
       SANJAYA: makePromoterDiscount('SANJAYA'),
       SATOMI: makePromoterDiscount('SATOMI'),
       ARIEL: makePromoterDiscount('ARIEL'),

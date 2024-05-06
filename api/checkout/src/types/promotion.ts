@@ -6,6 +6,7 @@ export interface Promotion {
   expirationDate: Date
   isActive: boolean
   apply(order: Order): Order
+  isAppliable(passId: string): boolean
 }
 
 export interface DiscountPromotion extends Promotion {

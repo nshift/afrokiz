@@ -79,12 +79,18 @@ export const getOrder = async (event: APIGatewayEvent, context: Context): Promis
 }
 
 export const getPromotion = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
-  const code = event.pathParameters?.code
+  if (!event.pathParameters) {
+    return invalidRequestErrorResponse(`Invalid Request.`)
+  }
+  const { passId, code } = event.pathParameters
   if (!code) {
     return notFoundErrorResponse(`Code is required in the request.`)
   }
+  if (!passId) {
+    return notFoundErrorResponse(`Pass Id is required in the request.`)
+  }
   try {
-    const promotion = await checkout.getPromotion(code)
+    const promotion = await checkout.getPromotion(passId, code)
     if (!promotion || !promotion.isActive) {
       return notFoundErrorResponse(`Promotion ${code} is not available.`)
     }
@@ -103,6 +109,12 @@ export const unauthorizedErrorResponse = (message: string) => ({
 
 export const notFoundErrorResponse = (message: string) => ({
   statusCode: 404,
+  headers,
+  body: JSON.stringify({ message }),
+})
+
+export const invalidRequestErrorResponse = (message: string) => ({
+  statusCode: 400,
   headers,
   body: JSON.stringify({ message }),
 })

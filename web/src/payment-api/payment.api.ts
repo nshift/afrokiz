@@ -64,8 +64,8 @@ export class PaymentAPI {
     }
   }
 
-  async applyPromoCode(code: string): Promise<Promotion> {
-    const response = await this.request({ method: 'GET', path: '/promotion/' + code })
+  async applyPromoCode(passId: string, code: string): Promise<Promotion> {
+    const response = await this.request({ method: 'GET', path: `/promotion/${passId}/${code}` })
     return {
       id: response.id,
       expirationDate: new Date(response.expirationDate),

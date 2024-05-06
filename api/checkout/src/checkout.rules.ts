@@ -6,5 +6,7 @@ export const calculateOrderTotal = (items: Order['items']) => ({
   currency: Array.from(new Set(items.map((item) => item.total.currency)))[0],
 })
 
-export const isPromotionAppliable = (promotion: Promotion, today: Date) =>
-  promotion.isActive && today.getTime() < promotion.expirationDate.getTime()
+export const isPromotionExpired = (promotion: Promotion, today: Date) =>
+  promotion.isActive && today.getTime() > promotion.expirationDate.getTime()
+
+export const isPromotionAppliable = (passId: string, promotion: Promotion) => promotion.isAppliable(passId)

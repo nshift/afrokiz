@@ -4,7 +4,7 @@ import { SendingEmail } from './adapters/email/email.gateway'
 import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { GeneratingQRCode } from './adapters/qr-code/qr-code.gateway'
 import { Repository } from './adapters/repository/repository'
-import { calculateOrderTotal, isPromotionAppliable } from './checkout.rules'
+import { calculateOrderTotal, isPromotionAppliable, isPromotionExpired } from './checkout.rules'
 import { Currency } from './types/currency'
 import { Customer } from './types/customer'
 import { Order, makeOrderId } from './types/order'
@@ -82,11 +82,11 @@ export class Checkout {
   //   return order
   // }
 
-  async getPromotion(code: string): Promise<Promotion | null> {
+  async getPromotion(passId: string, code: string): Promise<Promotion | null> {
     const promotions = await this.repository.getAllPromotions()
     const promotion = promotions[code.toUpperCase()]
     const today = this.dateGenerator.today()
-    if (!promotion || !isPromotionAppliable(promotion, today)) {
+    if (!promotion || isPromotionExpired(promotion, today) || isPromotionAppliable(passId, promotion)) {
       return null
     }
     return promotion ?? null
