@@ -55,7 +55,7 @@ describe('Create an order when checking out', () => {
 
 describe('Get promotion when checking out', () => {
   it('should get the available promotion', async () => {
-    const promotion = await checkout.getPromotion('MASSAGE')
+    const promotion = await checkout.getPromotion('fullpass', 'MASSAGE')
     expect(promotion).toEqual(massagePromotion)
   })
 })

@@ -7,6 +7,6 @@ export const calculateOrderTotal = (items: Order['items']) => ({
 })
 
 export const isPromotionExpired = (promotion: Promotion, today: Date) =>
-  promotion.isActive && today.getTime() > promotion.expirationDate.getTime()
+  today.getTime() > promotion.expirationDate.getTime()
 
 export const isPromotionAppliable = (passId: string, promotion: Promotion) => promotion.isAppliable(passId)

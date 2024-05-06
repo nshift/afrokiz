@@ -139,7 +139,7 @@ const makeGetPromotionEndpoint = (props: {
   const endpoint = createEndpoint('GetPromotion', {
     handler: 'adapters/lambda/lambda.getPromotion',
     method: 'GET',
-    path: '/promotion/{code}',
+    path: '/promotion/{passId}/{code}',
     environment: {
       NODE_ENV: 'PROD',
       LOG_LEVEL: 'info',

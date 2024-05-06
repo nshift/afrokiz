@@ -86,7 +86,12 @@ export class Checkout {
     const promotions = await this.repository.getAllPromotions()
     const promotion = promotions[code.toUpperCase()]
     const today = this.dateGenerator.today()
-    if (!promotion || isPromotionExpired(promotion, today) || isPromotionAppliable(passId, promotion)) {
+    if (
+      !promotion ||
+      !promotion.isActive ||
+      isPromotionExpired(promotion, today) ||
+      !isPromotionAppliable(passId, promotion)
+    ) {
       return null
     }
     return promotion ?? null

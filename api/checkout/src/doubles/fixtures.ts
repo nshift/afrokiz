@@ -128,6 +128,7 @@ export const massagePromotion: GiveAwayPromotion = makeGiveAwayPromotion({
       description: '1H tradtional massage.',
     },
   ],
+  isAppliable: () => true,
 })
 
 export const discountPromotion: DiscountPromotion = makeDiscountPromotion({
@@ -136,6 +137,7 @@ export const discountPromotion: DiscountPromotion = makeDiscountPromotion({
   expirationDate: new Date('3000-01-01'),
   isActive: false,
   discount: 0.5,
+  isAppliable: () => true,
 })
 
 export const qrCode = fs.readFileSync(path.join(__dirname, 'qr-code.png'))
