@@ -1,0 +1,35 @@
+import { Sales } from '../entities/sales'
+
+export const awdeshSales: Sales = {
+  id: 'awdesh-sales',
+  email: 'awdesh@gmail.com',
+  pass: 'vip-silver',
+  isLeader: true,
+  includes: [
+    { name: 'All Workshops' },
+    { name: 'All parties in main venue' },
+    { name: '3 welcome drinks per person' },
+    { name: '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)' },
+    { name: 'Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)' },
+    { name: '1H Foot Massage at Lek Massage per person' },
+  ],
+  total: { amount: 7000, currency: 'USD' },
+}
+export const achiSales: Sales = {
+  id: 'achi-sales',
+  email: 'achi@gmail.com',
+  pass: 'vip-gold',
+  isLeader: true,
+  includes: [
+    { name: 'All Workshops' },
+    { name: '2H Masterclass by Said & Oksana' },
+    { name: '2H Masterclass by Heneco' },
+    { name: 'All parties in main venue' },
+    { name: '3 welcome drinks per person' },
+    { name: '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)' },
+    { name: 'Airport Pick up' },
+    { name: 'Exclusive Dinner Cruise Party' },
+    { name: '1H Foot Massage at Lek Massage per person' },
+  ],
+  total: { amount: 250000, currency: 'THB' },
+}

@@ -6,6 +6,7 @@ import * as path from 'path'
 import 'source-map-support/register'
 import { makeCheckoutEndpoints } from './checkout.endpoint'
 import { createEventTable, createOrderTable, createSalesTable } from './dynamodb'
+import { makeOperationEndpoints } from './operation.endpoint'
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') })
 
@@ -22,7 +23,10 @@ const context = {
   orderTable,
   salesTable,
 }
-const endpoints: cdk.CfnResource[] = [...makeCheckoutEndpoints(context).map((endpoint) => endpoint.route)]
+const endpoints: cdk.CfnResource[] = [
+  ...makeCheckoutEndpoints(context).map((endpoint) => endpoint.route),
+  ...makeOperationEndpoints(context).map((endpoint) => endpoint.route),
+]
 deployApi(stack, api, endpoints)
 // new cdk.CfnOutput(stack, 'bucket', { value: bucket.bucketArn })
 // new cdk.CfnOutput(stack, 'test', { value: __dirname })
