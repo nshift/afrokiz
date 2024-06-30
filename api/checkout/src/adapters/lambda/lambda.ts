@@ -23,7 +23,7 @@ const dateGenerator = { today: () => new Date() }
 const repository = new DynamoDbRepository(dynamodb, { generate: uuid }, dateGenerator)
 const stripe = new Stripe(Environment.StripeSecretKey())
 const paymentAdapter = new StripePaymentAdapter(stripe)
-const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'DJ Ploy' })
+const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
 const qrCodeGenerator = new QrCodeGenerator()
 const checkout = new Checkout(repository, paymentAdapter, emailApi, qrCodeGenerator, dateGenerator)
 
