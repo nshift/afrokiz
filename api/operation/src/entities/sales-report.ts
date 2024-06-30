@@ -16,9 +16,9 @@ export const calculateTotalSales = (sales: Sales[]) =>
 export const calculateAmountInTHB = (amount: number, currency: Currency) => {
   switch (currency) {
     case 'EUR':
-      return amount / 0.025
+      return Number((amount / 0.025).toFixed(0))
     case 'USD':
-      return amount / 0.028
+      return Number((amount / 0.028).toFixed(0))
     case 'THB':
       return amount
     default:

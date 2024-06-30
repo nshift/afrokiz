@@ -1,6 +1,6 @@
 export class Environment {
   static OrderTableName = () => required('ORDER_TABLE_NAME')
-  static StripeSecretKey = () => required('STRIPE_SECRET_KEY')
+  // static StripeSecretKey = () => required('STRIPE_SECRET_KEY')
   static Region = () => process.env['AWS_REGION']
   static AwsAccessKeyId = () => process.env['AWS_ACCESS_KEY_ID']
   static AwsSecretAccessKey = () => process.env['AWS_SECRET_ACCESS_KEY']

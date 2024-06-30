@@ -9,7 +9,9 @@ export const listOrdersResponse = (response: any) =>
   response?.map(
     (item: any): Sales => ({
       id: item.id,
+      date: new Date(item.date),
       email: item.customer?.email ?? item.email,
+      fullname: item.customer?.fullname ?? item.fullname,
       pass: item.items[0].id,
       promoCode: item.promoCode,
       customerType: item.customer?.type ?? item.dancerType,

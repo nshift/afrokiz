@@ -1,6 +1,6 @@
 import { createEndpoint, createSharedLayer } from '@nshift/cdk'
 import * as cdk from 'aws-cdk-lib'
-import { CheckoutModule } from './path'
+import { OperationModule } from './path'
 
 export const makeOperationEndpoints = (props: {
   stack: cdk.Stack
@@ -9,8 +9,8 @@ export const makeOperationEndpoints = (props: {
   orderTable: cdk.aws_dynamodb.Table
   salesTable: cdk.aws_dynamodb.Table
 }) => {
-  const sharedLayer = createSharedLayer('OperationSharedLayer', CheckoutModule('.build/layer'), props.stack)
-  const codeUri = CheckoutModule('.build/src')
+  const sharedLayer = createSharedLayer('OperationSharedLayer', OperationModule('.build/layer'), props.stack)
+  const codeUri = OperationModule('.build/src')
   const context = { sharedLayer, codeUri }
   return [makeAllSalesReportEndpoint({ ...props, ...context })]
 }
