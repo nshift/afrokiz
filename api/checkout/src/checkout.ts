@@ -57,6 +57,15 @@ export class Checkout {
     }
   }
 
+  async resendConfirmationEmail(orderId: string) {
+    const { order, customer } = (await this.repository.getOrderById(orderId)) || {}
+    if (!order || !customer) {
+      throw new Error(`Order (${orderId}) is not found.`)
+    }
+    const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+    await this.emailApi.sendEmail(await confirmationEmail({ order, customer, qrCode: qrCodeFile }))
+  }
+
   async getOrder(id: string): Promise<{
     order: Order
     customer: Customer

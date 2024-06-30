@@ -39,3 +39,8 @@ export const buildUpdateOrderPaymentRequest = (event: APIGatewayEvent, stripe: S
   const stripeEvent = stripe.webhooks.constructEvent(body, signature, Environment.StripeWebhookSecretKey())
   return { type: stripeEvent.type, orderId: (stripeEvent.data.object as Stripe.PaymentIntent).metadata.orderId }
 }
+
+export const buildResendConfirmationEmailRequest = (event: APIGatewayEvent) => {
+  const body = JSON.parse(event.body ?? '{}')
+  return { orderId: body.orderId }
+}

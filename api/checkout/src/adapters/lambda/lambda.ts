@@ -9,7 +9,11 @@ import { SESEmailService } from '../email/ses'
 import { StripePaymentAdapter } from '../payment/stripe'
 import { QrCodeGenerator } from '../qr-code/qr-code.generator'
 import { DynamoDbRepository } from '../repository/dynamodb'
-import { buildProceedToCheckoutRequest, buildUpdateOrderPaymentRequest } from './request'
+import {
+  buildProceedToCheckoutRequest,
+  buildResendConfirmationEmailRequest,
+  buildUpdateOrderPaymentRequest,
+} from './request'
 import { buildOrderResponse, buildPromotionResponse } from './response'
 
 const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
@@ -95,6 +99,20 @@ export const getPromotion = async (event: APIGatewayEvent, context: Context): Pr
       return notFoundErrorResponse(`Promotion ${code} is not available.`)
     }
     return successResponse(buildPromotionResponse(promotion))
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const resendConfirmationEmail = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  const request = buildResendConfirmationEmailRequest(event)
+  try {
+    await checkout.resendConfirmationEmail(request.orderId)
+    return successfullyCreatedResponse()
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)

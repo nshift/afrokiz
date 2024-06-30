@@ -27,6 +27,7 @@ export const makeCheckoutEndpoints = (props: {
     makeGetOrderEndpoint({ ...props, ...context }),
     makeUpdateOrderPaymentStatusEndpoint({ ...props, ...context }),
     makeGetPromotionEndpoint({ ...props, ...context }),
+    makeResendConfirmationEmailEndpoint({ ...props, ...context }),
   ]
 }
 
@@ -149,5 +150,42 @@ const makeGetPromotionEndpoint = (props: {
     memorySize: 2048,
     ...props,
   })
+  return endpoint
+}
+
+const makeResendConfirmationEmailEndpoint = (props: {
+  stack: cdk.Stack
+  codeUri: string
+  api: cdk.aws_apigatewayv2.CfnApi
+  sharedLayer: cdk.aws_lambda.LayerVersion
+  eventTable: cdk.aws_dynamodb.Table
+  orderTable: cdk.aws_dynamodb.Table
+  salesTable: cdk.aws_dynamodb.Table
+  stripeSecretKey: string
+  stripeWebhookSecretKey: string
+}) => {
+  const endpoint = createEndpoint('ResendConfirmationEmail', {
+    handler: 'adapters/lambda/lambda.resendConfirmationEmail',
+    method: 'POST',
+    path: '/checkout/send-email',
+    environment: {
+      NODE_ENV: 'PROD',
+      LOG_LEVEL: 'info',
+      ORDER_TABLE_NAME: props.orderTable.tableName,
+      STRIPE_SECRET_KEY: props.stripeSecretKey,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
+      WEB_APP_HOST: Environment.WebAppHost(),
+    },
+    memorySize: 768,
+    ...props,
+  })
+  endpoint.lambda.addToRolePolicy(
+    new cdk.aws_iam.PolicyStatement({
+      actions: ['ses:CreateTemplate', 'ses:DeleteTemplate', 'ses:SendBulkTemplatedEmail', 'ses:SendRawEmail'],
+      resources: ['*'],
+      effect: cdk.aws_iam.Effect.ALLOW,
+    })
+  )
+  props.orderTable.grant(endpoint.lambda, 'dynamodb:Query')
   return endpoint
 }
