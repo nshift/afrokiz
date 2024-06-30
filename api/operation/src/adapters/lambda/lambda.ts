@@ -24,15 +24,21 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
             Name: sale.fullname,
             Pass: sale.pass,
             'Dancer type': sale.customerType,
-            'Said Oksana MC': sale.includes.includes('2H Masterclass by Said & Oksana')
-              ? 1 + (sale.customerType == 'couple' ? 1 : 0)
-              : 0,
-            'Heneco MC': sale.includes.includes('2H Masterclass by Heneco')
-              ? 1 + (sale.customerType == 'couple' ? 1 : 0)
-              : 0,
-            Cruise: sale.includes.includes('Exclusive Dinner Cruise Party')
-              ? 1 + (sale.customerType == 'couple' ? 1 : 0)
-              : 0,
+            'Said Oksana MC':
+              sale.includes.includes('2H Masterclass by Said & Oksana') ||
+              sale.includes.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')
+                ? 1 + (sale.customerType == 'couple' ? 1 : 0)
+                : 0,
+            'Heneco MC':
+              sale.includes.includes('2H Masterclass by Heneco') ||
+              sale.includes.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')
+                ? 1 + (sale.customerType == 'couple' ? 1 : 0)
+                : 0,
+            Cruise:
+              sale.includes.includes('Exclusive Dinner Cruise Party') ||
+              sale.includes.includes('Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM')
+                ? 1 + (sale.customerType == 'couple' ? 1 : 0)
+                : 0,
             Massage:
               sale.includes.filter((option) => option == '1H Foot Massage at Lek Massage').length +
               (sale.customerType == 'couple' ? 1 : 0),
