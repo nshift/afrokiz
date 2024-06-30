@@ -143,35 +143,66 @@ export const saveOrdersRequest = (orders: OrderSchema[]) =>
   })
 
 export const orderResponse = (response: any): OrderSchema[] =>
-  response?.map(
-    (item: any): OrderSchema => ({
-      order: {
-        id: item.id,
-        date: new Date(item.date),
-        total: { amount: item.total.amount, currency: item.total.currency },
-        items: item.items.map((item: any) => ({
-          id: item.id,
-          title: item.title,
-          includes: item.includes,
-          amount: item.amount,
-          total: { amount: item.total.amount, currency: item.total.currency },
-        })),
-      },
-      customer: {
-        email: item.customer.email,
-        fullname: item.customer.fullname,
-        type: item.customer.type,
-      },
-      payment: {
-        status: item.payment.status,
-        intent: {
-          id: item.payment.intent.id,
-          secret: item.payment.intent.secret,
-        },
-      },
-      promoCode: item.promoCode,
-    })
-  ) ?? []
+  response?.map((item: any): OrderSchema => (item.email ? orderV1Response(item) : orderV2Response(item)))
+
+export const orderV2Response = (item: any): OrderSchema => ({
+  order: {
+    id: item.id,
+    date: new Date(item.date),
+    total: { amount: item.total.amount, currency: item.total.currency },
+    items: item.items.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      includes: item.includes,
+      amount: item.amount,
+      total: { amount: item.total.amount, currency: item.total.currency },
+    })),
+  },
+  customer: {
+    email: item.customer.email,
+    fullname: item.customer.fullname,
+    type: item.customer.type,
+  },
+  payment: {
+    status: item.payment.status,
+    intent: {
+      id: item.payment.intent.id,
+      secret: item.payment.intent.secret,
+    },
+  },
+  promoCode: item.promoCode,
+})
+
+export const orderV1Response = (item: any): OrderSchema => ({
+  order: {
+    id: item.id,
+    date: new Date(item.date),
+    total: {
+      amount: item.items.reduce((total: number, item: any) => (total += item.total.amount), 0),
+      currency: item.items[0].total.currency,
+    },
+    items: item.items.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      includes: item.includes,
+      amount: item.amount,
+      total: { amount: item.total.amount, currency: item.total.currency },
+    })),
+  },
+  customer: {
+    email: item.email,
+    fullname: item.fullname,
+    type: item.dancerType,
+  },
+  payment: {
+    status: item.paymentStatus,
+    intent: {
+      id: item.paymentIntentId,
+      secret: '',
+    },
+  },
+  promoCode: item.promoCode,
+})
 
 export const updatePaymentOrdersRequest = (data: { orderId: string; paymentStatus: PaymentStatus }) =>
   new UpdateCommand({
