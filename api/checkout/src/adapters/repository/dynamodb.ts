@@ -12,7 +12,7 @@ import { Event } from './events/event'
 import { processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event'
 import { transformCreateOrderEvent, transformFailedPaymentEvent, transformSuccessfulPaymentEvent } from './migration'
-import { makePromoterDiscount, makeTarrakizSGDiscount } from './promotions'
+import { makePromoterDiscount, makeSensualDiscount, makeTarrakizSGDiscount } from './promotions'
 import { Repository } from './repository'
 import {
   OrderSchema,
@@ -65,22 +65,26 @@ export class DynamoDbRepository implements Repository {
 
   async getAllPromotions(): Promise<{ [key: string]: Promotion }> {
     return {
-      TARRAKIZSG: makeTarrakizSGDiscount,
+      AIDANCE: makePromoterDiscount('AIDANCE'),
+      ARIEL: makePromoterDiscount('ARIEL'),
+      ASANKA: makePromoterDiscount('ASANKA'),
+      DJDRZ: makePromoterDiscount('DJDRZ'),
+      HITOMI: makePromoterDiscount('HITOMI'),
+      JAY: makePromoterDiscount('JAY'),
+      KEVIN: makePromoterDiscount('KEVIN'),
+      KIW: makePromoterDiscount('HITOMI'),
+      LUCERNE: makePromoterDiscount('LUCERNE'),
+      MANLUO: makePromoterDiscount('MANLUO'),
+      NARUTONYA: makePromoterDiscount('NARUTONYA'),
+      RAJ: makePromoterDiscount('RAJ'),
+      RITA: makePromoterDiscount('RITA'),
       SANJAYA: makePromoterDiscount('SANJAYA'),
       SATOMI: makePromoterDiscount('SATOMI'),
-      ARIEL: makePromoterDiscount('ARIEL'),
+      SENSUAL: makeSensualDiscount,
       SIRI: makePromoterDiscount('SIRI'),
+      TARRAKIZSG: makeTarrakizSGDiscount,
       THEO: makePromoterDiscount('THEO'),
-      RITA: makePromoterDiscount('RITA'),
       ZIKIMMY: makePromoterDiscount('ZIKIMMY'),
-      LUCERNE: makePromoterDiscount('LUCERNE'),
-      AIDANCE: makePromoterDiscount('AIDANCE'),
-      NARUTONYA: makePromoterDiscount('NARUTONYA'),
-      MANLUO: makePromoterDiscount('MANLUO'),
-      ZAK: makePromoterDiscount('ZAK'),
-      JAY: makePromoterDiscount('JAY'),
-      RAJ: makePromoterDiscount('RAJ'),
-      HITOMI: makePromoterDiscount('HITOMI'),
     }
   }
 
