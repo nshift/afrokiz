@@ -100,10 +100,10 @@ export const defaultPasses: { [key: string]: Pass } = {
         }),
       ]
       const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
-      const doorPrice = { USD: 14900, EUR: 13900, THB: 529000 }
+      const doorPrice = { USD: 20000, EUR: 18500, THB: 720000 }
       return activePromotion?.price ?? doorPrice
     })(),
-    doorPrice: { USD: 14900, EUR: 13900, THB: 529000 },
+    doorPrice: { USD: 20000, EUR: 18500, THB: 720000 },
     includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
     giveAways: [],
     isPromoted: true,
@@ -138,7 +138,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           end: new Date('2024-07-01'),
         }),
         makePromotion({
-          price: { USD: 43000, EUR: 40000, THB: 1499000 },
+          price: { USD: 41500, EUR: 38900, THB: 1499000 },
           start: new Date('2024-07-01'),
           end: new Date('2024-09-07'),
         }),
@@ -202,7 +202,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   vipGold: {
     id: 'vip-gold',
     name: 'VIP Gold Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: (() => {
       const promotions = [
         makePromotion({
@@ -227,10 +227,10 @@ export const defaultPasses: { [key: string]: Pass } = {
         }),
       ]
       const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
-      const doorPrice = { USD: 56500, EUR: 52000, THB: 1999000 }
+      const doorPrice = { USD: 56500, EUR: 52000, THB: 2199000 }
       return activePromotion?.price ?? doorPrice
     })(),
-    doorPrice: { USD: 56500, EUR: 52000, THB: 1999000 },
+    doorPrice: { USD: 56500, EUR: 52000, THB: 2199000 },
     includes: [
       'All Workshops',
       '2H Masterclass by Said & Oksana',

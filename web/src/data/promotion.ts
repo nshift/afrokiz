@@ -233,10 +233,10 @@ const promotions: Promotion[] = [
     start: new Date('2024-07-01'),
     end: new Date('2024-06-30'),
   }),
-  makeSpecialPricePromotion({
-    start: new Date('2024-07-01'),
-    end: new Date('2024-09-01'),
-  }),
+  // makeSpecialPricePromotion({
+  //   start: new Date('2024-07-01'),
+  //   end: new Date('2024-09-01'),
+  // }),
 ]
 
 export const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
