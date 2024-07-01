@@ -108,6 +108,25 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      'couple-option': {
+        id: 'couple-option',
+        icon: 'fa-user-group',
+        title: 'Couple',
+        includes: ['1 couple ticket'],
+        selected: false,
+        price: (() => {
+          const promotions = [
+            makePromotion({
+              price: { USD: 12500, EUR: 11500, THB: 450000 },
+              start: new Date('2024-07-01'),
+              end: new Date('2024-09-07'),
+            }),
+          ]
+          const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
+          const doorPrice = { USD: 15000, EUR: 14000, THB: 550000 }
+          return activePromotion?.price ?? doorPrice
+        })(),
+      },
       'massage-option': options['massage-option'],
       'muay-thai-option': options['muay-thai-option'],
       'cruise-option': options['cruise-option'],

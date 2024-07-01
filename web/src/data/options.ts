@@ -63,7 +63,7 @@ export const options: {
     selected: false,
     price: {
       USD: 7200,
-      EUR: 6800,
+      EUR: 6700,
       THB: 259000,
     },
   },

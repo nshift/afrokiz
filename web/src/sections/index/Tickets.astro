@@ -28,7 +28,7 @@ function calculatePrice(pass: Pass) {
         { promotedPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
       </div>
       <div class="container-column features">
-        { valentinePromotion.isActive ? '' : <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option avalaible</p> }
+        { valentinePromotion.isActive || !promotedPass.options['couple-option'] ? '' : <p class="option-available"><i class="fa-solid fa-user-group"></i> Couple option avalaible</p> }
         <ul>{promotedPass.includes.concat(promotedPass.giveAways.map((giveAway) => '+ ' + giveAway)).map((feature) => <li>{promotedPass.giveAways.map((giveAway) => '+ ' + giveAway).includes(feature) ? <b>{feature}</b> : feature}</li>)}</ul>
       </div>
     </div>
