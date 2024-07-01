@@ -218,6 +218,21 @@ export const defaultPasses: { [key: string]: Pass } = {
       'said-mc-option': options['said-mc-option'],
     },
   },
+  dj: {
+    id: 'dj',
+    name: 'DJ Master Class By DJ Lenhy',
+    isSoldOut: false,
+    price: { USD: 9900, EUR: 8900, THB: 339000 },
+    doorPrice: { USD: 9900, EUR: 8900, THB: 339000 },
+    includes: [
+      '2H DJ Masterclass on Transition, Mixing Technique, Live Mixing, Musicality',
+      'Limited to "AfroKiz Bangkok Edition 2" participant only.',
+      'Limited to 10 participants only.',
+    ],
+    giveAways: [],
+    isPromoted: false,
+    options: {},
+  },
   vipGold: {
     id: 'vip-gold',
     name: 'VIP Gold Pass',
@@ -301,17 +316,6 @@ export const defaultPasses: { [key: string]: Pass } = {
       'muay-thai-option': options['muay-thai-option'],
     },
   },
-  // dj: {
-  //   id: 'dj',
-  //   name: 'DJ Master Class By DJ Lenny',
-  //   isSoldOut: false,
-  //   price: { USD: 9900, EUR: 8900, THB: 339000 },
-  //   doorPrice: { USD: 9900, EUR: 8900, THB: 339000 },
-  //   includes: [],
-  //   giveAways: [],
-  //   isPromoted: false,
-  //   options: {},
-  // },
 }
 
 export function calculateTotal(

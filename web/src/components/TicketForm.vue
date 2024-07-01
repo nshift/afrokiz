@@ -224,8 +224,8 @@ const shouldDisabled = (id: string) => {
             </li>
           </ul>
         </div>
-        <h3>Options</h3>
-        <ul class="options">
+        <h3 v-if="Object.keys(pass.options).length > 0">Options</h3>
+        <ul class="options" v-if="Object.keys(pass.options).length > 0">
           <li v-for="option in Object.values(pass.options)" :key="option.id" @click="selectOption(option.id)">
             <div :class="['option-container', option.id]">
               <input type="checkbox" :value="option.id" v-model="optionIds" :disabled="shouldDisabled(option.id)" />

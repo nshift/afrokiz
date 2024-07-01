@@ -216,6 +216,60 @@ export const henecoPromotion = makeHenecoMasterclassPromotion({
   end: new Date('2024-04-30'),
 })
 
+const makePromotionPhase4 = (promotion: { start: Date; end: Date }): Promotion => {
+  const festivalStartInDays = moment(new Date('2024-09-06')).diff(moment(new Date()), 'days')
+  return {
+    text: `AfroKiz festival is starting in ${festivalStartInDays} days.`,
+    isActive: new Date().getTime() > promotion.start.getTime() && new Date().getTime() < promotion.end.getTime(),
+    passes: {
+      fullPass: defaultPasses.fullPass,
+      fullPassBundle: {
+        ...defaultPasses.fullPass,
+        id: 'fullpass-bundle',
+        name: 'Full Pass + Masterclass',
+        isPromoted: false,
+        price: { USD: 23000, EUR: 21500, THB: 849000 },
+        doorPrice: { USD: 27000, EUR: 25000, THB: 990000 },
+        includes: [...defaultPasses.fullPass.includes],
+        options: {
+          ...defaultPasses.fullPass.options,
+          'couple-option': {
+            id: 'couple-option',
+            icon: 'fa-user-group',
+            title: 'Couple',
+            includes: ['1 couple ticket'],
+            selected: false,
+            price: { USD: 19000, EUR: 17500, THB: 700000 },
+          },
+          'all-mc-option': { ...options['all-mc-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+        },
+      },
+      vipSilver: defaultPasses.vipSilver,
+      partyBundle: {
+        ...defaultPasses.party,
+        id: 'party-bundle',
+        name: 'Party Combo Pass',
+        isPromoted: false,
+        price: { USD: 17800, EUR: 16500, THB: 650000 },
+        doorPrice: { USD: 20000, EUR: 18600, THB: 730000 },
+        includes: [
+          'All parties in main venue',
+          '8 welcome drinks per person',
+          'Day time social party',
+          '2H Foot Massage at Lek Massage',
+        ],
+        options: {
+          ...defaultPasses.party.options,
+          'cruise-option': { ...options['cruise-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+        },
+      },
+      party: defaultPasses.party,
+      dj: defaultPasses.dj,
+      vipGold: defaultPasses.vipGold,
+    },
+  }
+}
+
 const promotions: Promotion[] = [
   makePromotion({
     name: 'Early bird',
@@ -233,10 +287,10 @@ const promotions: Promotion[] = [
     start: new Date('2024-07-01'),
     end: new Date('2024-06-30'),
   }),
-  // makeSpecialPricePromotion({
-  //   start: new Date('2024-07-01'),
-  //   end: new Date('2024-09-01'),
-  // }),
+  makePromotionPhase4({
+    start: new Date('2024-07-01'),
+    end: new Date('2024-09-07'),
+  }),
 ]
 
 export const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
