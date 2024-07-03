@@ -62,6 +62,15 @@ export const makeTarrakizSGDiscount = makeDiscountPromotion({
   isAppliable: (passId: string) => ['fullpass', 'vip-silver', 'vip-gold'].includes(passId),
 })
 
+export const makeDashDiscount = makeDiscountPromotion({
+  id: 'dash',
+  isActive: (() => new Date().getTime() > new Date('2024-07-19').getTime())(),
+  code: 'dash'.toUpperCase(),
+  expirationDate: new Date('2024-07-23'),
+  discount: 0.9,
+  isAppliable: (passId: string) => ['fullpass'].includes(passId),
+})
+
 export const makeSensualDiscount = makeDiscountPromotion({
   id: 'sensual',
   isActive: true,

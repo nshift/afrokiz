@@ -12,7 +12,7 @@ import { Event } from './events/event'
 import { processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event'
 import { transformCreateOrderEvent, transformFailedPaymentEvent, transformSuccessfulPaymentEvent } from './migration'
-import { makePromoterDiscount, makeSensualDiscount, makeTarrakizSGDiscount } from './promotions'
+import { makeDashDiscount, makePromoterDiscount, makeSensualDiscount, makeTarrakizSGDiscount } from './promotions'
 import { Repository } from './repository'
 import {
   OrderSchema,
@@ -85,6 +85,7 @@ export class DynamoDbRepository implements Repository {
       TARRAKIZSG: makeTarrakizSGDiscount,
       THEO: makePromoterDiscount('THEO'),
       ZIKIMMY: makePromoterDiscount('ZIKIMMY'),
+      DASH: makeDashDiscount,
     }
   }
 
