@@ -12,11 +12,11 @@ export const buildOrderResponse = ({
 }: {
   order: Order
   customer: Customer
-  promoCode?: string
-  payment: { status: PaymentStatus; intent: PaymentIntent }
+  promoCode: string | null
+  payment: { status: PaymentStatus; intent: PaymentIntent | null }
 }) => ({
   id: order.id,
-  paymentIntentId: payment.intent.id,
+  paymentIntentId: payment.intent ? payment.intent.id : null,
   paymentStatus: payment.status,
   email: customer.email,
   fullname: customer.fullname,

@@ -1,16 +1,23 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
+import { S3 } from '@aws-sdk/client-s3'
+import { SQSClient } from '@aws-sdk/client-sqs'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
+import { APIGatewayEvent, APIGatewayProxyResult, Context, SQSEvent } from 'aws-lambda'
 import Stripe from 'stripe'
 import { v4 as uuid } from 'uuid'
 import { Checkout } from '../../checkout'
 import { Environment } from '../../environment'
+import { StorageAdapter } from '../document/storage.adapter'
+import { S3Storage } from '../document/storage.s3'
 import { SESEmailService } from '../email/ses'
 import { StripePaymentAdapter } from '../payment/stripe'
 import { QrCodeGenerator } from '../qr-code/qr-code.generator'
+import { QueueAdapter } from '../queue.adapter'
 import { DynamoDbRepository } from '../repository/dynamodb'
 import {
+  buildImportOrderRequest,
   buildProceedToCheckoutRequest,
+  buildRequestImportOrdersRequest,
   buildResendConfirmationEmailRequest,
   buildUpdateOrderPaymentRequest,
 } from './request'
@@ -25,7 +32,18 @@ const stripe = new Stripe(Environment.StripeSecretKey())
 const paymentAdapter = new StripePaymentAdapter(stripe)
 const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
 const qrCodeGenerator = new QrCodeGenerator()
-const checkout = new Checkout(repository, paymentAdapter, emailApi, qrCodeGenerator, dateGenerator)
+const s3Client = new S3Storage(new S3({}), Environment.DocumentBucketName())
+const documentAdapter = new StorageAdapter(s3Client, dateGenerator)
+const queueAdapter = new QueueAdapter(new SQSClient({}))
+const checkout = new Checkout(
+  repository,
+  paymentAdapter,
+  emailApi,
+  qrCodeGenerator,
+  documentAdapter,
+  queueAdapter,
+  dateGenerator
+)
 
 export const proceedToCheckout = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body ?? '{}')
@@ -112,6 +130,35 @@ export const resendConfirmationEmail = async (
   const request = buildResendConfirmationEmailRequest(event)
   try {
     await checkout.resendConfirmationEmail(request.orderId)
+    return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const requestImportOrders = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  const request = buildRequestImportOrdersRequest(event)
+  try {
+    await checkout.requestImportOrders(request.csvPath)
+    return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const importOrder = async (event: SQSEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  if (event.Records.length > 1) {
+    console.error('There is more than one record.', { records: event.Records })
+  }
+  const record = event.Records[0]
+  if (!record) {
+    console.error('There is no record.', { event })
+  }
+  const request = buildImportOrderRequest(record)
+  try {
+    await checkout.importOrder(request.orderId)
     return successfullyCreatedResponse()
   } catch (error) {
     console.error(error)

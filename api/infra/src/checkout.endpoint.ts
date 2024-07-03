@@ -9,25 +9,22 @@ export const makeCheckoutEndpoints = (props: {
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
   salesTable: cdk.aws_dynamodb.Table
+  importOrdersTable: cdk.aws_dynamodb.Table
+  importOrderQueue: cdk.aws_sqs.Queue
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
 }) => {
   const sharedLayer = createSharedLayer('CheckoutSharedLayer', CheckoutModule('.build/layer'), props.stack)
   const codeUri = CheckoutModule('.build/src')
-  const secretKeyManager = cdk.aws_secretsmanager.Secret.fromSecretNameV2(
-    props.stack,
-    'aws/secretsmanager',
-    Environment.SecretKeysName()
-  )
-  const stripeSecretKey = secretKeyManager.secretValueFromJson(Environment.StripeSecretApiKeyName()).unsafeUnwrap()
-  const stripeWebhookSecretKey = secretKeyManager
-    .secretValueFromJson(Environment.StripeWebhookSecretApiKeyName())
-    .unsafeUnwrap()
-  const context = { sharedLayer, codeUri, stripeSecretKey, stripeWebhookSecretKey }
+
+  const context = { sharedLayer, codeUri, stripeSecrets: props.stripeSecrets }
   return [
     makeProceedToCheckoutEndpoint({ ...props, ...context }),
     makeGetOrderEndpoint({ ...props, ...context }),
     makeUpdateOrderPaymentStatusEndpoint({ ...props, ...context }),
     makeGetPromotionEndpoint({ ...props, ...context }),
     makeResendConfirmationEmailEndpoint({ ...props, ...context }),
+    makeRequestImportOrderEndpoint({ ...props, ...context }),
   ]
 }
 
@@ -38,8 +35,8 @@ const makeProceedToCheckoutEndpoint = (props: {
   sharedLayer: cdk.aws_lambda.LayerVersion
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
-  stripeSecretKey: string
-  stripeWebhookSecretKey: string
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
 }) => {
   const endpoint = createEndpoint('ProceedToCheckout', {
     handler: 'adapters/lambda/lambda.proceedToCheckout',
@@ -48,10 +45,11 @@ const makeProceedToCheckoutEndpoint = (props: {
     environment: {
       NODE_ENV: 'PROD',
       LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
-      STRIPE_SECRET_KEY: props.stripeSecretKey,
-      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
     },
     memorySize: 2048,
     ...props,
@@ -67,8 +65,8 @@ const makeGetOrderEndpoint = (props: {
   api: cdk.aws_apigatewayv2.CfnApi
   sharedLayer: cdk.aws_lambda.LayerVersion
   orderTable: cdk.aws_dynamodb.Table
-  stripeSecretKey: string
-  stripeWebhookSecretKey: string
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
 }) => {
   const endpoint = createEndpoint('GetOrder', {
     handler: 'adapters/lambda/lambda.getOrder',
@@ -77,9 +75,10 @@ const makeGetOrderEndpoint = (props: {
     environment: {
       NODE_ENV: 'PROD',
       LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
-      STRIPE_SECRET_KEY: props.stripeSecretKey,
-      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
     },
     memorySize: 2048,
     ...props,
@@ -96,8 +95,8 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
   salesTable: cdk.aws_dynamodb.Table
-  stripeSecretKey: string
-  stripeWebhookSecretKey: string
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
 }) => {
   const endpoint = createEndpoint('UpdateOrderPaymentStatus', {
     handler: 'adapters/lambda/lambda.updateOrderPaymentStatus',
@@ -106,11 +105,12 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
     environment: {
       NODE_ENV: 'PROD',
       LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
       SALES_TABLE_NAME: props.salesTable.tableName,
-      STRIPE_SECRET_KEY: props.stripeSecretKey,
-      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
       WEB_APP_HOST: Environment.WebAppHost(),
     },
     memorySize: 2048,
@@ -134,8 +134,8 @@ const makeGetPromotionEndpoint = (props: {
   codeUri: string
   api: cdk.aws_apigatewayv2.CfnApi
   sharedLayer: cdk.aws_lambda.LayerVersion
-  stripeSecretKey: string
-  stripeWebhookSecretKey: string
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
 }) => {
   const endpoint = createEndpoint('GetPromotion', {
     handler: 'adapters/lambda/lambda.getPromotion',
@@ -144,8 +144,9 @@ const makeGetPromotionEndpoint = (props: {
     environment: {
       NODE_ENV: 'PROD',
       LOG_LEVEL: 'info',
-      STRIPE_SECRET_KEY: props.stripeSecretKey,
-      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
     },
     memorySize: 2048,
     ...props,
@@ -161,8 +162,8 @@ const makeResendConfirmationEmailEndpoint = (props: {
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
   salesTable: cdk.aws_dynamodb.Table
-  stripeSecretKey: string
-  stripeWebhookSecretKey: string
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
 }) => {
   const endpoint = createEndpoint('ResendConfirmationEmail', {
     handler: 'adapters/lambda/lambda.resendConfirmationEmail',
@@ -171,9 +172,10 @@ const makeResendConfirmationEmailEndpoint = (props: {
     environment: {
       NODE_ENV: 'PROD',
       LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
-      STRIPE_SECRET_KEY: props.stripeSecretKey,
-      STRIPE_WEBHOOK_SECRET_KEY: props.stripeWebhookSecretKey,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
       WEB_APP_HOST: Environment.WebAppHost(),
     },
     memorySize: 768,
@@ -187,5 +189,43 @@ const makeResendConfirmationEmailEndpoint = (props: {
     })
   )
   props.orderTable.grant(endpoint.lambda, 'dynamodb:Query')
+  return endpoint
+}
+
+const makeRequestImportOrderEndpoint = (props: {
+  stack: cdk.Stack
+  codeUri: string
+  api: cdk.aws_apigatewayv2.CfnApi
+  sharedLayer: cdk.aws_lambda.LayerVersion
+  eventTable: cdk.aws_dynamodb.Table
+  orderTable: cdk.aws_dynamodb.Table
+  importOrdersTable: cdk.aws_dynamodb.Table
+  importOrderQueue: cdk.aws_sqs.Queue
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
+}) => {
+  const endpoint = createEndpoint('RequestImportOrder', {
+    handler: 'adapters/lambda/lambda.requestImportOrders',
+    method: 'POST',
+    path: '/import/orders',
+    environment: {
+      NODE_ENV: 'PROD',
+      LOG_LEVEL: 'info',
+      EVENT_TABLE_NAME: props.eventTable.tableName,
+      ORDER_TABLE_NAME: props.orderTable.tableName,
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
+      IMPORT_ORDER_TABLE_NAME: props.importOrdersTable.tableName,
+      IMPORT_ORDER_QUEUE: props.importOrderQueue.queueUrl,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
+    },
+    memorySize: 2048,
+    ...props,
+  })
+  props.eventTable.grant(endpoint.lambda, 'dynamodb:Query', 'dynamodb:BatchWriteItem')
+  props.orderTable.grant(endpoint.lambda, 'dynamodb:Query', 'dynamodb:BatchWriteItem')
+  props.importOrdersTable.grant(endpoint.lambda, 'dynamodb:BatchGetItem', 'dynamodb:BatchWriteItem')
+  props.documentBucket.grantRead(endpoint.lambda)
+  props.importOrderQueue.grantSendMessages(endpoint.lambda)
   return endpoint
 }

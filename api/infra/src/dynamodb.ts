@@ -26,3 +26,6 @@ export const createOrderTable = (stack: cdk.Stack) =>
 
 export const createSalesTable = (stack: cdk.Stack) =>
   createDynamoDbTable('SalesTable', { partitionKey: { name: 'id', type: STRING }, stack })
+
+export const createImportOrderTable = (stack: cdk.Stack) =>
+  createDynamoDbTable('ImportOrderTable', { partitionKey: { name: 'fingerprint', type: STRING }, stack })

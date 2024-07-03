@@ -11,7 +11,7 @@ import { Event } from './event'
 export type UpdatePaymentStatusEventInput = {
   order: Order
   customer: Customer
-  promoCode?: string
+  promoCode: string | null
   paymentStatus: PaymentStatus
 }
 

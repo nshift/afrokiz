@@ -14,8 +14,8 @@ type Checkout = {
   order: Order
   total: { amount: number; currency: Currency }
   customer: Customer
-  promoCode?: string
-  payment: { status: PaymentStatus; intent: PaymentIntent }
+  promoCode: string | null
+  payment: { status: PaymentStatus; intent: PaymentIntent | null }
 }
 
 export interface ProceedToCheckoutEvent extends Event<Checkout> {}
@@ -42,22 +42,24 @@ export const processProceedToCheckoutEvent = async (
   return event
 }
 
-const mapToOrder = (
+export const mapToOrder = (
   checkout: Checkout
 ): {
   order: Order
   customer: Customer
-  promoCode: string | undefined
-  payment: { status: PaymentStatus; intent: PaymentIntent }
+  promoCode: string | null
+  payment: { status: PaymentStatus; intent: PaymentIntent | null }
 } => ({
   order: checkout.order,
   customer: checkout.customer,
   promoCode: checkout.promoCode,
   payment: {
     status: checkout.payment.status,
-    intent: {
-      id: checkout.payment.intent.id,
-      secret: checkout.payment.intent.secret,
-    },
+    intent: checkout.payment.intent
+      ? {
+          id: checkout.payment.intent.id,
+          secret: checkout.payment.intent.secret,
+        }
+      : null,
   },
 })

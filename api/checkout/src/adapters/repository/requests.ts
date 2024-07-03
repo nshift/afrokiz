@@ -1,8 +1,15 @@
-import { BatchWriteCommand, PutCommand, QueryCommand, ScanCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import {
+  BatchGetCommand,
+  BatchWriteCommand,
+  PutCommand,
+  QueryCommand,
+  ScanCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb'
 import { Environment } from '../../environment'
 import { Currency } from '../../types/currency'
 import { Customer } from '../../types/customer'
-import { Order } from '../../types/order'
+import { ImportOrder, Order } from '../../types/order'
 import { PaymentStatus } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
 import { Event } from './events/event'
@@ -103,8 +110,8 @@ export const getOrderByIdRequest = (id: string) =>
 export type OrderSchema = {
   order: Order
   customer: Customer
-  promoCode: string | undefined
-  payment: { status: PaymentStatus; intent: PaymentIntent }
+  promoCode: string | null
+  payment: { status: PaymentStatus; intent: PaymentIntent | null }
 }
 
 export const saveOrdersRequest = (orders: OrderSchema[]) =>
@@ -121,10 +128,12 @@ export const saveOrdersRequest = (orders: OrderSchema[]) =>
             },
             payment: {
               status: payment.status,
-              intent: {
-                id: payment.intent.id,
-                secret: payment.intent.secret,
-              },
+              intent: payment.intent
+                ? {
+                    id: payment.intent.id,
+                    secret: payment.intent.secret,
+                  }
+                : null,
             },
             date: order.date.toISOString(),
             promoCode: promoCode ?? null,
@@ -165,10 +174,12 @@ export const orderV2Response = (item: any): OrderSchema => ({
   },
   payment: {
     status: item.payment.status,
-    intent: {
-      id: item.payment.intent.id,
-      secret: item.payment.intent.secret,
-    },
+    intent: item.payment.intent
+      ? {
+          id: item.payment.intent.id,
+          secret: item.payment.intent.secret,
+        }
+      : null,
   },
   promoCode: item.promoCode,
 })
@@ -217,7 +228,7 @@ export type SaleSchema = {
   id: string
   date: Date
   orderId: string
-  promoCode?: string
+  promoCode: string | null
   customer: Customer
   passId: string
   items: {
@@ -319,3 +330,34 @@ export const salesResponse = (response: any): SaleSchema[] =>
 //       })),
 //     },
 //   })
+
+export type ImportOrderSchema = {
+  fingerprint: string
+  orderId: string
+}
+
+export const getImportOrdersByFingerprintsRequest = (fingerprints: string[]) =>
+  new BatchGetCommand({
+    RequestItems: {
+      [Environment.ImportOrderTableName()]: {
+        Keys: fingerprints.map((fingerprint) => ({ fingerprint })),
+      },
+    },
+  })
+
+export const saveImportOrdersRequest = (orders: ImportOrderSchema[]) =>
+  new BatchWriteCommand({
+    RequestItems: {
+      [Environment.ImportOrderTableName()]: orders.map((order) => ({
+        PutRequest: {
+          Item: {
+            fingerprint: order.fingerprint,
+            orderId: order.orderId,
+          },
+        },
+      })),
+    },
+  })
+
+export const importOrdersResponse = (response: any): ImportOrder[] =>
+  response?.map((item: any): ImportOrder => ({ fingerprint: item.fingerprint, orderId: item.orderId })) ?? []
