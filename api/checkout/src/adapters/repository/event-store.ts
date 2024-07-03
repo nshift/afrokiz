@@ -21,6 +21,15 @@ export class EventStore {
     )
   }
 
+  // async process2(events: Event<any>[]): Promise<void> {
+  //   const commands = events.flatMap((event) => {
+  //     const saveEventCommand = this.saveEvent(event)
+  //     const commands = event.process()
+  //     return [saveEventCommand, ...commands]
+  //   })
+  //   await this.commit2(commands)
+  // }
+
   private saveEvent(event: Event<any>): PutCommand {
     return saveEventRequest(event)
   }
@@ -30,8 +39,12 @@ export class EventStore {
     // await this.client.send(new BatchWriteCommand({ RequestItems: this.requestItems(commands) }))
   }
 
+  // private async commit2(commands: (UpdateCommand | PutCommand | DeleteCommand | BatchWriteCommand)[]): Promise<void> {
+  //   await this.client.send(new BatchWriteCommand({ RequestItems: this.requestItems(commands) }))
+  // }
+
   // private requestItems = (
-  //   commands: (PutCommand | DeleteCommand | BatchWriteCommand)[]
+  //   commands: (UpdateCommand | PutCommand | DeleteCommand | BatchWriteCommand)[]
   // ): BatchWriteCommandInput['RequestItems'] => {
   //   return commands.reduce((requestItems, command) => {
   //     if (!requestItems) {
@@ -56,6 +69,9 @@ export class EventStore {
   //       | { DeleteRequest: Omit<DeleteCommandInput, 'TableName'> }[]
   //       | undefined => {
   //       if (command instanceof PutCommand) {
+  //         const item = command.input.Item
+  //         return item ? [{ PutRequest: { Item: item } }] : undefined
+  //       } else if (command instanceof UpdateCommand) {
   //         const item = command.input.Item
   //         return item ? [{ PutRequest: { Item: item } }] : undefined
   //       } else if (command instanceof DeleteCommand) {

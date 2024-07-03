@@ -1,4 +1,4 @@
-import { APIGatewayEvent } from 'aws-lambda'
+import { APIGatewayEvent, SQSRecord } from 'aws-lambda'
 import Stripe from 'stripe'
 import { Environment } from '../../environment'
 import { Customer } from '../../types/customer'
@@ -9,7 +9,7 @@ export const buildProceedToCheckoutRequest = (
 ): {
   newOrder: NewOrder
   customer: Customer
-  promoCode?: string
+  promoCode: string | null
 } => ({
   newOrder: {
     // passId: request.pass_id,
@@ -44,4 +44,14 @@ export const buildUpdateOrderPaymentRequest = (event: APIGatewayEvent, stripe: S
 export const buildResendConfirmationEmailRequest = (event: APIGatewayEvent) => {
   const body = JSON.parse(event.body ?? '{}')
   return { orderId: body.orderId }
+}
+
+export const buildRequestImportOrdersRequest = (event: APIGatewayEvent) => {
+  const body = JSON.parse(event.body ?? '{}')
+  return { csvPath: body.csvPath }
+}
+
+export const buildImportOrderRequest = (record: SQSRecord) => {
+  const body = JSON.parse(record.body ?? '{}')
+  return { orderId: body.id }
 }

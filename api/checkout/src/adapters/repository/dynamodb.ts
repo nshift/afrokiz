@@ -1,7 +1,9 @@
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import { chunk } from '../../chunk'
+import { Environment } from '../../environment'
 import { Currency } from '../../types/currency'
 import { Customer } from '../../types/customer'
-import { Order } from '../../types/order'
+import { ImportOrder, Order } from '../../types/order'
 import { PaymentStatus } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
 import { Promotion } from '../../types/promotion'
@@ -9,7 +11,7 @@ import { DateGenerator } from '../date.generator'
 import { UUIDGenerator } from '../uuid.generator'
 import { EventStore } from './event-store'
 import { Event } from './events/event'
-import { processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
+import { mapToOrder, proceedToCheckoutEvent, processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event'
 import { transformCreateOrderEvent, transformFailedPaymentEvent, transformSuccessfulPaymentEvent } from './migration'
 import {
@@ -26,10 +28,14 @@ import {
   eventResponse,
   getAllSalesRequest,
   getEventFromRangeRequest,
+  getImportOrdersByFingerprintsRequest,
   getOrderByIdRequest,
+  importOrdersResponse,
   orderResponse,
   salesResponse,
   saveEventsRequest,
+  saveImportOrdersRequest,
+  saveOrdersRequest,
 } from './requests'
 
 export class DynamoDbRepository implements Repository {
@@ -44,7 +50,7 @@ export class DynamoDbRepository implements Repository {
     if (!order || !customer) {
       throw new Error(`Order ${data.order.id} does not exist`)
     }
-    const eventData = { order, customer, promoCode, paymentStatus: data.payment.status }
+    const eventData = { order, customer, promoCode: promoCode ?? null, paymentStatus: data.payment.status }
     await processUpdatePaymentStatusEvent(this.dynamodb, this.uuidGenerator, this.dateGenerator, eventData)
   }
 
@@ -52,10 +58,36 @@ export class DynamoDbRepository implements Repository {
     order: Order
     total: { amount: number; currency: Currency }
     customer: Customer
-    promoCode?: string
-    payment: { status: PaymentStatus; intent: PaymentIntent }
+    promoCode: string | null
+    payment: { status: PaymentStatus; intent: PaymentIntent | null }
   }): Promise<void> {
     await processProceedToCheckoutEvent(this.dynamodb, this.uuidGenerator, this.dateGenerator, checkout)
+  }
+
+  async saveCheckouts(
+    checkouts: {
+      order: Order
+      total: { amount: number; currency: Currency }
+      customer: Customer
+      promoCode: string | null
+      payment: { status: PaymentStatus; intent: PaymentIntent | null }
+    }[]
+  ): Promise<void> {
+    if (checkouts.length == 0) {
+      return
+    }
+    const events = checkouts.map((checkout) =>
+      proceedToCheckoutEvent({
+        id: this.uuidGenerator.generate(),
+        name: 'ProceedToCheckout',
+        time: this.dateGenerator.today(),
+        data: checkout,
+      })
+    )
+    const saveEventsCommand = saveEventsRequest(events)
+    await this.dynamodb.send(saveEventsCommand)
+    const saveOrdersCommand = saveOrdersRequest(checkouts.map((checkout) => mapToOrder(checkout)))
+    await this.dynamodb.send(saveOrdersCommand)
   }
 
   async getOrderById(id: string): Promise<OrderSchema | null> {
@@ -137,12 +169,16 @@ export class DynamoDbRepository implements Repository {
     await Promise.all(chunk(eventsToPlay, 25).map((event) => eventStore.process(event)))
     return events.eventsToPlay
   }
-}
 
-function chunk(array: any, size: number) {
-  // TODO: should be made lazy
-  return Array.from(
-    { length: Math.ceil(array.length / size) }, // number of slices
-    (_, index) => array.slice(index * size, (index + 1) * size) // for every slice, extract it
-  )
+  async saveImportOrders(imports: ImportOrder[]): Promise<void> {
+    if (imports.length == 0) {
+      return
+    }
+    await this.dynamodb.send(saveImportOrdersRequest(imports))
+  }
+
+  async getImportOrdersByFingerprints(fingerprints: string[]): Promise<ImportOrder[]> {
+    const response = await this.dynamodb.send(getImportOrdersByFingerprintsRequest(fingerprints))
+    return importOrdersResponse(response.Responses?.[Environment.ImportOrderTableName()] ?? [])
+  }
 }

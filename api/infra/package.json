@@ -21,7 +21,7 @@
     "typescript": "~5.2.2"
   },
   "dependencies": {
-    "@nshift/cdk": "https://github.com/nshift/cdk",
+    "@nshift/cdk": "https://github.com/nshift/cdk#main",
     "aws-cdk-lib": "2.104.0",
     "constructs": "^10.0.0",
     "dotenv": "^16.3.1",

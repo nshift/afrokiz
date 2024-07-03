@@ -12,8 +12,8 @@ export class InMemoryRepository implements Repository {
     [key: string]: {
       order: Order
       customer: Customer
-      promoCode: string | undefined
-      payment: { status: PaymentStatus; intent: PaymentIntent }
+      promoCode: string | null
+      payment: { status: PaymentStatus; intent: PaymentIntent | null }
     }
   } = {}
 
@@ -32,8 +32,8 @@ export class InMemoryRepository implements Repository {
     order: Order
     total: { amount: number; currency: Currency }
     customer: Customer
-    promoCode?: string
-    payment: { status: PaymentStatus; intent: PaymentIntent }
+    promoCode: string | null
+    payment: { status: PaymentStatus; intent: PaymentIntent | null }
   }): Promise<void> {
     this.orders[checkout.order.id] = {
       order: checkout.order,
@@ -46,8 +46,8 @@ export class InMemoryRepository implements Repository {
   async getOrderById(id: string): Promise<{
     order: Order
     customer: Customer
-    promoCode: string | undefined
-    payment: { status: PaymentStatus; intent: PaymentIntent }
+    promoCode: string | null
+    payment: { status: PaymentStatus; intent: PaymentIntent | null }
   } | null> {
     return this.orders[id] ?? null
   }

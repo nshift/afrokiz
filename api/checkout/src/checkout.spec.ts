@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from '@jest/globals'
+import { StorageAdapter } from './adapters/document/storage.adapter'
 import { confirmationEmail } from './adapters/email/email.confirmation'
 import { SendingEmail } from './adapters/email/email.gateway'
+import { ImportOrderQueueRequest } from './adapters/queue.gateway'
 import { Checkout } from './checkout'
 import {
   order as fakeOrder,
@@ -16,10 +18,14 @@ import { PaymentIntent } from './types/payment-intent'
 
 let checkout: Checkout
 let emailGateway: SendingEmail
+let queueAdapter: ImportOrderQueueRequest
 let repository: InMemoryRepository
+let storageAdapter: StorageAdapter
 
 beforeEach(() => {
   emailGateway = mock()
+  storageAdapter = mock()
+  queueAdapter = mock()
   repository = new InMemoryRepository()
   checkout = new Checkout(
     repository,
@@ -34,21 +40,24 @@ beforeEach(() => {
     },
     emailGateway,
     { generateOrderQrCode: async (order: { id: string }) => fakeQrCode },
+    storageAdapter,
+    queueAdapter,
     { today: () => new Date('2024-01-01') }
   )
 })
 
 describe('Create an order when checking out', () => {
   it('should save an order', async () => {
-    const { order } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
+    const { order } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer, promoCode: null })
     expect({
       order: { ...fakeOrder, id: expect.any(String) },
       payment: { status: 'pending', intent: fakePaymentIntent },
       customer: romainCustomer,
+      promoCode: null,
     }).toEqual(await repository.getOrderById(order.id))
   })
   it('should create a payment intent', async () => {
-    const { payment } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
+    const { payment } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer, promoCode: null })
     expect(fakePaymentIntent.secret).toEqual(payment.intent.secret)
   })
 })
@@ -62,17 +71,26 @@ describe('Get promotion when checking out', () => {
 
 describe('Handling successful payment when checking out', () => {
   it('should update the payment status', async () => {
-    const { order: newOrder } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
+    const { order: newOrder } = await checkout.proceed({
+      newOrder: fakeOrder,
+      customer: romainCustomer,
+      promoCode: null,
+    })
     await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'success' } })
     const updatedOrder = await repository.getOrderById(newOrder.id)
     expect(updatedOrder).toEqual({
       order: { ...fakeOrder, id: newOrder.id },
       payment: { status: 'success', intent: fakePaymentIntent },
       customer: romainCustomer,
+      promoCode: null,
     })
   })
   it('should send a confirmation email', async () => {
-    const { order: newOrder } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
+    const { order: newOrder } = await checkout.proceed({
+      newOrder: fakeOrder,
+      customer: romainCustomer,
+      promoCode: null,
+    })
     await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'success' } })
     const email = await confirmationEmail({
       order: { ...fakeOrder, id: newOrder.id },
@@ -85,13 +103,18 @@ describe('Handling successful payment when checking out', () => {
 
 describe('Handling failing payment when checking out', () => {
   it('should update the payment status', async () => {
-    const { order: newOrder } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
+    const { order: newOrder } = await checkout.proceed({
+      newOrder: fakeOrder,
+      customer: romainCustomer,
+      promoCode: null,
+    })
     await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'failed' } })
     const updatedOrder = await repository.getOrderById(newOrder.id)
     expect(updatedOrder).toEqual({
       order: { ...fakeOrder, id: newOrder.id },
       payment: { status: 'failed', intent: fakePaymentIntent },
       customer: romainCustomer,
+      promoCode: null,
     })
   })
 })

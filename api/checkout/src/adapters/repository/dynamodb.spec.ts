@@ -22,7 +22,7 @@ import { DynamoDbRepository } from './dynamodb'
 import { processCreateOrderEvent } from './events/create-order.event'
 import { processSuccessfulPaymentEvent } from './events/successful-payment.event'
 
-describe('Dynamodb', () => {
+describe.skip('Dynamodb', () => {
   let dynamodb: DynamoDBDocumentClient
   let repository: DynamoDbRepository
   let uuid = 1

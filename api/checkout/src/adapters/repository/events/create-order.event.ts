@@ -12,7 +12,7 @@ export type CreateOrder = {
   dancerType: 'leader' | 'follower' | 'couple'
   passId: string
   date: Date
-  promoCode?: string
+  promoCode: string | null
   paymentIntentId: string
   paymentStatus: 'pending' | 'success' | 'failed'
   items: {

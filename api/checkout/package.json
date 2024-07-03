@@ -12,6 +12,7 @@
     "test:coverage": "./node_modules/.bin/jest --coverage --config ../jest.config.js --rootDir . --passWithNoTests --setupFilesAfterEnv './src/doubles/setup.int.ts'"
   },
   "dependencies": {
+    "csv-parse": "^5.5.6",
     "jsqr": "^1.4.0",
     "nodemailer": "^6.9.8",
     "qrcode": "^1.5.3",
@@ -21,9 +22,13 @@
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.490.0",
+    "@aws-sdk/client-s3": "^3.606.0",
     "@aws-sdk/client-ses": "^3.490.0",
+    "@aws-sdk/client-sqs": "^3.624.0",
     "@aws-sdk/lib-dynamodb": "^3.490.0",
+    "@aws-sdk/s3-request-presigner": "^3.606.0",
     "@types/aws-lambda": "^8.10.110",
+    "@types/csv-parse": "^1.2.2",
     "@types/jest": "^29.2.6",
     "@types/node": "^18.15.5",
     "@types/nodemailer": "^6.4.14",
