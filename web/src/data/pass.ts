@@ -324,7 +324,7 @@ export function calculateTotal(
   discount: number = 1
 ): { USD: number; EUR: number; THB: number } {
   return Object.keys(pass.price).reduce((prices, currency) => {
-    let total = pass.price[currency as Currency]
+    let total = pass.price[currency as Currency] * discount
     total += Object.values(pass.options).reduce(
       (total, option) =>
         (total += selectedOptionIds.includes(option.id)
@@ -333,7 +333,6 @@ export function calculateTotal(
           : 0),
       0
     )
-    total *= discount
     prices[currency] = total
     return prices
   }, {} as any)
