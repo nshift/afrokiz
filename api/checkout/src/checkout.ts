@@ -92,7 +92,7 @@ export class Checkout {
   // }
 
   async getPromotion(passId: string, code: string): Promise<Promotion | null> {
-    const promotions = await this.repository.getAllPromotions()
+    const promotions = await this.repository.getAllPromotions(passId)
     const promotion = promotions[code.toUpperCase()]
     const today = this.dateGenerator.today()
     if (

@@ -50,7 +50,7 @@ export const makePromoterDiscount = (code: string) =>
     code: code.toUpperCase(),
     expirationDate: new Date('2024-09-01'),
     discount: 0.95,
-    isAppliable: (passId: string) => ['fullpass'].includes(passId),
+    isAppliable: (passId: string) => !['party-bundle'].includes(passId),
   })
 
 export const makeTarrakizSGDiscount = makeDiscountPromotion({
@@ -79,6 +79,16 @@ export const makeSensualDiscount = makeDiscountPromotion({
   discount: 0.85,
   isAppliable: (passId: string) => true,
 })
+
+export const makeCNEDiscount = (passId: string) =>
+  makeDiscountPromotion({
+    id: 'cne',
+    isActive: true,
+    code: 'cne'.toUpperCase(),
+    expirationDate: new Date('2024-09-04'),
+    discount: ['fullpass'].includes(passId) ? 0.9 : 0.95,
+    isAppliable: (passId: string) => !['party-bundle'].includes(passId),
+  })
 
 export const massagePromotion: GiveAwayPromotion = makeGiveAwayPromotion({
   id: 'referal-dicount-promotion',

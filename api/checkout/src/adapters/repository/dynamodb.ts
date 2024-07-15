@@ -12,7 +12,13 @@ import { Event } from './events/event'
 import { processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event'
 import { transformCreateOrderEvent, transformFailedPaymentEvent, transformSuccessfulPaymentEvent } from './migration'
-import { makeDashDiscount, makePromoterDiscount, makeSensualDiscount, makeTarrakizSGDiscount } from './promotions'
+import {
+  makeCNEDiscount,
+  makeDashDiscount,
+  makePromoterDiscount,
+  makeSensualDiscount,
+  makeTarrakizSGDiscount,
+} from './promotions'
 import { Repository } from './repository'
 import {
   OrderSchema,
@@ -63,7 +69,7 @@ export class DynamoDbRepository implements Repository {
     return salesResponse(response.Items)
   }
 
-  async getAllPromotions(): Promise<{ [key: string]: Promotion }> {
+  async getAllPromotions(passId: string): Promise<{ [key: string]: Promotion }> {
     return {
       AIDANCE: makePromoterDiscount('AIDANCE'),
       ARIEL: makePromoterDiscount('ARIEL'),
@@ -86,6 +92,7 @@ export class DynamoDbRepository implements Repository {
       THEO: makePromoterDiscount('THEO'),
       ZIKIMMY: makePromoterDiscount('ZIKIMMY'),
       DASH: makeDashDiscount,
+      CNE: makeCNEDiscount(passId),
     }
   }
 

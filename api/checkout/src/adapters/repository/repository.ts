@@ -26,7 +26,7 @@ export interface GettingOrders {
 }
 
 export interface GettingPromotions {
-  getAllPromotions(): Promise<{ [key: string]: Promotion }>
+  getAllPromotions(passId: string): Promise<{ [key: string]: Promotion }>
 }
 
 export interface SavingPayment {
