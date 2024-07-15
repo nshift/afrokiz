@@ -1,0 +1,64 @@
+---
+import Card from "../../components/Card.astro";
+---
+
+<div class="grid">
+  <Card classes={["schedule-card"]}>
+    <div class="container-row">
+      <h2 class="container-column">Friday 6th</h2>
+      <p class="container-column">5H Workshops<br />Jack & Jill Competition<br />Party until 3AM</p>
+      <div class="container-column button-container"><a href="/schedule#friday" class="button action">Schedule</a></div>
+    </div>
+  </Card>
+  <Card classes={["schedule-card"]}>
+    <div class="container-row">
+      <h2 class="container-column">Saturday 7th</h2>
+      <p class="container-column">4H Workshops<br />2H Heneco Master Class<br />Party until 4AM</p>
+      <div class="container-column button-container"><a href="/schedule#saturday" class="button action">Schedule</a></div>
+    </div>
+  </Card>
+  <Card classes={["schedule-card"]}>
+  <div class="container-row">
+    <h2 class="container-column">Sunday 8th</h2>
+    <p class="container-column">5H Workshops<br />2H Said & Oksana Master Class<br />Party until 3AM</p>
+    <div class="container-column button-container"><a href="/schedule#sunday" class="button action">Schedule</a></div>
+  </div>
+  </Card>
+</div>
+
+<style is:global>
+  .schedule-card {
+    padding: var(--m-padding);
+    grid-column: span 4;
+  }
+  @media only screen and (max-width: 920px) {
+    .schedule-card {
+      grid-column: span 12;
+    }
+  }
+</style>
+
+<style>
+  .container-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-m-gap);
+  }
+  .container-column {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-m-gap);
+    text-align: center;
+    justify-content: center;
+  }
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--grid-lg-gap);
+  }
+  .button {
+    min-width: 130px;
+  }
+</style>
