@@ -55,6 +55,16 @@ function calculatePrice(pass: Pass) {
       </Card>
     ))
   }
+  <Card classes={["ticket-card", "ticket", "jackjill"]}>
+    <div class="container-column">
+      <div>
+        <h2>Jack & Jill Competition (Free)</h2>
+      </div>
+      <div class="button-container">
+        <a class="button action" target="_blank" href="https://l.facebook.com/l.php?u=https%3A%2F%2Fforms.gle%2F1AHbbgkbUaRiFT53A%3Ffbclid%3DIwZXh0bgNhZW0CMTAAAR2MWJJQsd19gxoSiPq88taFY1Z3mgoLRSLYu8bMsNvMcGm3kP9Xrc7487M_aem_nW_V9PKK05oTzYfO5BOrOQ&h=AT1FJnKE7ITQGXhbDrO0I6YWAPk892cM7NH54qwv2S5Gys-2_MVXk96UT_ac5QsgsgZtOAXgx9ALpba96KF88qUTniKc-NvuPVsBMflaIfBDGHFFLkOlG3_bkMUNsNLQQQ-c-YXYoQ&__tn__=-UK-R&c[0]=AT2ODzBawTmGtbUKieoadCLxmV1VjdBgVS-4OlamSOEYou0tfYmCcLg-RTZgbnbcH3_jqm-4p1PGAOqbdT0jbMHtUyesp_MOo_vg2jvMW9lOuo3gOOOo1d9Oc60reU9ETqBhgvmyOCGG2mUjHMKe49ktPsSuNmOxFOWT-6_R-6qFVPQSzdxx3zgB4O8iBOVu32KXXHLNUsdzg3XvUtjrGZtz44fx2HcybRMA">Sign Up</a>
+      </div>
+    </div>
+  </Card>
 </div>
 
 <style is:global>
@@ -77,6 +87,10 @@ function calculatePrice(pass: Pass) {
   .early-bird .option-available i {
     font-size: calc(var(--h4-font-size) * 0.8) !important;
     margin-right: 0.5rem !important;
+  }
+  .jackjill  {
+    background-color: #ccc0ed !important;
+    color: var(--primary-darker-color) !important;
   }
   @media only screen and (max-width: 920px) {
     .card.early-bird .container-row {
