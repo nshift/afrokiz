@@ -264,7 +264,11 @@ const makePromotionPhase4 = (promotion: { start: Date; end: Date }): Promotion =
         },
       },
       party: defaultPasses.party,
+      // oneDay: defaultPasses.oneDay,
+      friSat: defaultPasses.friSat,
+      satSun: defaultPasses.satSun,
       dj: defaultPasses.dj,
+      // cruise: defaultPasses.cruise,
       vipGold: defaultPasses.vipGold,
     },
   }
