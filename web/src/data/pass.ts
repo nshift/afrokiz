@@ -65,7 +65,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     isPromoted: false,
     options: {
       'massage-option': options['massage-option'],
-      'muay-thai-option': options['muay-thai-option'],
+      'bootcamp-option': options['bootcamp-option'],
       'cruise-option': options['cruise-option'],
       'all-mc-option': options['all-mc-option'],
       'heneco-mc-option': options['heneco-mc-option'],
@@ -128,7 +128,10 @@ export const defaultPasses: { [key: string]: Pass } = {
         })(),
       },
       'massage-option': options['massage-option'],
-      'muay-thai-option': options['muay-thai-option'],
+      'bootcamp-option': {
+        ...options['bootcamp-option'],
+        price: { USD: 1400, EUR: 1200, THB: 50000 },
+      },
       'cruise-option': options['cruise-option'],
       'all-mc-option': options['all-mc-option'],
       'heneco-mc-option': options['heneco-mc-option'],
@@ -212,7 +215,10 @@ export const defaultPasses: { [key: string]: Pass } = {
           return activePromotion?.price ?? doorPrice
         })(),
       },
-      'muay-thai-option': options['muay-thai-option'],
+      'bootcamp-option': {
+        ...options['bootcamp-option'],
+        price: { USD: 1400, EUR: 1200, THB: 50000 },
+      },
       'all-mc-option': options['all-mc-option'],
       'heneco-mc-option': options['heneco-mc-option'],
       'said-mc-option': options['said-mc-option'],
@@ -313,7 +319,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           return activePromotion?.price ?? doorPrice
         })(),
       },
-      'muay-thai-option': options['muay-thai-option'],
+      'bootcamp-option': options['bootcamp-option'],
     },
   },
   oneDay: {

@@ -28,17 +28,30 @@ export const options: {
       THB: 39000,
     },
   },
-  'muay-thai-option': {
-    id: 'muay-thai-option',
+  // 'muay-thai-option': {
+  //   id: 'muay-thai-option',
+  //   icon: 'fa-dumbbell',
+  //   title: 'Muay Thai',
+  //   includesInShortDescription: ['1H class'],
+  //   includes: ['1H introduction of Muay Thai'],
+  //   selected: false,
+  //   price: {
+  //     USD: 1700,
+  //     EUR: 1500,
+  //     THB: 59000,
+  //   },
+  // },
+  'bootcamp-option': {
+    id: 'bootcamp-option',
     icon: 'fa-dumbbell',
-    title: 'Muay Thai',
-    includesInShortDescription: ['1H class'],
-    includes: ['1H introduction of Muay Thai'],
+    title: 'Bootcamp',
+    includesInShortDescription: ['2H Ginga Styling bootcamp'],
+    includes: ['2H Ginga Styling bootcamp (video recorded)'],
     selected: false,
     price: {
-      USD: 1700,
-      EUR: 1500,
-      THB: 59000,
+      USD: 2400,
+      EUR: 2200,
+      THB: 90000,
     },
   },
   'cruise-option': {

@@ -242,6 +242,7 @@ const makePromotionPhase4 = (promotion: { start: Date; end: Date }): Promotion =
             price: { USD: 19000, EUR: 17500, THB: 700000 },
           },
           'all-mc-option': { ...options['all-mc-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+          'bootcamp-option': { ...options['bootcamp-option'], price: { USD: 1400, EUR: 1200, THB: 50000 } },
         },
       },
       vipSilver: defaultPasses.vipSilver,
