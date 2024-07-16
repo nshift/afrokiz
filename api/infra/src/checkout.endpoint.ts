@@ -57,7 +57,7 @@ const makeProceedToCheckoutEndpoint = (props: {
     ...props,
   })
   props.eventTable.grant(endpoint.lambda, 'dynamodb:PutItem')
-  props.orderTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
+  props.orderTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem', 'dynamodb:Query')
   return endpoint
 }
 

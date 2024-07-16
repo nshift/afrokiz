@@ -7,7 +7,7 @@ import { Repository } from './adapters/repository/repository'
 import { calculateOrderTotal, isPromotionAppliable, isPromotionExpired } from './checkout.rules'
 import { Currency } from './types/currency'
 import { Customer } from './types/customer'
-import { Order, makeOrderId } from './types/order'
+import { NewOrder, Order, makeOrderId } from './types/order'
 import { PaymentStatus } from './types/payment'
 import { PaymentIntent } from './types/payment-intent'
 import { Promotion } from './types/promotion'
@@ -21,17 +21,12 @@ export class Checkout {
     private readonly dateGenerator: DateGenerator
   ) {}
 
-  async proceed({
-    newOrder,
-    customer,
-    promoCode,
-  }: {
-    newOrder: Omit<Order, 'id' | 'total'>
-    customer: Customer
-    promoCode?: string
-  }) {
+  async proceed({ newOrder, customer, promoCode }: { newOrder: NewOrder; customer: Customer; promoCode?: string }) {
     const total = calculateOrderTotal(newOrder.items)
-    const order = this.createOrder(newOrder, total)
+    const order =
+      (newOrder.id ? (await this.getOrder(newOrder.id))?.order : undefined) ?? this.createOrder(newOrder, total)
+    order.items = newOrder.items
+    order.total = total
     // order = await this.applyPromotion(order, promoCode)
     const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total })
     const checkout = {

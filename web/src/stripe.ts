@@ -5,7 +5,7 @@ import {
   type StripeError,
 } from '@stripe/stripe-js'
 import { Environment } from './environment'
-import { PaymentAPI, type Order } from './payment-api/payment.api'
+import { PaymentAPI, type NewOrder } from './payment-api/payment.api'
 
 export { type StripeElements, type StripeError } from '@stripe/stripe-js'
 
@@ -35,10 +35,7 @@ export class Stripe {
     paymentElement.mount(domElement)
   }
 
-  async confirmPayment(
-    elements: StripeElements,
-    newOrder: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'>
-  ): Promise<never | { error: StripeError }> {
+  async confirmPayment(elements: StripeElements, newOrder: NewOrder): Promise<never | { error: StripeError }> {
     const { error: submitError } = await elements.submit()
     if (submitError) {
       return { error: submitError }

@@ -14,4 +14,16 @@ export type Order = {
   total: { amount: number; currency: Currency }
 }
 
+export type NewOrder = {
+  id?: string
+  date: Date
+  items: {
+    id: string
+    title: string
+    includes: string[]
+    amount: number
+    total: { amount: number; currency: Currency }
+  }[]
+}
+
 export const makeOrderId = () => crypto.randomBytes(3).toString('hex')

@@ -3,7 +3,7 @@ import { onMounted, ref, type Ref, inject, watch } from 'vue'
 import Card from '../components/Card.vue'
 import { type Pass, calculateTotal } from '../data/pass'
 import { loadStripe, Stripe, type StripeElements } from '../stripe'
-import { PaymentAPI, type Order } from '../payment-api/payment.api'
+import { PaymentAPI, type NewOrder, type Order } from '../payment-api/payment.api'
 import { type DiscountPromotion, type GiveAwayPromotion } from '../payment-api/promotion'
 
 const { pass } = defineProps<{ pass: Pass }>()
@@ -72,7 +72,7 @@ const submit = async () => {
   emailValidationError.value = !email.value
   dancerTypeValidationError.value = dancerType.value.length == 0
   const options = optionIds.value.map((option) => pass.options[option])
-  const order: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'> = {
+  const order: NewOrder = {
     email: email.value,
     fullname: fullName.value,
     dancerType: optionIds.value.includes('couple-option') ? 'couple' : dancerType.value[0],

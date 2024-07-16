@@ -399,3 +399,17 @@ export function calculateTotal(
     return prices
   }, {} as any)
 }
+
+export function sumPrices(prices: { USD: number; EUR: number; THB: number }[]) {
+  return prices.reduce(
+    (total, currencies) => {
+      total = {
+        USD: total.USD + currencies.USD,
+        EUR: total.EUR + currencies.EUR,
+        THB: total.THB + currencies.THB,
+      }
+      return total
+    },
+    { USD: 0, EUR: 0, THB: 0 }
+  )
+}

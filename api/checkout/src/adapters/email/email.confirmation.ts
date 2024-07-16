@@ -35,7 +35,9 @@ export const confirmationEmail = async ({
     <br />
     <br />Ticket Includes:
     ${order.items.map((item) =>
-      [`<br /> - ${item.title}`].concat(item.includes.map((include) => `<br /> - ${include}`)).join('')
+      [`<br /> - ${item.title}`]
+        .concat(item.includes.length > 0 ? item.includes.map((include) => `<br /> - ${include}`) : [])
+        .join('')
     )}
     <br />
     ${

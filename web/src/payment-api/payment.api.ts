@@ -1,13 +1,12 @@
 import { Environment } from '../environment'
 import type { DiscountPromotion, GiveAwayPromotion, Promotion } from './promotion'
 export class PaymentAPI {
-  async createOrder(
-    newOrder: Omit<Order, 'id' | 'paymentIntentId' | 'paymentStatus'>
-  ): Promise<{ order: Order; clientSecret: string }> {
+  async createOrder(newOrder: NewOrder): Promise<{ order: Order; clientSecret: string }> {
     const json = await this.request({
       method: 'POST',
       path: '/checkout',
       body: JSON.stringify({
+        id: newOrder.id,
         email: newOrder.email,
         fullname: newOrder.fullname,
         dancer_type: newOrder.dancerType,
@@ -112,6 +111,23 @@ export type Order = {
   promoCode?: string
   paymentIntentId: string
   paymentStatus: 'pending' | 'success' | 'failed'
+  items: {
+    id: string
+    title: string
+    includes: string[]
+    amount: number
+    total: { amount: number; currency: 'USD' | 'EUR' | 'THB' }
+  }[]
+}
+
+export type NewOrder = {
+  id?: string
+  email: string
+  fullname: string
+  dancerType: 'leader' | 'follower' | 'couple'
+  passId: string
+  date: Date
+  promoCode?: string
   items: {
     id: string
     title: string

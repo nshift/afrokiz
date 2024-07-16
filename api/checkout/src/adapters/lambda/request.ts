@@ -2,17 +2,18 @@ import { APIGatewayEvent } from 'aws-lambda'
 import Stripe from 'stripe'
 import { Environment } from '../../environment'
 import { Customer } from '../../types/customer'
-import { Order } from '../../types/order'
+import { NewOrder } from '../../types/order'
 
 export const buildProceedToCheckoutRequest = (
   request: any
 ): {
-  newOrder: Omit<Order, 'id' | 'total'>
+  newOrder: NewOrder
   customer: Customer
   promoCode?: string
 } => ({
   newOrder: {
     // passId: request.pass_id,
+    id: request.id ?? undefined,
     date: new Date(request.date),
     items: request.items.map((item: any) => ({
       id: item.id,
