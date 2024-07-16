@@ -17,7 +17,7 @@ const order = await paymentApi.getOrderById(orderId)
 const pass = Object.values(passes).filter((pass) => pass.id == order.passId)[0]
 ---
 
-<Layout title="Purchase confirmation | Afrokiz Bkk Festival Edition 2">
+<Layout title={`Order #${order.id} | Afrokiz Bkk Festival Edition 2`}>
   <Header />
   <main>
     <OrderVue client:load pass={pass} order={order} />

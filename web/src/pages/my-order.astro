@@ -1,0 +1,88 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../sections/Header.astro";
+import Footer from "../sections/Footer.astro";
+import Card from "../components/Card.astro";
+---
+
+<Layout title="Find My Order | Afrokiz Bkk Festival Edition 2">
+  <Header />
+  <main>
+    <div class="grid">
+      <Card classes={["find-order"]}>
+        <div class="content">
+          <div class="description">
+            <h1>Find your order</h1>
+            <p>To view the status of your order and add any add-ons, please search using your order number. You can find this number in your purchase confirmation email. If you're unable to locate your order, please contact us at afrokiz.bkk@gmail.com.</p>
+          </div>
+          <div>
+            <form class="information-element" action="/order" method="get">
+              <label>Order #</label>
+              <div class="field-container">
+                <input class="field" placeholder="abc123" name="order_id" />
+              </div>
+              <button class="button action">Find</button>
+            </form>
+          </div>
+        </div>
+      </Card>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .find-order {
+    grid-column: span 12;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: var(--lg-padding);
+    min-height: 540px;
+  }
+  .find-order .text {
+    width: 100%;
+  }
+  .find-order .grid {
+    padding: 0;
+  }
+</style>
+
+<style>
+  .content {
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-lg-gap);
+    align-items: center;
+    justify-content: center;
+  }
+  .content > * {
+    padding: var(--lg-padding);
+  }
+  .description {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-m-gap);
+  }
+  .field-container {
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-m-gap);
+  }
+  .information-element {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .information-element button {
+    margin-top: 1rem;
+  }
+  @media only screen and (max-width: 920px) {
+    .content {
+      flex-direction: column;
+    }
+    .description {
+      width: 80%;
+    }
+  }
+</style>
