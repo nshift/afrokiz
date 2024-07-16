@@ -202,31 +202,6 @@ const shouldDisabled = (id: string) => {
 .grid {
   align-items: start;
 }
-.payment .container {
-  padding: var(--lg-padding);
-  display: flex;
-  flex-direction: column;
-  gap: var(--grid-m-gap);
-}
-
-.payment {
-  grid-column: span 5;
-  color: rgb(26, 26, 26) !important;
-  background-color: white !important;
-  min-height: 400px !important;
-  align-items: start !important;
-  justify-content: start !important;
-}
-
-@media only screen and (max-width: 920px) {
-  .payment {
-    grid-column: span 12;
-  }
-}
-
-.payment .text {
-  width: 100%;
-}
 
 ul {
   list-style: none;
@@ -375,11 +350,43 @@ p.card-error {
   gap: var(--grid-lg-gap);
   margin-bottom: var(--lg-padding);
 }
+@media only screen and (max-width: 920px) {
+  .section {
+    flex-direction: column;
+  }
+  .section > * {
+    width: 100%;
+  }
+}
 </style>
 
 <style is:global>
 .card.payment {
   align-items: start !important;
   justify-content: start !important;
+}
+.payment .container {
+  padding: var(--lg-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-m-gap);
+}
+
+.payment {
+  grid-column: span 5;
+  color: rgb(26, 26, 26) !important;
+  background-color: white !important;
+  min-height: 400px !important;
+  align-items: start !important;
+  justify-content: start !important;
+}
+.payment .text {
+  width: 100%;
+}
+
+@media only screen and (max-width: 920px) {
+  .payment {
+    grid-column: span 12;
+  }
 }
 </style>
