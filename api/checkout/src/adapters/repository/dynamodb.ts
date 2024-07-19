@@ -74,11 +74,13 @@ export class DynamoDbRepository implements Repository {
       AIDANCE: makePromoterDiscount('AIDANCE'),
       ARIEL: makePromoterDiscount('ARIEL'),
       ASANKA: makePromoterDiscount('ASANKA'),
+      CNE: makeCNEDiscount(passId),
+      DASH: makeDashDiscount,
       DJDRZ: makePromoterDiscount('DJDRZ'),
       HITOMI: makePromoterDiscount('HITOMI'),
       JAY: makePromoterDiscount('JAY'),
       KEVIN: makePromoterDiscount('KEVIN'),
-      KIW: makePromoterDiscount('HITOMI'),
+      KIW: makePromoterDiscount('KIW'),
       LUCERNE: makePromoterDiscount('LUCERNE'),
       MANLUO: makePromoterDiscount('MANLUO'),
       NARUTONYA: makePromoterDiscount('NARUTONYA'),
@@ -88,11 +90,10 @@ export class DynamoDbRepository implements Repository {
       SATOMI: makePromoterDiscount('SATOMI'),
       SENSUAL: makeSensualDiscount,
       SIRI: makePromoterDiscount('SIRI'),
+      STEFANOS: makePromoterDiscount('STEFANOS'),
       TARRAKIZSG: makeTarrakizSGDiscount,
       THEO: makePromoterDiscount('THEO'),
       ZIKIMMY: makePromoterDiscount('ZIKIMMY'),
-      DASH: makeDashDiscount,
-      CNE: makeCNEDiscount(passId),
     }
   }
 
