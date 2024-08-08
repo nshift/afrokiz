@@ -90,6 +90,7 @@ export class DynamoDbRepository implements Repository {
       SATOMI: makePromoterDiscount('SATOMI'),
       SENSUAL: makeSensualDiscount,
       SIRI: makePromoterDiscount('SIRI'),
+      SOULKIZDANANG: makePromoterDiscount('SOULKIZDANANG'),
       STEFANOS: makePromoterDiscount('STEFANOS'),
       TARRAKIZSG: makeTarrakizSGDiscount,
       THEO: makePromoterDiscount('THEO'),
