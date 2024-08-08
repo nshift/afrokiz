@@ -42,7 +42,7 @@ describe('Create an order when checking out', () => {
   it('should save an order', async () => {
     const { order } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
     expect({
-      order: fakeOrder,
+      order: { ...fakeOrder, id: expect.any(String) },
       payment: { status: 'pending', intent: fakePaymentIntent },
       customer: romainCustomer,
     }).toEqual(await repository.getOrderById(order.id))
@@ -62,30 +62,34 @@ describe('Get promotion when checking out', () => {
 
 describe('Handling successful payment when checking out', () => {
   it('should update the payment status', async () => {
-    await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
-    await checkout.handlePayment({ orderId: fakeOrder.id, payment: { status: 'success' } })
-    const updatedOrder = await repository.getOrderById(fakeOrder.id)
+    const { order: newOrder } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
+    await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'success' } })
+    const updatedOrder = await repository.getOrderById(newOrder.id)
     expect(updatedOrder).toEqual({
-      order: fakeOrder,
+      order: { ...fakeOrder, id: newOrder.id },
       payment: { status: 'success', intent: fakePaymentIntent },
       customer: romainCustomer,
     })
   })
   it('should send a confirmation email', async () => {
-    await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
-    await checkout.handlePayment({ orderId: fakeOrder.id, payment: { status: 'success' } })
-    const email = await confirmationEmail({ order: fakeOrder, customer: romainCustomer, qrCode: fakeQrCode })
+    const { order: newOrder } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
+    await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'success' } })
+    const email = await confirmationEmail({
+      order: { ...fakeOrder, id: newOrder.id },
+      customer: romainCustomer,
+      qrCode: fakeQrCode,
+    })
     expect(emailGateway.sendEmail).toHaveBeenCalledWith(email)
   })
 })
 
 describe('Handling failing payment when checking out', () => {
   it('should update the payment status', async () => {
-    await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
-    await checkout.handlePayment({ orderId: fakeOrder.id, payment: { status: 'failed' } })
-    const updatedOrder = await repository.getOrderById(fakeOrder.id)
+    const { order: newOrder } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer })
+    await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'failed' } })
+    const updatedOrder = await repository.getOrderById(newOrder.id)
     expect(updatedOrder).toEqual({
-      order: fakeOrder,
+      order: { ...fakeOrder, id: newOrder.id },
       payment: { status: 'failed', intent: fakePaymentIntent },
       customer: romainCustomer,
     })

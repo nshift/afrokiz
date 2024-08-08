@@ -73,7 +73,7 @@ export class Checkout {
   private createOrder = (
     newOrder: Omit<Order, 'id' | 'total'>,
     total: { amount: number; currency: Currency }
-  ): Order => ({ id: makeOrderId(), ...newOrder, total })
+  ): Order => ({ ...newOrder, total, id: makeOrderId() })
 
   // private async applyPromotion(order: Order, promoCode?: string): Promise<Order> {
   //   if (promoCode) {
