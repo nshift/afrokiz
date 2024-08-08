@@ -141,7 +141,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   vipSilver: {
     id: 'vip-silver',
     name: 'VIP Silver Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: (() => {
       const promotions = [
         makePromotion({
