@@ -52,14 +52,19 @@ export const defaultPasses: { [key: string]: Pass } = {
         makePromotion({
           price: { USD: 11500, EUR: 10500, THB: 420000 },
           start: new Date('2024-07-01'),
+          end: new Date('2024-08-07'),
+        }),
+        makePromotion({
+          price: { USD: 13000, EUR: 12000, THB: 465000 },
+          start: new Date('2024-08-08'),
           end: new Date('2024-09-07'),
         }),
       ]
       const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
-      const doorPrice = { USD: 12500, EUR: 11500, THB: 429000 }
+      const doorPrice = { USD: 14200, EUR: 13000, THB: 500000 }
       return activePromotion?.price ?? doorPrice
     })(),
-    doorPrice: { USD: 12500, EUR: 11500, THB: 429000 },
+    doorPrice: { USD: 14200, EUR: 13000, THB: 500000 },
     includes: ['All parties in main venue', '3 welcome drinks per person'],
     giveAways: [],
     isPromoted: false,
@@ -96,14 +101,19 @@ export const defaultPasses: { [key: string]: Pass } = {
         makePromotion({
           price: { USD: 17500, EUR: 16000, THB: 640000 },
           start: new Date('2024-07-01'),
+          end: new Date('2024-08-08'),
+        }),
+        makePromotion({
+          price: { USD: 20000, EUR: 18000, THB: 695000 },
+          start: new Date('2024-08-09'),
           end: new Date('2024-09-07'),
         }),
       ]
       const activePromotion = promotions.filter((promotion) => promotion.isActive)[0]
-      const doorPrice = { USD: 20000, EUR: 18500, THB: 720000 }
+      const doorPrice = { USD: 21000, EUR: 19000, THB: 730000 }
       return activePromotion?.price ?? doorPrice
     })(),
-    doorPrice: { USD: 20000, EUR: 18500, THB: 720000 },
+    doorPrice: { USD: 21000, EUR: 19000, THB: 730000 },
     includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
     giveAways: [],
     isPromoted: true,
@@ -347,7 +357,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'fri-sat',
     name: 'Friday & Saturday Pass',
     isSoldOut: false,
-    price: { USD: 15000, EUR: 13900, THB: 540000 },
+    price: { USD: 17000, EUR: 15500, THB: 595000 },
     doorPrice: { USD: 18000, EUR: 16500, THB: 650000 },
     includes: [
       'All Workshops',
@@ -365,13 +375,66 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'sat-sun',
     name: 'Saturday & Sunday Pass',
     isSoldOut: false,
-    price: { USD: 15000, EUR: 13900, THB: 540000 },
+    price: { USD: 17000, EUR: 15500, THB: 595000 },
     doorPrice: { USD: 18000, EUR: 16500, THB: 650000 },
     includes: [
       'All Workshops',
       "Saturday's Day Time Social",
       'Evening Party on Saturday 7th September - Sunday 8th September',
       '2 welcome drinks',
+      'NOTE: Excluded Bootcamp, Master Class & Dinner Cruise',
+    ],
+    giveAways: [],
+    isPromoted: false,
+    options,
+  },
+  fri: {
+    id: 'fri',
+    name: 'Friday Pass',
+    isSoldOut: false,
+    price: { USD: 8400, EUR: 7600, THB: 295000 },
+    doorPrice: { USD: 10000, EUR: 9200, THB: 350000 },
+    includes: [
+      'All Friday Workshops',
+      'Jack & Jill Competition',
+      'Evening Party on Friday 6th',
+      '1 welcome drink on Friday 6th',
+      'NOTE: Excluded Bootcamp, Master Class & Dinner Cruise',
+    ],
+    giveAways: [],
+    isPromoted: false,
+    options,
+  },
+  sat: {
+    id: 'sat',
+    name: 'Saturday Pass',
+    isSoldOut: false,
+    price: { USD: 9500, EUR: 8500, THB: 330000 },
+    doorPrice: { USD: 10900, EUR: 9900, THB: 380000 },
+    includes: [
+      'All Friday Workshops',
+      'Jack & Jill Competition',
+      "Saturday's Day Time Social",
+      'Evening Party on Saturday 7th',
+      '1 welcome drink on Saturday 7th',
+      'NOTE: Excluded Bootcamp, Master Class & Dinner Cruise',
+    ],
+    giveAways: [],
+    isPromoted: false,
+    options,
+  },
+  sun: {
+    id: 'sun',
+    name: 'Sunday Pass',
+    isSoldOut: false,
+    price: { USD: 9500, EUR: 8500, THB: 330000 },
+    doorPrice: { USD: 10900, EUR: 9900, THB: 380000 },
+    includes: [
+      'All Friday Workshops',
+      'Jack & Jill Competition',
+      "Sunday's Day Time Social",
+      'Evening Party on Sunday 7th',
+      '1 welcome drink on Sunday 7th',
       'NOTE: Excluded Bootcamp, Master Class & Dinner Cruise',
     ],
     giveAways: [],

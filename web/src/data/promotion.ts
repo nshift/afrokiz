@@ -275,6 +275,68 @@ const makePromotionPhase4 = (promotion: { start: Date; end: Date }): Promotion =
   }
 }
 
+const makePromotionPhase5 = (promotion: { start: Date; end: Date }): Promotion => {
+  const festivalStartInDays = moment(new Date('2024-09-06')).diff(moment(new Date()), 'days')
+  return {
+    text: `AfroKiz festival is starting in ${festivalStartInDays} days.`,
+    isActive: new Date().getTime() > promotion.start.getTime() && new Date().getTime() < promotion.end.getTime(),
+    passes: {
+      fullPass: defaultPasses.fullPass,
+      fullPassBundle: {
+        ...defaultPasses.fullPass,
+        id: 'fullpass-bundle',
+        name: 'Full Pass + Masterclass',
+        isPromoted: false,
+        price: { USD: 25500, EUR: 23200, THB: 895000 },
+        doorPrice: { USD: 27000, EUR: 25000, THB: 990000 },
+        includes: [...defaultPasses.fullPass.includes],
+        options: {
+          ...defaultPasses.fullPass.options,
+          'couple-option': {
+            id: 'couple-option',
+            icon: 'fa-user-group',
+            title: 'Couple',
+            includes: ['1 couple ticket'],
+            selected: false,
+            price: { USD: 19000, EUR: 17500, THB: 700000 },
+          },
+          'all-mc-option': { ...options['all-mc-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+          'bootcamp-option': { ...options['bootcamp-option'], price: { USD: 1400, EUR: 1200, THB: 50000 } },
+        },
+      },
+      partyBundle: {
+        ...defaultPasses.party,
+        id: 'party-bundle',
+        name: 'Party Combo Pass',
+        isPromoted: false,
+        price: { USD: 20000, EUR: 18000, THB: 695000 },
+        doorPrice: { USD: 21000, EUR: 19000, THB: 730000 },
+        includes: [
+          'All parties in main venue',
+          '8 welcome drinks per person',
+          'Day time social party',
+          '2H Foot Massage at Lek Massage',
+        ],
+        options: {
+          ...defaultPasses.party.options,
+          'cruise-option': { ...options['cruise-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+        },
+      },
+      party: defaultPasses.party,
+      vipSilver: defaultPasses.vipSilver,
+      // oneDay: defaultPasses.oneDay,
+      friSat: defaultPasses.friSat,
+      satSun: defaultPasses.satSun,
+      fri: defaultPasses.fri,
+      sat: defaultPasses.sat,
+      sun: defaultPasses.sun,
+      dj: defaultPasses.dj,
+      // cruise: defaultPasses.cruise,
+      vipGold: defaultPasses.vipGold,
+    },
+  }
+}
+
 const promotions: Promotion[] = [
   makePromotion({
     name: 'Early bird',
@@ -289,11 +351,15 @@ const promotions: Promotion[] = [
     end: new Date('2024-05-01'),
   }),
   makeSpecialPricePromotion({
-    start: new Date('2024-07-01'),
+    start: new Date('2024-05-01'),
     end: new Date('2024-06-30'),
   }),
   makePromotionPhase4({
     start: new Date('2024-07-01'),
+    end: new Date('2024-08-08'),
+  }),
+  makePromotionPhase5({
+    start: new Date('2024-08-09'),
     end: new Date('2024-09-07'),
   }),
 ]
