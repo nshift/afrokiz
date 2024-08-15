@@ -1,0 +1,32 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../sections/Header.astro";
+import Footer from "../../sections/Footer.astro";
+import Card from "../../components/Card.astro";
+---
+
+<Layout title="Unauthorized | Afrokiz Bkk Festival Edition 2">
+  <Header />
+  <main>
+    <div class="grid">
+      <Card classes={["staff-check"]}>
+        <p>You are not authorized to perform this action. Only staff can validate pass.</p>
+      </Card>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .staff-check {
+    grid-column: span 12;
+    padding: var(--lg-padding);
+    min-height: 50vh;
+  }
+  .staff-check .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-lg-gap);
+    text-align: center;
+  }
+</style>

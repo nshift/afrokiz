@@ -1,33 +1,98 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Header from "../../sections/Header.astro";
-import Footer from "../../sections/Footer.astro";
 import Card from "../../components/Card.astro";
+import { PaymentAPI } from "../../payment-api/payment.api";
+
+const queryParams = Astro.url.searchParams
+const orderId = queryParams.get('order_id')
+const authToken = Astro.cookies.get('STAFF_AUTH_TOKEN')?.value ?? ''
+const authorized = !(!orderId || !authToken || authToken != 'ab65bb3c-80e5-463b-8097-57bd0593da43')
+if (!orderId || !authorized) {
+  return Astro.redirect('/staff/unauthorized')
+}
+const paymentApi = new PaymentAPI()
+const order = await paymentApi.getOrderById(orderId)
+const includedItems = order.items.flatMap((item) => item.includes)
+
+function getNumber(pattern: string) {
+  return includedItems.filter((option) => option.includes(pattern)).map((option) => Number(option.match(new RegExp('(\\d+)' + pattern))?.[1] ?? '0')).reduce((a, b) => a+b, 0)
+}
+
+const items = [
+  { icon: '', title: 'Heneco MC', value: (includedItems.includes('2H Masterclass by Heneco') || includedItems.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')) ? 1 : 0 },
+  { icon: '', title: 'Said MC', value: (includedItems.includes('2H Masterclass by Said & Oksana') || includedItems.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')) ? 1 : 0 },
+  { icon: 'fa-ship', title: 'Cruise', value: (includedItems.includes('Exclusive Dinner Cruise Party') || includedItems.includes('Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)')) ? 1 : 0 },
+  { icon: 'fa-spa', title: 'Massage', value: getNumber('H Foot Massage') },
+  { icon: 'fa-martini-glass', title: 'Welcome drinks', value: getNumber(' welcome drinks') },
+  { icon: '', title: 'Ginga', value: includedItems.includes('2H Ginga Styling bootcamp (video recorded)') ? 1 : 0 },
+]
 ---
 
-<Layout title="Help Center | Afrokiz Bkk Festival Edition 2">
-  <Header />
+<Layout title=`Order ${order.id} | Afrokiz Bkk Festival Edition 2``>
   <main>
     <div class="grid">
-      <Card classes={["staff-check"]}>
-        <p>This page is reserved for the registration process.</p>
-        <p>Please show the QR Code you received by email at the registration counter.</p>
-      </Card>
+      <div class="list">
+        <Card classes={["ticket-card"]}>
+          <div class="lines">
+            <h1>{order.fullname}</h1>
+            <p>{order.id}</p>
+          </div>
+        </Card>
+        {
+          items.map((item) => 
+            <Card classes={["ticket-card"]}>
+              <div class="list">
+                <p class="value">{item.value}</p>
+                <div class="lines">
+                  <i class:list={['icon', 'fa-solid', item.icon]}></i>
+                  <p>{item.title}</p>
+                </div>
+              </div>
+            </Card>
+          )
+        }
+      </div>
     </div>
   </main>
-  <Footer />
 </Layout>
 
 <style is:global>
-  .staff-check {
-    grid-column: span 12;
-    padding: var(--lg-padding);
-    min-height: 50vh;
+  .ticket-card {
+    width: calc((100% / 2) - 0.8rem) !important;
+    height: 175px !important;
   }
-  .staff-check .text {
+</style>
+
+<style>
+  main {
+    margin-top: 1rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: var(--grid-lg-gap);
+    padding: 0 var(--grid-side-padding);
+  }
+  .list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    grid-column: span 12;
+  }
+  .lines {
     display: flex;
     flex-direction: column;
-    gap: var(--grid-lg-gap);
-    text-align: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .icon {
+    font-size: 2rem;
+  }
+  .value {
+    font-size: 4rem;
+    font-weight: bold;
   }
 </style>
