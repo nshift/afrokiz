@@ -14,6 +14,7 @@ export const awdeshSales: Sales = {
     { name: '1H Foot Massage at Lek Massage per person' },
   ],
   total: { amount: 7000, currency: 'USD' },
+  paymentStatus: 'success',
 }
 export const achiSales: Sales = {
   id: 'achi-sales',
@@ -32,4 +33,5 @@ export const achiSales: Sales = {
     { name: '1H Foot Massage at Lek Massage per person' },
   ],
   total: { amount: 250000, currency: 'THB' },
+  paymentStatus: 'success',
 }

@@ -16,6 +16,7 @@ import { QueueAdapter } from '../queue.adapter'
 import { DynamoDbRepository } from '../repository/dynamodb'
 import {
   buildImportOrderRequest,
+  buildMarkPaymentAsSucceedRequest,
   buildProceedToCheckoutRequest,
   buildRequestImportOrdersRequest,
   buildResendConfirmationEmailRequest,
@@ -76,6 +77,21 @@ export const updateOrderPaymentStatus = async (
       default:
         break
     }
+    return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const markPaymentAsSucceed = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const request = buildMarkPaymentAsSucceedRequest(event)
+    console.log('[markPaymentAsSucceed] Request.', { request })
+    await checkout.handlePayment({ orderId: request.orderId, payment: { status: 'success' } })
     return successfullyCreatedResponse()
   } catch (error) {
     console.error(error)

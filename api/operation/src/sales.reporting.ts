@@ -6,9 +6,10 @@ export class SalesReporting {
 
   async makeAllSalesReport(): Promise<SalesReport> {
     const allSales = await this.repository.listAllSales()
+    const succeedSales = allSales.filter((sale) => sale.paymentStatus == 'success')
     return {
-      sales: allSales,
-      totalInTHB: calculateTotalSales(allSales),
+      sales: succeedSales,
+      totalInTHB: calculateTotalSales(succeedSales),
     }
   }
 }

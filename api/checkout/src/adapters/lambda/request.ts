@@ -55,3 +55,8 @@ export const buildImportOrderRequest = (record: SQSRecord) => {
   const body = JSON.parse(record.body ?? '{}')
   return { orderId: body.id }
 }
+
+export const buildMarkPaymentAsSucceedRequest = (event: APIGatewayEvent) => {
+  const body = JSON.parse(event.body ?? '{}')
+  return { orderId: body.orderId }
+}
