@@ -1,10 +1,12 @@
 import { SES } from '@aws-sdk/client-ses'
+import { chunk } from '../../chunk'
 import { Email } from './email'
 import { SendingBulkEmails, SendingEmail } from './email.gateway'
 import { EmailTemplate } from './email.template'
 import MailComposer = require('nodemailer/lib/mail-composer')
 
 export class SESEmailService implements SendingBulkEmails, SendingEmail {
+  private static BulkTemplateEmailLimit = 49
   private client: SES = new SES({})
   constructor(private source: { email: string; name: string }) {}
 
@@ -16,16 +18,21 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
         HtmlPart: template.html,
       },
     })
-    await this.client.sendBulkTemplatedEmail({
-      Destinations: template.destinations.map((destination) => ({
-        Destination: { ToAddresses: destination.toAddresses },
-        ReplacementTemplateData: JSON.stringify(destination.data),
-      })),
-      Source: this.source.email,
-      Template: template.name,
-      DefaultTemplateData: '{}',
-      ConfigurationSetName: 'afrokiz-configuration-set',
-    })
+    await Promise.all(
+      chunk(template.destinations, SESEmailService.BulkTemplateEmailLimit).map(
+        async (destinations) =>
+          await this.client.sendBulkTemplatedEmail({
+            Destinations: destinations.map((destination) => ({
+              Destination: { ToAddresses: destination.toAddresses },
+              ReplacementTemplateData: JSON.stringify(destination.data),
+            })),
+            Source: this.source.email,
+            Template: template.name,
+            DefaultTemplateData: '{}',
+            ConfigurationSetName: 'afrokiz-configuration-set',
+          })
+      )
+    )
     await this.client.deleteTemplate({ TemplateName: template.name })
   }
 
