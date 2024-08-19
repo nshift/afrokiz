@@ -12,6 +12,7 @@ import { Customer } from '../../types/customer'
 import { ImportOrder, Order } from '../../types/order'
 import { PaymentStatus } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
+import { Sales } from '../../types/sales'
 import { Event } from './events/event'
 import { proceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { updatePaymentStatusEvent } from './events/update-payment-status.event'
@@ -269,7 +270,22 @@ export const saveSalesRequest = (sales: SaleSchema[]) =>
     },
   })
 
+export const updateSalesCampaignRequest = (orderId: string, campaignName: string) =>
+  new UpdateCommand({
+    TableName: Environment.OrderTableName(),
+    Key: { id: orderId },
+    UpdateExpression: 'SET #campaignName = :status',
+    ExpressionAttributeNames: { '#campaignName': campaignName },
+    ExpressionAttributeValues: { ':status': 'sent' },
+  })
+
 export const getAllSalesRequest = () => new ScanCommand({ TableName: Environment.SalesTableName() })
+
+export const listOrdersWithoutCampaignRequest = (campaignName: string) =>
+  new ScanCommand({
+    TableName: Environment.OrderTableName(),
+    FilterExpression: `attribute_not_exists(${campaignName})`,
+  })
 
 export const salesResponse = (response: any): SaleSchema[] =>
   response?.map(
@@ -291,6 +307,25 @@ export const salesResponse = (response: any): SaleSchema[] =>
         includes: item.includes,
         amount: item.amount,
       })),
+    })
+  ) ?? []
+
+export const listOrdersResponse = (response: any) =>
+  response?.map(
+    (item: any): Sales => ({
+      id: item.id,
+      date: new Date(item.date),
+      email: item.customer?.email ?? item.email,
+      fullname: item.customer?.fullname ?? item.fullname,
+      pass: item.items[0]?.id ?? '',
+      promoCode: item.promoCode,
+      customerType: item.customer?.type ?? item.dancerType,
+      includes: item.items.flatMap((item: any) => item.includes),
+      paymentStatus: item.paymentStatus ?? item.payment?.status,
+      total: {
+        amount: item.items.reduce((total: number, item: any) => (total += item.total.amount), 0),
+        currency: item.items[0].total.currency,
+      },
     })
   ) ?? []
 

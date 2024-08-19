@@ -2,10 +2,10 @@ import { parse } from 'csv-parse/sync'
 import { Customer } from '../../types/customer'
 import { Order, makeOrderId } from '../../types/order'
 import { DateGenerator } from '../date.generator'
-import { GetOrders } from './storage.gateway'
+import { GetOrders, UploadQrCode } from './storage.gateway'
 import { S3Storage } from './storage.s3'
 
-export class StorageAdapter implements GetOrders {
+export class StorageAdapter implements GetOrders, UploadQrCode {
   constructor(private readonly s3Storage: S3Storage, private readonly dateGenerator: DateGenerator) {}
 
   async getOrdersFromImports(path: string): Promise<{ customer: Customer; order: Order; promoCode: string | null }[]> {
@@ -17,6 +17,14 @@ export class StorageAdapter implements GetOrders {
       promoCode: this.mapPromoCode(item),
     }))
     return orders
+  }
+
+  async uploadQrCode(orderId: string, qrCode: Buffer): Promise<string> {
+    const { link } = await this.s3Storage.uploadDocument(
+      { binary: qrCode, name: `qrcode-${orderId}`, type: 'image/png' },
+      `qrcode/${orderId}.png`
+    )
+    return link
   }
 
   private mapCustomer = (customer: any): Customer => ({

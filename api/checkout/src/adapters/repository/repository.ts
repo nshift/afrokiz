@@ -4,6 +4,7 @@ import { ImportOrder, Order } from '../../types/order'
 import { PaymentStatus } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
 import { Promotion } from '../../types/promotion'
+import { Sales } from '../../types/sales'
 
 export interface SavingCheckout {
   saveCheckout(checkout: {
@@ -52,10 +53,20 @@ export interface GettingImportOrder {
   getImportOrdersByFingerprints(fingerprints: string[]): Promise<ImportOrder[]>
 }
 
+export interface GettingSales {
+  getAllRegistrationCampaignSales(): Promise<Sales[]>
+}
+
+export interface SavingSales {
+  updateOrdersForRegistrationCampaign(orderIds: string[]): Promise<void>
+}
+
 export interface Repository
   extends GettingOrders,
     GettingPromotions,
     SavingPayment,
     SavingCheckout,
     SavingImportOrder,
-    GettingImportOrder {}
+    GettingImportOrder,
+    SavingSales,
+    GettingSales {}

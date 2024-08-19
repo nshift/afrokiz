@@ -26,6 +26,8 @@ export const testEmailTemplate: EmailTemplate = {
   destinations: [{ toAddresses: ['romain.asnar@gmail.com'], data: { author: 'Uncle Bob' } }],
 }
 
+export const fakeQrCode = () => fs.readFileSync(path.join(__dirname, './qr-code.png'))
+
 export const testEmail: Email = {
   subject: 'Email testing',
   destinations: ['romain.asnar@gmail.com'],
@@ -40,7 +42,7 @@ export const testEmail: Email = {
   attachments: [
     {
       filename: 'qr-code.png',
-      content: fs.readFileSync(path.join(__dirname, './qr-code.png')),
+      content: fakeQrCode(),
     },
   ],
 }

@@ -10,7 +10,11 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
 
   async sendBulkEmails(template: EmailTemplate) {
     await this.client.createTemplate({
-      Template: { TemplateName: template.name, SubjectPart: template.subject, HtmlPart: template.html },
+      Template: {
+        TemplateName: template.name,
+        SubjectPart: template.subject,
+        HtmlPart: template.html,
+      },
     })
     await this.client.sendBulkTemplatedEmail({
       Destinations: template.destinations.map((destination) => ({
@@ -20,6 +24,7 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
       Source: this.source.email,
       Template: template.name,
       DefaultTemplateData: '{}',
+      ConfigurationSetName: 'afrokiz-configuration-set',
     })
     await this.client.deleteTemplate({ TemplateName: template.name })
   }

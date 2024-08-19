@@ -182,37 +182,50 @@ export const importOrder = async (event: SQSEvent, context: Context): Promise<AP
   }
 }
 
-export const unauthorizedErrorResponse = (message: string) => ({
-  statusCode: 401,
-  headers,
-  body: JSON.stringify({ message }),
-})
+export const sendRegistrationCampaign = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const data = await checkout.sendRegistrationCampaign()
+    return successResponse({ numberOfOrderProcessed: data.length })
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
 
-export const notFoundErrorResponse = (message: string) => ({
+// const unauthorizedErrorResponse = (message: string) => ({
+//   statusCode: 401,
+//   headers,
+//   body: JSON.stringify({ message }),
+// })
+
+const notFoundErrorResponse = (message: string) => ({
   statusCode: 404,
   headers,
   body: JSON.stringify({ message }),
 })
 
-export const invalidRequestErrorResponse = (message: string) => ({
+const invalidRequestErrorResponse = (message: string) => ({
   statusCode: 400,
   headers,
   body: JSON.stringify({ message }),
 })
 
-export const successfullyCreatedResponse = () => ({
+const successfullyCreatedResponse = () => ({
   statusCode: 201,
   headers,
   body: '',
 })
 
-export const successResponse = (body: any) => ({
+const successResponse = (body: any) => ({
   statusCode: 200,
   headers,
   body: JSON.stringify(body),
 })
 
-export const internalServerErrorResponse = (error: any) => ({
+const internalServerErrorResponse = (error: any) => ({
   statusCode: 500,
   headers,
   body: JSON.stringify({ message: error?.message ?? `Unknown error: ${error}` }),

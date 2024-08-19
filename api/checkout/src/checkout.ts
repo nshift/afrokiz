@@ -1,7 +1,8 @@
 import { DateGenerator } from './adapters/date.generator'
-import { GetOrders } from './adapters/document/storage.gateway'
+import { GetOrders, UploadQrCode } from './adapters/document/storage.gateway'
 import { confirmationEmail } from './adapters/email/email.confirmation'
-import { SendingEmail } from './adapters/email/email.gateway'
+import { SendingBulkEmails, SendingEmail } from './adapters/email/email.gateway'
+import { registrationEmail } from './adapters/email/email.registration'
 import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { GeneratingQRCode } from './adapters/qr-code/qr-code.gateway'
 import { ImportOrderQueueRequest } from './adapters/queue.gateway'
@@ -18,9 +19,9 @@ export class Checkout {
   constructor(
     private readonly repository: Repository,
     private readonly paymentAdapter: CreatingPaymentIntent,
-    private readonly emailApi: SendingEmail,
+    private readonly emailApi: SendingEmail & SendingBulkEmails,
     private readonly qrCodeGenerator: GeneratingQRCode,
-    private readonly documentAdapter: GetOrders,
+    private readonly documentAdapter: GetOrders & UploadQrCode,
     private readonly queueAdapter: ImportOrderQueueRequest,
     private readonly dateGenerator: DateGenerator
   ) {}
@@ -147,6 +148,24 @@ export class Checkout {
     await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
     const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
     await this.emailApi.sendEmail(await confirmationEmail({ order, customer, qrCode: qrCodeFile }))
+  }
+
+  async sendRegistrationCampaign() {
+    const allSales = await this.repository.getAllRegistrationCampaignSales()
+    const sales = allSales.filter((sale) => sale.paymentStatus == 'success')
+    if (sales.length == 0) {
+      return []
+    }
+    const data = await Promise.all(
+      sales.map(async (sale) => {
+        const qrCode = await this.qrCodeGenerator.generateOrderQrCode({ id: sale.id })
+        const link = await this.documentAdapter.uploadQrCode(sale.id, qrCode)
+        return { sale, qrCodeUrl: link }
+      })
+    )
+    await this.emailApi.sendBulkEmails(registrationEmail(data))
+    await this.repository.updateOrdersForRegistrationCampaign(sales.map((sale) => sale.id))
+    return data
   }
 
   private makeFingerprints(

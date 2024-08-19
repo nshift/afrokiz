@@ -1,6 +1,7 @@
-import { GetObjectCommand, PutObjectCommand, S3 } from '@aws-sdk/client-s3'
+import { PutObjectCommand, S3 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Readable } from 'stream'
+import { Environment } from '../../environment'
 
 export class S3Storage {
   private static ExpiresIn = 30 * 60
@@ -13,9 +14,7 @@ export class S3Storage {
 
   async uploadDocument(document: { binary: Buffer; name: string; type: string }, path: string) {
     await this.upload(document.binary, path, document.type)
-    const command = new GetObjectCommand({ Bucket: this.bucketName, Key: path })
-    const signedUrl = await getSignedUrl(this.client, command, { expiresIn: S3Storage.ExpiresIn })
-    return { path, link: new URL(signedUrl) }
+    return { path, link: `https://${this.bucketName}.s3.${Environment.Region()}.amazonaws.com/${path}` }
   }
 
   async createUploadSignedUrl(path: string): Promise<{ path: string; url: URL }> {
@@ -26,8 +25,8 @@ export class S3Storage {
 
   getDocument = (path: string): Promise<Buffer> => this.download(path)
 
-  private async upload(buffer: Buffer, path: string, contentType: string): Promise<void> {
-    await this.client.putObject({
+  private upload(buffer: Buffer, path: string, contentType: string) {
+    return this.client.putObject({
       Bucket: this.bucketName,
       Key: path,
       Body: buffer,

@@ -7,6 +7,7 @@ import { ImportOrder, Order } from '../../types/order'
 import { PaymentStatus } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
 import { Promotion } from '../../types/promotion'
+import { Sales } from '../../types/sales'
 import { DateGenerator } from '../date.generator'
 import { UUIDGenerator } from '../uuid.generator'
 import { EventStore } from './event-store'
@@ -24,18 +25,18 @@ import {
 import { Repository } from './repository'
 import {
   OrderSchema,
-  SaleSchema,
   eventResponse,
-  getAllSalesRequest,
   getEventFromRangeRequest,
   getImportOrdersByFingerprintsRequest,
   getOrderByIdRequest,
   importOrdersResponse,
+  listOrdersResponse,
+  listOrdersWithoutCampaignRequest,
   orderResponse,
-  salesResponse,
   saveEventsRequest,
   saveImportOrdersRequest,
   saveOrdersRequest,
+  updateSalesCampaignRequest,
 } from './requests'
 
 export class DynamoDbRepository implements Repository {
@@ -96,9 +97,22 @@ export class DynamoDbRepository implements Repository {
     return orders[0] ?? null
   }
 
-  async getAllSales(): Promise<SaleSchema[]> {
-    const response = await this.dynamodb.send(getAllSalesRequest())
-    return salesResponse(response.Items)
+  // async getAllSales(): Promise<SaleSchema[]> {
+  //   const response = await this.dynamodb.send(getAllSalesRequest())
+  //   return salesResponse(response.Items)
+  // }
+
+  async getAllRegistrationCampaignSales(): Promise<Sales[]> {
+    const response = await this.dynamodb.send(listOrdersWithoutCampaignRequest('registration_campaign'))
+    return listOrdersResponse(response.Items)
+  }
+
+  async updateOrdersForRegistrationCampaign(orderIds: string[]): Promise<void> {
+    await Promise.all(
+      orderIds.map(
+        async (orderId) => await this.dynamodb.send(updateSalesCampaignRequest(orderId, 'registration_campaign'))
+      )
+    )
   }
 
   async getAllPromotions(passId: string): Promise<{ [key: string]: Promotion }> {
