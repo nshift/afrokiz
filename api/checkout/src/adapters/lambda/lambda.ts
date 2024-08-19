@@ -188,7 +188,7 @@ export const sendRegistrationCampaign = async (
 ): Promise<APIGatewayProxyResult> => {
   try {
     const data = await checkout.sendRegistrationCampaign()
-    return successResponse({ numberOfOrderProcessed: data.length })
+    return successResponse({ numberOfOrderProcessed: data.length, orders: data.map((order) => order.sale.id) })
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)
