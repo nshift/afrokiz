@@ -403,7 +403,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     ],
     giveAways: [],
     isPromoted: false,
-    options,
+    options: {},
   },
   sat: {
     id: 'sat',
@@ -421,7 +421,9 @@ export const defaultPasses: { [key: string]: Pass } = {
     ],
     giveAways: [],
     isPromoted: false,
-    options,
+    options: {
+      'heneco-mc-option': options['heneco-mc-option'],
+    },
   },
   sun: {
     id: 'sun',
@@ -439,7 +441,9 @@ export const defaultPasses: { [key: string]: Pass } = {
     ],
     giveAways: [],
     isPromoted: false,
-    options,
+    options: {
+      'said-mc-option': options['said-mc-option'],
+    },
   },
 }
 
