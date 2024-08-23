@@ -40,9 +40,10 @@ const total = ref(calculatePrice())
 onMounted(async () => {
   stripe = await loadStripe()
   const price = calculatePrice()
+  const currentCurrency = currency?.value ?? defaultCurrency
   elements = stripe.elements({
-    amount: price > 0 ? price : 100,
-    currency: (currency?.value ?? defaultCurrency).toLowerCase(),
+    amount: price > 0 ? price : currentCurrency == 'THB' ? 10000 : 100,
+    currency: currentCurrency.toLowerCase(),
   })
   stripe.mountElements(elements, '#payment-element')
 })
