@@ -5,6 +5,7 @@ export type Option = {
   includesInShortDescription?: string[]
   includes: string[]
   selected: boolean
+  soldOut: boolean
   price: {
     USD: number
     EUR: number
@@ -22,6 +23,7 @@ export const options: {
     includesInShortDescription: ['1H foot massage'],
     includes: ['1H Foot Massage at Lek Massage'],
     selected: false,
+    soldOut: false,
     price: {
       USD: 1200,
       EUR: 1000,
@@ -48,6 +50,7 @@ export const options: {
     includesInShortDescription: ['2H Ginga Styling bootcamp'],
     includes: ['2H Ginga Styling bootcamp (video recorded)'],
     selected: false,
+    soldOut: false,
     price: {
       USD: 2400,
       EUR: 2200,
@@ -61,6 +64,7 @@ export const options: {
     includesInShortDescription: ['3H party & buffet'],
     includes: ['Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)'],
     selected: false,
+    soldOut: true,
     price: {
       USD: 5500,
       EUR: 5000,
@@ -74,6 +78,7 @@ export const options: {
     includesInShortDescription: ['2H Masterclass'],
     includes: ['2H Said & Oksana Masterclass'],
     selected: false,
+    soldOut: false,
     price: {
       USD: 7200,
       EUR: 6700,
@@ -87,6 +92,7 @@ export const options: {
     includesInShortDescription: ['2H Masterclass'],
     includes: ['2H Heneco Masterclass'],
     selected: false,
+    soldOut: false,
     price: {
       USD: 7200,
       EUR: 6700,
@@ -100,6 +106,7 @@ export const options: {
     includesInShortDescription: ['4H Masterclass'],
     includes: ['2H Said & Oksana Masterclass and 2H Heneco Masterclass'],
     selected: false,
+    soldOut: false,
     price: {
       USD: 10000,
       EUR: 9200,

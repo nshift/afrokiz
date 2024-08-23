@@ -182,7 +182,8 @@ const selectOption = (id: string) => {
 const shouldDisabled = (id: string) => {
   return (
     (optionIds.value.includes('all-mc-option') && ['said-mc-option', 'heneco-mc-option'].includes(id)) ||
-    pass.options[id].selected == true
+    pass.options[id].selected == true ||
+    pass.options[id].soldOut == true
   )
 }
 </script>
@@ -226,7 +227,11 @@ const shouldDisabled = (id: string) => {
         </div>
         <h3 v-if="Object.keys(pass.options).length > 0">Options</h3>
         <ul class="options" v-if="Object.keys(pass.options).length > 0">
-          <li v-for="option in Object.values(pass.options)" :key="option.id" @click="selectOption(option.id)">
+          <li
+            v-for="option in Object.values(pass.options).filter((option) => !option.soldOut)"
+            :key="option.id"
+            @click="selectOption(option.id)"
+          >
             <div :class="['option-container', option.id]">
               <input type="checkbox" :value="option.id" v-model="optionIds" :disabled="shouldDisabled(option.id)" />
               <div class="option">

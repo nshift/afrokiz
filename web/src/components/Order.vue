@@ -162,7 +162,11 @@ const shouldDisabled = (id: string) => {
           <Card :class="['options']">
             <h3 v-if="Object.keys(options).length > 0">Addons</h3>
             <ul class="options" v-if="Object.keys(options).length > 0">
-              <li v-for="option in Object.values(options)" :key="option.id" @click="selectOption(option.id)">
+              <li
+                v-for="option in Object.values(options).filter((option) => !option.soldOut)"
+                :key="option.id"
+                @click="selectOption(option.id)"
+              >
                 <div :class="['option-container', option.id]">
                   <input type="checkbox" :value="option.id" v-model="optionIds" :disabled="shouldDisabled(option.id)" />
                   <div class="option">

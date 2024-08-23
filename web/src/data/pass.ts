@@ -124,6 +124,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         title: 'Couple',
         includes: ['1 couple ticket'],
         selected: false,
+        soldOut: true,
         price: (() => {
           const promotions = [
             makePromotion({
@@ -197,6 +198,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         title: 'Couple',
         includes: ['1 couple ticket'],
         selected: false,
+        soldOut: true,
         price: (() => {
           const promotions = [
             makePromotion({
@@ -301,6 +303,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         title: 'Couple',
         includes: ['1 couple ticket'],
         selected: false,
+        soldOut: true,
         price: (() => {
           const promotions = [
             makePromotion({
