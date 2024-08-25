@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import Card from "../../components/Card.astro";
 import { PaymentAPI } from "../../payment-api/payment.api";
+import { Environment } from "../../environment";
 
 const queryParams = Astro.url.searchParams
 const orderId = queryParams.get('order_id')
@@ -12,6 +13,7 @@ if (!orderId || !authorized) {
 }
 const paymentApi = new PaymentAPI()
 const order = await paymentApi.getOrderById(orderId)
+const checkedIn = false
 const includedItems = order.items.flatMap((item) => item.includes)
 
 function getNumber(pattern: string) {
@@ -19,29 +21,66 @@ function getNumber(pattern: string) {
 }
 
 const items = [
-  { icon: '', title: 'Heneco MC', value: (includedItems.includes('2H Masterclass by Heneco') || includedItems.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')) ? 1 : 0 },
-  { icon: '', title: 'Said MC', value: (includedItems.includes('2H Masterclass by Said & Oksana') || includedItems.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')) ? 1 : 0 },
+  { icon: '', title: 'Heneco MC', value: (includedItems.includes('2H Masterclass by Heneco') || includedItems.includes('2H Heneco Masterclass') || includedItems.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')) ? 1 : 0 },
+  { icon: '', title: 'Said MC', value: (includedItems.includes('2H Masterclass by Said & Oksana') || includedItems.includes('2H Said & Oksana Masterclass') || includedItems.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')) ? 1 : 0 },
   { icon: 'fa-ship', title: 'Cruise', value: (includedItems.includes('Exclusive Dinner Cruise Party') || includedItems.includes('Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)')) ? 1 : 0 },
+  { icon: '', title: 'Ginga', value: includedItems.includes('2H Ginga Styling bootcamp (video recorded)') ? 1 : 0 },
   { icon: 'fa-spa', title: 'Massage', value: getNumber('H Foot Massage') },
   { icon: 'fa-martini-glass', title: 'Welcome drinks', value: getNumber(' welcome drinks') },
-  { icon: '', title: 'Ginga', value: includedItems.includes('2H Ginga Styling bootcamp (video recorded)') ? 1 : 0 },
 ]
+
+function getPassColorClass(passId: string) {
+  return (
+    {
+      'vip-silver': 'silver',
+      'vip-gold': 'gold',
+    }[passId] ?? 'purple'
+  )
+}
+
+function getPassName(passId: string) {
+  return (
+    {
+      party: 'Party Pass',
+      'party-bundle': 'Party Combo Pass',
+      fullpass: 'Full Pass',
+      'fullpass-bundle': 'Full Pass + Masterclass',
+      heneco: 'Heneco Full Pass',
+      said: 'Said Full Pass',
+      'vip-silver': 'VIP Silver Pass',
+      'vip-gold': 'VIP Gold Pass',
+      'fri-sat': 'Friday & Saturday Pass',
+      'sat-sun': 'Saturday & Sunday Pass',
+      fri: 'Friday Pass',
+      sat: 'Saturday Pass',
+      sun: 'Sunday Pass',
+    }[passId] ?? passId.replace('-', ' ') + ' Pass'
+  )
+}
 ---
 
 <Layout title=`Order ${order.id} | Afrokiz Bkk Festival Edition 2``>
   <main>
     <div class="grid">
       <div class="list">
-        <Card classes={["ticket-card"]}>
+        <Card classes={["ticket-card", getPassColorClass(order.items[0].id)]}>
           <div class="lines">
             <h1>{order.fullname}</h1>
-            <p>{order.id}</p>
+            <p style="text-transform: capitalize"><b>{getPassName(order.items[0].id)}</b></p>
+            <p>{order.email}</p>
+            <p><a target="_blank" href=`/order?order_id=${order.id}`>{order.id}</a></p>
           </div>
+        </Card>
+        <Card classes={["ticket-card", "check-in", checkedIn ? "green" : "blue"]}>
+          <a href="">
+            <i class="large-icon fa-solid fa-check"></i>
+            {checkedIn == true ? <p>Checked In</p> : <p>Check In</p>}
+          </a>
         </Card>
         {
           items.map((item) => 
             <Card classes={["ticket-card"]}>
-              <div class="list">
+              <div class="list2">
                 <p class="value">{item.value}</p>
                 <div class="lines">
                   <i class:list={['icon', 'fa-solid', item.icon]}></i>
@@ -59,13 +98,49 @@ const items = [
 <style is:global>
   .ticket-card {
     width: calc((100% / 2) - 0.8rem) !important;
-    height: 175px !important;
+    min-height: 175px !important;
+  }
+  .ticket-card .text {
+    width: 100%;
+  }
+  .check-in.green {
+    background-color: #39c440;
+  }
+  .check-in.green a {
+    color: white;
+    text-decoration: none;
+  }
+  .check-in.blue {
+    background-color: #3b79ff;
+  }
+  .check-in.blue a {
+    color: white;
+    text-decoration: none;
+  }
+  .gold {
+    background-color: #ed9e00 !important;
+    color: black !important;
+  }
+  .gold a, .silver a {
+    color: black !important;
+  }
+  .silver {
+    background-color: #808080 !important;
+    color: black !important;
+  }
+  .purple {
+    background-color: #371b58 !important;
+    color: white !important;
+  }
+  .purple a {
+    color: white !important;
   }
 </style>
 
 <style>
   main {
     margin-top: 1rem;
+    font-size: 120%;
   }
   .grid {
     display: grid;
@@ -79,6 +154,22 @@ const items = [
     flex-wrap: wrap;
     gap: 1rem;
     grid-column: span 12;
+    justify-content: center;
+    align-items: stretch;
+    text-align: center;
+  }
+  .list2 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+  }
+  .list2 > * {
+    flex: 1;
   }
   .lines {
     display: flex;
@@ -90,6 +181,10 @@ const items = [
   }
   .icon {
     font-size: 2rem;
+  }
+
+  .large-icon {
+    font-size: 3rem;
   }
   .value {
     font-size: 4rem;
