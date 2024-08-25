@@ -547,7 +547,7 @@
 
 "@nshift/cdk@https://github.com/nshift/cdk#main":
   version "0.3.0"
-  resolved "https://github.com/nshift/cdk#5fa92f903cf0b1377e3a813931ce7d8df77faae4"
+  resolved "https://github.com/nshift/cdk#0b3a5aea74c19d5234606209bbfe4caa9192e8e5"
   dependencies:
     aws-cdk-lib "2.104.0"
     constructs "^10.0.0"

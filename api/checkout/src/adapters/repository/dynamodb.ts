@@ -40,6 +40,8 @@ import {
 } from './requests'
 
 export class DynamoDbRepository implements Repository {
+  static WriteBulkLimit = 25
+
   constructor(
     private readonly dynamodb: DynamoDBDocumentClient,
     private readonly uuidGenerator: UUIDGenerator,
@@ -85,10 +87,17 @@ export class DynamoDbRepository implements Repository {
         data: checkout,
       })
     )
-    const saveEventsCommand = saveEventsRequest(events)
-    await this.dynamodb.send(saveEventsCommand)
-    const saveOrdersCommand = saveOrdersRequest(checkouts.map((checkout) => mapToOrder(checkout)))
-    await this.dynamodb.send(saveOrdersCommand)
+    await Promise.all(
+      chunk(events, DynamoDbRepository.WriteBulkLimit).map((chunkEvents) =>
+        this.dynamodb.send(saveEventsRequest(chunkEvents))
+      )
+    )
+    await Promise.all(
+      chunk(
+        checkouts.map((checkout) => mapToOrder(checkout)),
+        DynamoDbRepository.WriteBulkLimit
+      ).map((chunkCheckouts) => this.dynamodb.send(saveOrdersRequest(chunkCheckouts)))
+    )
   }
 
   async getOrderById(id: string): Promise<OrderSchema | null> {
@@ -177,11 +186,14 @@ export class DynamoDbRepository implements Repository {
       }
     )
     // await this.dynamodb.send(deleteEventsRequest(events.eventsToDelete.map((event) => event.id)))
-    await Promise.all(chunk(events.eventsToAdd, 25).map((events) => this.dynamodb.send(saveEventsRequest(events))))
+    await Promise.all(
+      chunk(events.eventsToAdd, DynamoDbRepository.WriteBulkLimit).map((events) =>
+        this.dynamodb.send(saveEventsRequest(events))
+      )
+    )
     const eventStore = new EventStore(this.dynamodb)
     const eventsToPlay = events.eventsToPlay.sort((a, b) => a.time.getTime() - b.time.getTime())
-    console.log(eventsToPlay)
-    await Promise.all(chunk(eventsToPlay, 25).map((event) => eventStore.process(event)))
+    await Promise.all(chunk(eventsToPlay, DynamoDbRepository.WriteBulkLimit).map((event) => eventStore.process(event)))
     return events.eventsToPlay
   }
 
@@ -189,7 +201,11 @@ export class DynamoDbRepository implements Repository {
     if (imports.length == 0) {
       return
     }
-    await this.dynamodb.send(saveImportOrdersRequest(imports))
+    await Promise.all(
+      chunk(imports, DynamoDbRepository.WriteBulkLimit).map((chunkImports) =>
+        this.dynamodb.send(saveImportOrdersRequest(chunkImports))
+      )
+    )
   }
 
   async getImportOrdersByFingerprints(fingerprints: string[]): Promise<ImportOrder[]> {

@@ -13,7 +13,7 @@ export const createImportOrderQueue = (props: {
 }) => {
   const sharedLayer = createSharedLayer('ImportOrderSharedLayer', CheckoutModule('.build/layer'), props.stack)
   const codeUri = CheckoutModule('.build/src')
-  const queue = createSQS('ImportOrder', { stack: props.stack })
+  const queue = createSQS('ImportOrder', { stack: props.stack }, true)
   const lambda = createLambda('ImportOrder', {
     stack: props.stack,
     sharedLayer,

@@ -19,7 +19,7 @@ describe('Storage adapter', () => {
     const orders = await storage.getOrdersFromImports('imports/test.csv')
     // console.log(orders.map((o) => o.customer))
     // console.log(orders.map((o) => o.order))
-    console.log(orders[0])
+    console.log(orders[1].order.items)
   })
 
   it('should upload qr code', async () => {

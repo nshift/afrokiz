@@ -5,41 +5,37 @@ import { Customer } from '../../types/customer'
 import { Order } from '../../types/order'
 import { EmailTemplate } from './email.template'
 
-export const confirmationEmail = ({
-  order,
-  customer,
-  qrCodeUrl,
-}: {
-  order: Order
-  customer: Customer
-  qrCodeUrl: string
-}): EmailTemplate => ({
+export const confirmationEmail = (
+  data: {
+    order: Order
+    customer: Customer
+    qrCodeUrl: string
+  }[]
+): EmailTemplate => ({
   name: 'ConfirmationEmail-' + uuid(),
-  destinations: [
-    {
-      toAddresses: [customer.email],
-      data: {
-        orderId: order.id,
-        qrCodeUrl: qrCodeUrl,
-        fullname: customer.fullname,
-        items: order.items.map((item) => ({
-          pass: item.title,
-          includes: item.includes.map((description) => ({ description })),
-          amount: item.amount,
-          price: {
-            amount: (item.total.amount / 100).toFixed(2).toString(),
-            currency: item.total.currency,
-          },
-        })),
-        total: {
-          amount: (order.total.amount / 100).toFixed(2).toString(),
-          currency: order.total.currency,
+  destinations: data.map(({ order, customer, qrCodeUrl }) => ({
+    toAddresses: [customer.email],
+    data: {
+      orderId: order.id,
+      qrCodeUrl: qrCodeUrl,
+      fullname: customer.fullname,
+      items: order.items.map((item) => ({
+        pass: item.title,
+        includes: item.includes.map((description) => ({ description })),
+        amount: item.amount,
+        price: {
+          amount: (item.total.amount / 100).toFixed(2).toString(),
+          currency: item.total.currency,
         },
-        passHexColor: getPassColor(order.items[0].id),
-        passName: getPassName(order.items[0].id),
+      })),
+      total: {
+        amount: (order.total.amount / 100).toFixed(2).toString(),
+        currency: order.total.currency,
       },
+      passHexColor: getPassColor(order.items[0].id),
+      passName: getPassName(order.items[0].id),
     },
-  ],
+  })),
   subject: 'Confirmation - AfroKiz Bangkok #2',
   html: fs.readFileSync(path.join(__dirname, 'confirmation.html')).toString(),
 })

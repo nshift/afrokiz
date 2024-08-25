@@ -202,6 +202,7 @@ const makeRequestImportOrderEndpoint = (props: {
   sharedLayer: cdk.aws_lambda.LayerVersion
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
+  salesTable: cdk.aws_dynamodb.Table
   importOrdersTable: cdk.aws_dynamodb.Table
   importOrderQueue: cdk.aws_sqs.Queue
   documentBucket: cdk.aws_s3.Bucket
@@ -216,20 +217,37 @@ const makeRequestImportOrderEndpoint = (props: {
       LOG_LEVEL: 'info',
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
+      SALES_TABLE_NAME: props.salesTable.tableName,
       DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
       IMPORT_ORDER_TABLE_NAME: props.importOrdersTable.tableName,
       IMPORT_ORDER_QUEUE: props.importOrderQueue.queueUrl,
+      WEB_APP_HOST: Environment.WebAppHost(),
       STRIPE_SECRET_KEY: props.stripeSecrets.secret,
       STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
     },
     memorySize: 2048,
     ...props,
   })
-  props.eventTable.grant(endpoint.lambda, 'dynamodb:Query', 'dynamodb:BatchWriteItem')
-  props.orderTable.grant(endpoint.lambda, 'dynamodb:Query', 'dynamodb:BatchWriteItem')
+  props.eventTable.grant(endpoint.lambda, 'dynamodb:Query', 'dynamodb:BatchWriteItem', 'dynamodb:PutItem')
+  props.orderTable.grant(
+    endpoint.lambda,
+    'dynamodb:Query',
+    'dynamodb:BatchWriteItem',
+    'dynamodb:UpdateItem',
+    'dynamodb:PutItem'
+  )
+  props.salesTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
   props.importOrdersTable.grant(endpoint.lambda, 'dynamodb:BatchGetItem', 'dynamodb:BatchWriteItem')
   props.documentBucket.grantRead(endpoint.lambda)
   props.importOrderQueue.grantSendMessages(endpoint.lambda)
+  endpoint.lambda.addToRolePolicy(
+    new cdk.aws_iam.PolicyStatement({
+      actions: ['ses:CreateTemplate', 'ses:DeleteTemplate', 'ses:SendBulkTemplatedEmail', 'ses:SendRawEmail'],
+      resources: ['*'],
+      effect: cdk.aws_iam.Effect.ALLOW,
+    })
+  )
+  props.documentBucket.grantPut(endpoint.lambda)
   return endpoint
 }
 

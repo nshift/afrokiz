@@ -99,9 +99,20 @@ export class Checkout {
   async requestImportOrders(csvPath: string): Promise<Order[]> {
     const orders = await this.documentAdapter.getOrdersFromImports(csvPath)
     const newOrders = await this.getNewOrders(orders)
+    if (newOrders.length == 0) {
+      return []
+    }
     await this.saveImportOrders(newOrders)
     await this.saveCheckouts(newOrders)
-    await this.requestImportOrder(newOrders)
+    const ordersWithQrCode = await Promise.all(
+      newOrders.map(async ({ order, customer, promoCode }) => {
+        await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
+        const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+        const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
+        return { order, customer, promoCode, qrCodeUrl: link }
+      })
+    )
+    await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode))
     return newOrders.map(({ order }) => order)
   }
 
@@ -146,8 +157,7 @@ export class Checkout {
     qrCode: Buffer
   }) {
     const link = await this.documentAdapter.uploadQrCode(order.id, qrCode)
-    console.log(confirmationEmail({ order, customer, qrCodeUrl: link }))
-    return this.emailApi.sendBulkEmails(confirmationEmail({ order, customer, qrCodeUrl: link }))
+    return this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }]))
   }
 
   async importOrder(orderId: string) {
@@ -159,7 +169,7 @@ export class Checkout {
     await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
     const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
     const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
-    await this.emailApi.sendBulkEmails(confirmationEmail({ order, customer, qrCodeUrl: link }))
+    await this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }]))
   }
 
   async sendRegistrationCampaign() {
@@ -237,17 +247,13 @@ export class Checkout {
     )
   }
 
-  private requestImportOrder(
-    newOrders: {
-      customer: Customer
-      order: Order
-      promoCode: string | null
-    }[]
-  ): Promise<void> {
-    console.log(
-      'Request import orders: ',
-      newOrders.map((order) => order.order.id)
-    )
-    return this.queueAdapter.requestImportOrder(newOrders.map(({ order }) => order))
-  }
+  // private requestImportOrder(
+  //   newOrders: {
+  //     customer: Customer
+  //     order: Order
+  //     promoCode: string | null
+  //   }[]
+  // ): Promise<void> {
+  //   return this.queueAdapter.requestImportOrder(newOrders.map(({ order }) => order))
+  // }
 }
