@@ -74,7 +74,7 @@ function getPassName(passId: string) {
         <Card classes={["ticket-card", "check-in", checkedIn ? "green" : "blue"]}>
           <a href="">
             <i class="large-icon fa-solid fa-check"></i>
-            {checkedIn == true ? <p>Checked In</p> : <p>Check In</p>}
+            {checkedIn ? <p>Checked In</p> : <p>Check In</p>}
           </a>
         </Card>
         {
