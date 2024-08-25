@@ -28,11 +28,13 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
               'Dancer type': sale.customerType,
               'Said Oksana MC':
                 sale.includes.includes('2H Masterclass by Said & Oksana') ||
+                sale.includes.includes('2H Said & Oksana Masterclass') ||
                 sale.includes.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')
                   ? 1
                   : 0,
               'Heneco MC':
                 sale.includes.includes('2H Masterclass by Heneco') ||
+                sale.includes.includes('2H Heneco Masterclass') ||
                 sale.includes.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')
                   ? 1
                   : 0,
