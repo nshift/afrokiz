@@ -12,6 +12,7 @@ import { Customer } from '../types/customer'
 import { Order } from '../types/order'
 import { PaymentIntent } from '../types/payment-intent'
 import { DiscountPromotion, GiveAwayPromotion } from '../types/promotion'
+import { Sales } from '../types/sales'
 
 export const testEmailTemplate: EmailTemplate = {
   name: 'EmailDoublesTemplate',
@@ -61,7 +62,7 @@ export const order: Order = {
   // paymentStatus: 'pending',
   items: [
     {
-      id: 'item-1',
+      id: 'vip-gold',
       title: 'VIP Gold Pass',
       includes: ['All parties and workshops'],
       amount: 1,
@@ -156,7 +157,31 @@ export const checkoutEvent = {
   },
 }
 
-export const sales: SaleSchema = {
+export const sales: Sales = {
+  id: 'order-1',
+  date: new Date('1990-01-02'),
+  email: 'romain.asnar+1@gmail.com',
+  fullname: romainCustomer.fullname,
+  customerType: romainCustomer.type,
+  pass: 'vip-gold',
+  promoCode: '',
+  paymentStatus: 'success',
+  items: [
+    {
+      id: 'item-1',
+      title: 'VIP Gold Pass',
+      includes: ['All parties and workshops'],
+      amount: 1,
+      total: { amount: 30000, currency: 'USD' },
+    },
+  ],
+  total: {
+    amount: 51000,
+    currency: 'USD',
+  },
+}
+
+export const salesSchema: SaleSchema = {
   id: 'id-2',
   orderId: 'order-1',
   date: new Date('1990-01-02'),
@@ -179,7 +204,7 @@ export const successPaymentStatusEvent = {
   time: new Date('1990-01-02 10:03'),
   data: {
     sales: {
-      ...sales,
+      ...salesSchema,
       id: 'id-3',
       date: new Date('1990-01-02 10:03'),
     },
@@ -194,7 +219,7 @@ export const successPaymentStatusEvent3 = {
   time: new Date('1990-01-02 10:04'),
   data: {
     sales: {
-      ...sales,
+      ...salesSchema,
       id: 'id-2',
       date: new Date('1990-01-02 10:03'),
     },

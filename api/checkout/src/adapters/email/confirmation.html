@@ -1,0 +1,129 @@
+<html>
+  <head>
+    <style>
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin: 0;
+      }
+      div,
+      td {
+        padding: 0;
+      }
+      div {
+        margin: 0 !important;
+      }
+    </style>
+  </head>
+  <body style="background-color: #f0f0f0; color: #12091d; font-family: Avenir, Helvetica, Arial, sans-serif">
+    <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>
+        <td align="center">
+          <div
+            style="background-color: white; padding: 2rem; margin: 2rem 0 !important; width: 600px; text-align: left"
+          >
+            <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation">
+              <tr>
+                <td align="left">
+                  <img class="logo" src="https://afrokiz-assets.s3.ap-southeast-1.amazonaws.com/logo.png" width="100" />
+                </td>
+                <td align="right">
+                  <div
+                    style="width: 200px; background-color: {{passHexColor}}; padding: 1rem; color: white; border-radius: 30px"
+                  >
+                    <div class="text" style="text-align: center; vertical-align: middle">
+                      <p style="margin: 0.25rem; text-transform: capitalize">{{passName}}</p>
+                      <p style="margin: 0.25rem">Order #{{orderId}}</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <p style="margin-top: 2rem">Hi {{fullname}},</p>
+            <p>
+              Thank you for choosing AfroKiz Bangkok Edition 2 as your festival destination! We are thrilled to confirm
+              your purchase of {{passName}} for the upcoming event. Your support means the world to us, and we can't
+              wait to celebrate the vibrant world of AfroKiz with you.
+            </p>
+            <table style="width: 100%; margin: 1.5rem 0" cellpadding="0" cellspacing="0" role="presentation">
+              <thead style="text-align: left">
+                <tr>
+                  <th style="padding: 0.8rem; border-bottom: 1px solid black">Description</th>
+                  <th style="padding: 0.8rem; border-bottom: 1px solid black">Amount</th>
+                  <th style="padding: 0.8rem; border-bottom: 1px solid black">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each items}}
+                <tr>
+                  <td style="padding: 0.8rem; border-bottom: 1px solid black">
+                    {{pass}}
+                    <ul style="margin: 0.5rem">
+                      {{#each includes}}
+                      <li>{{description}}</li>
+                      {{/each}}
+                    </ul>
+                  </td>
+                  <td style="padding: 0.8rem; border-bottom: 1px solid black">{{amount}}</td>
+                  <td style="padding: 0.8rem; border-bottom: 1px solid black">{{price.currency}} {{price.amount}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td style="padding: 0.8rem">Total</td>
+                  <td style="padding: 0.8rem"></td>
+                  <td style="padding: 0.8rem">{{total.currency}} {{total.amount}}</td>
+                </tr>
+              </tfoot>
+            </table>
+            <p>This year we made the registration process much more smoother:</p>
+            <div>
+              <p>
+                1. Go to the reception at
+                <a href="https://maps.app.goo.gl/hpxcacQuDtBxwwF3A" target="_blank">
+                  Glowfish Floor 2, Sathorn Thani 2 Building, Bangkok </a
+                >.
+              </p>
+            </div>
+            <div>
+              <p>2. Show your QR Code to the staff</p>
+              <img src="{{qrCodeUrl}}" />
+            </div>
+            <p>3. Enjoy the festival!</p>
+            <div>
+              <p>
+                The QR Code is individual and can be registered only once. A proof of payment might be requested in case
+                of conflicts.
+              </p>
+            </div>
+            <p>
+              Once again, thank you for being a part of AfroKiz Bangkok Edition 2. Your presence will contribute to
+              making this festival an unforgettable experience. Get ready to dance, connect, and celebrate the spirit of
+              AfroKiz!
+            </p>
+            <p>
+              <br />
+              AfroKiz Bangkok Edition 2 Team,
+              <br />Whatsapp +66991166561
+            </p>
+            <hr style="height: 0; border: 0; border-top: 2px solid #bfbfbf" />
+            <div style="color: #737373; text-align: center; margin-top: 2rem !important">
+              <p style="margin: 0.5rem">
+                <a href="https://www.facebook.com/share/1LgTVFcWbJi844kr/" target="_blank" style="color: #737373"
+                  >Facebook</a
+                >
+              </p>
+              <p style="margin: 0.5rem">
+                <a href="https://www.instagram.com/afrokizbkk/" target="_blank" style="color: #737373">Instagram</a>
+              </p>
+              <p style="margin: 0.5rem">
+                <a href="https://afrokizbkk.com" target="_blank" style="color: #737373">afrokizbkk.com</a>
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

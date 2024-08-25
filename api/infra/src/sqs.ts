@@ -41,6 +41,7 @@ export const createImportOrderQueue = (props: {
       effect: cdk.aws_iam.Effect.ALLOW,
     })
   )
+  props.documentBucket.grantPut(lambda)
   linkLambdaToSQS(lambda, queue)
   return queue
 }

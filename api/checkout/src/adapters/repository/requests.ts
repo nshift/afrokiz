@@ -320,7 +320,13 @@ export const listOrdersResponse = (response: any) =>
       pass: item.items[0]?.id ?? '',
       promoCode: item.promoCode,
       customerType: item.customer?.type ?? item.dancerType,
-      includes: item.items.flatMap((item: any) => item.includes),
+      items: item.items.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        includes: item.includes,
+        amount: item.amount,
+        total: { amount: item.total.amount, currency: item.total.currency },
+      })),
       paymentStatus: item.paymentStatus ?? item.payment?.status,
       total: {
         amount: item.items.reduce((total: number, item: any) => (total += item.total.amount), 0),

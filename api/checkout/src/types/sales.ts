@@ -7,7 +7,13 @@ export type Sales = {
   fullname: string
   pass: string
   customerType: string
-  includes: string[]
+  items: {
+    id: string
+    title: string
+    includes: string[]
+    amount: number
+    total: { amount: number; currency: Currency }
+  }[]
   promoCode: string
   paymentStatus: 'pending' | 'success' | 'failed'
   total: {

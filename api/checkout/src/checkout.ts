@@ -96,12 +96,13 @@ export class Checkout {
     return promotion ?? null
   }
 
-  async requestImportOrders(csvPath: string) {
+  async requestImportOrders(csvPath: string): Promise<Order[]> {
     const orders = await this.documentAdapter.getOrdersFromImports(csvPath)
     const newOrders = await this.getNewOrders(orders)
     await this.saveImportOrders(newOrders)
     await this.saveCheckouts(newOrders)
     await this.requestImportOrder(newOrders)
+    return newOrders.map(({ order }) => order)
   }
 
   private async createCheckout({
@@ -135,8 +136,18 @@ export class Checkout {
     total: { amount: number; currency: Currency }
   ): Order => ({ ...newOrder, total, id: makeOrderId() })
 
-  private async sendConfirmationEmail(email: { order: Order; customer: Customer; qrCode: Buffer }) {
-    return this.emailApi.sendEmail(await confirmationEmail(email))
+  private async sendConfirmationEmail({
+    order,
+    customer,
+    qrCode,
+  }: {
+    order: Order
+    customer: Customer
+    qrCode: Buffer
+  }) {
+    const link = await this.documentAdapter.uploadQrCode(order.id, qrCode)
+    console.log(confirmationEmail({ order, customer, qrCodeUrl: link }))
+    return this.emailApi.sendBulkEmails(confirmationEmail({ order, customer, qrCodeUrl: link }))
   }
 
   async importOrder(orderId: string) {
@@ -147,7 +158,8 @@ export class Checkout {
     const { order, customer } = result
     await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
     const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
-    await this.emailApi.sendEmail(await confirmationEmail({ order, customer, qrCode: qrCodeFile }))
+    const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
+    await this.emailApi.sendBulkEmails(confirmationEmail({ order, customer, qrCodeUrl: link }))
   }
 
   async sendRegistrationCampaign() {
@@ -232,6 +244,10 @@ export class Checkout {
       promoCode: string | null
     }[]
   ): Promise<void> {
+    console.log(
+      'Request import orders: ',
+      newOrders.map((order) => order.order.id)
+    )
     return this.queueAdapter.requestImportOrder(newOrders.map(({ order }) => order))
   }
 }

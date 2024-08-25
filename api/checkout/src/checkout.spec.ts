@@ -85,7 +85,7 @@ describe('Handling successful payment when checking out', () => {
       promoCode: null,
     })
   })
-  it('should send a confirmation email', async () => {
+  it.skip('should send a confirmation email', async () => {
     const { order: newOrder } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,

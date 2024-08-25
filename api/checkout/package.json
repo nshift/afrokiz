@@ -6,7 +6,7 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "./node_modules/.bin/tsc && cp ./src/adapters/email/registration.html ./.build/src/adapters/email/registration.html",
+    "build": "./node_modules/.bin/tsc && cp -r ./src/adapters/email/*.html ./.build/src/adapters/email/",
     "test": "./node_modules/.bin/jest --coverage --testMatch '**/src/*.spec.ts' --config ../jest.config.js --rootDir . --passWithNoTests  --setupFilesAfterEnv './src/doubles/setup.int.ts'",
     "test:int": "./node_modules/.bin/jest --coverage --testMatch '**/src/adapters/**/*.spec.ts' --config ../jest.config.js --rootDir . --passWithNoTests --setupFilesAfterEnv './src/doubles/setup.int.ts'",
     "test:coverage": "./node_modules/.bin/jest --coverage --config ../jest.config.js --rootDir . --passWithNoTests --setupFilesAfterEnv './src/doubles/setup.int.ts'"

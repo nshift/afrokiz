@@ -156,8 +156,11 @@ export const resendConfirmationEmail = async (
 export const requestImportOrders = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const request = buildRequestImportOrdersRequest(event)
   try {
-    await checkout.requestImportOrders(request.csvPath)
-    return successfullyCreatedResponse()
+    const orders = await checkout.requestImportOrders(request.csvPath)
+    return successResponse({
+      numberOfImports: orders.length,
+      orderIds: orders.map((order) => order.id),
+    })
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)

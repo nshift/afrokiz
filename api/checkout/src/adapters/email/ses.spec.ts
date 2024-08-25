@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it } from '@jest/globals'
-import { order, romainCustomer, testEmail, testEmailTemplate } from '../../doubles/fixtures'
+import { order, romainCustomer, sales, testEmail, testEmailTemplate } from '../../doubles/fixtures'
+import { confirmationEmail } from './email.confirmation'
 import { registrationEmail } from './email.registration'
 import { SESEmailService } from './ses'
 
-describe.skip('Email service', () => {
+describe('Email service', () => {
   let email: SESEmailService
 
   beforeEach(async () => {
@@ -16,10 +17,22 @@ describe.skip('Email service', () => {
   it('should send an email', async () => {
     await expect(email.sendEmail(testEmail)).resolves.not.toThrow()
   })
+  it('should send a registration email', async () => {
+    await expect(
+      email.sendBulkEmails(
+        registrationEmail([
+          {
+            sale: sales,
+            qrCodeUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/31/MM_QRcode.png',
+          },
+        ])
+      )
+    ).resolves.not.toThrow()
+  })
   it.only('should send a registration email', async () => {
     await expect(
       email.sendBulkEmails(
-        registrationEmail({
+        confirmationEmail({
           order,
           customer: romainCustomer,
           qrCodeUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/31/MM_QRcode.png',

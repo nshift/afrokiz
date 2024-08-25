@@ -128,6 +128,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
   props.eventTable.grant(endpoint.lambda, 'dynamodb:PutItem')
   props.orderTable.grant(endpoint.lambda, 'dynamodb:UpdateItem', 'dynamodb:Query')
   props.salesTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
+  props.documentBucket.grantPut(endpoint.lambda)
   return endpoint
 }
 
