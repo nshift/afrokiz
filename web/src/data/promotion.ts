@@ -347,6 +347,72 @@ const makePromotionPhase5 = (promotion: { start: Date; end: Date }): Promotion =
   }
 }
 
+const makePromotion10off = (promotion: { start: Date; end: Date }): Promotion => {
+  return {
+    text: `Get 10% off until 29th of August.`,
+    isActive: new Date().getTime() > promotion.start.getTime() && new Date().getTime() < promotion.end.getTime(),
+    passes: {
+      fullPass: { ...defaultPasses.fullPass, price: { USD: 18900, EUR: 17100, THB: 657000 } },
+      fullPassBundle: {
+        ...defaultPasses.fullPass,
+        id: 'fullpass-bundle',
+        name: 'Full Pass + Masterclass',
+        isPromoted: false,
+        price: { USD: 24300, EUR: 22500, THB: 891000 },
+        doorPrice: { USD: 27000, EUR: 25000, THB: 990000 },
+        includes: [...defaultPasses.fullPass.includes],
+        options: {
+          ...defaultPasses.fullPass.options,
+          'couple-option': {
+            id: 'couple-option',
+            icon: 'fa-user-group',
+            title: 'Couple',
+            includes: ['1 couple ticket'],
+            selected: false,
+            soldOut: true,
+            price: { USD: 19000, EUR: 17500, THB: 700000 },
+          },
+          'all-mc-option': { ...options['all-mc-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+          'bootcamp-option': { ...options['bootcamp-option'], price: { USD: 1400, EUR: 1200, THB: 50000 } },
+        },
+      },
+      partyBundle: {
+        ...defaultPasses.party,
+        id: 'party-bundle',
+        name: 'Party Combo Pass',
+        isPromoted: false,
+        isSoldOut: true,
+        price: { USD: 18900, EUR: 17100, THB: 657000 },
+        doorPrice: { USD: 21000, EUR: 19000, THB: 730000 },
+        includes: [
+          'All parties in main venue',
+          '8 welcome drinks per person',
+          'Day time social party',
+          '2H Foot Massage at Lek Massage',
+        ],
+        options: {
+          ...defaultPasses.party.options,
+          'cruise-option': { ...options['cruise-option'], selected: true, price: { USD: 0, EUR: 0, THB: 0 } },
+        },
+      },
+      party: { ...defaultPasses.party, price: { USD: 12800, EUR: 11700, THB: 450000 } },
+      vipSilver: defaultPasses.vipSilver,
+      // oneDay: defaultPasses.oneDay,
+      friSat: { ...defaultPasses.friSat, price: { USD: 16200, EUR: 14900, THB: 585000 } },
+      satSun: { ...defaultPasses.satSun, price: { USD: 16200, EUR: 14900, THB: 585000 } },
+      fri: { ...defaultPasses.fri, price: { USD: 9000, EUR: 8200, THB: 315000 } },
+      sat: { ...defaultPasses.sat, price: { USD: 9800, EUR: 8900, THB: 342000 } },
+      sun: { ...defaultPasses.sun, price: { USD: 9800, EUR: 8900, THB: 342000 } },
+      friNight: { ...defaultPasses.friNight, price: { USD: 4700, EUR: 4000, THB: 161000 } },
+      satNight: { ...defaultPasses.satNight, price: { USD: 5000, EUR: 4500, THB: 170000 } },
+      sunNight: { ...defaultPasses.sunNight, price: { USD: 4700, EUR: 4000, THB: 161000 } },
+      dj: { ...defaultPasses.dj, price: { USD: 8900, EUR: 8000, THB: 305000 } },
+      // cruise: defaultPasses.cruise,
+      vipGold: defaultPasses.vipGold,
+    },
+  }
+}
+
 const promotions: Promotion[] = [
   makePromotion({
     name: 'Early bird',
@@ -367,6 +433,10 @@ const promotions: Promotion[] = [
   makePromotionPhase4({
     start: new Date('2024-07-01'),
     end: new Date('2024-08-08'),
+  }),
+  makePromotion10off({
+    start: new Date('2024-08-25'),
+    end: new Date('2024-08-30'),
   }),
   makePromotionPhase5({
     start: new Date('2024-08-09'),
