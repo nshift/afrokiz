@@ -70,17 +70,6 @@ export class Checkout {
     return this.repository.getOrderById(id)
   }
 
-  // private async applyPromotion(order: Order, promoCode?: string): Promise<Order> {
-  //   if (promoCode) {
-  //     const promotion = await this.getPromotion(promoCode)
-  //     const today = this.dateGenerator.today()
-  //     if (promotion && shouldApplyPromotion(promotion, today)) {
-  //       return promotion.apply(order)
-  //     }
-  //   }
-  //   return order
-  // }
-
   async getPromotion(passId: string, code: string): Promise<Promotion | null> {
     const promotions = await this.repository.getAllPromotions(passId)
     const promotion = promotions[code.toUpperCase()]
@@ -114,6 +103,36 @@ export class Checkout {
     )
     await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode))
     return newOrders.map(({ order }) => order)
+  }
+
+  async importOrder(orderId: string) {
+    const result = await this.repository.getOrderById(orderId)
+    if (!result) {
+      throw new Error(`Can not find order ${orderId}`)
+    }
+    const { order, customer } = result
+    await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
+    const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+    const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
+    await this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }]))
+  }
+
+  async sendRegistrationCampaign() {
+    const allSales = await this.repository.getAllRegistrationCampaignSales()
+    const sales = allSales.filter((sale) => sale.paymentStatus == 'success')
+    if (sales.length == 0) {
+      return []
+    }
+    const data = await Promise.all(
+      sales.map(async (sale) => {
+        const qrCode = await this.qrCodeGenerator.generateOrderQrCode({ id: sale.id })
+        const link = await this.documentAdapter.uploadQrCode(sale.id, qrCode)
+        return { sale, qrCodeUrl: link }
+      })
+    )
+    await this.emailApi.sendBulkEmails(registrationEmail(data))
+    await this.repository.updateOrdersForRegistrationCampaign(sales.map((sale) => sale.id))
+    return data
   }
 
   private async createCheckout({
@@ -158,36 +177,6 @@ export class Checkout {
   }) {
     const link = await this.documentAdapter.uploadQrCode(order.id, qrCode)
     return this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }]))
-  }
-
-  async importOrder(orderId: string) {
-    const result = await this.repository.getOrderById(orderId)
-    if (!result) {
-      throw new Error(`Can not find order ${orderId}`)
-    }
-    const { order, customer } = result
-    await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
-    const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
-    const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
-    await this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }]))
-  }
-
-  async sendRegistrationCampaign() {
-    const allSales = await this.repository.getAllRegistrationCampaignSales()
-    const sales = allSales.filter((sale) => sale.paymentStatus == 'success')
-    if (sales.length == 0) {
-      return []
-    }
-    const data = await Promise.all(
-      sales.map(async (sale) => {
-        const qrCode = await this.qrCodeGenerator.generateOrderQrCode({ id: sale.id })
-        const link = await this.documentAdapter.uploadQrCode(sale.id, qrCode)
-        return { sale, qrCodeUrl: link }
-      })
-    )
-    await this.emailApi.sendBulkEmails(registrationEmail(data))
-    await this.repository.updateOrdersForRegistrationCampaign(sales.map((sale) => sale.id))
-    return data
   }
 
   private makeFingerprints(
@@ -246,6 +235,17 @@ export class Checkout {
       }))
     )
   }
+
+  // private async applyPromotion(order: Order, promoCode?: string): Promise<Order> {
+  //   if (promoCode) {
+  //     const promotion = await this.getPromotion(promoCode)
+  //     const today = this.dateGenerator.today()
+  //     if (promotion && shouldApplyPromotion(promotion, today)) {
+  //       return promotion.apply(order)
+  //     }
+  //   }
+  //   return order
+  // }
 
   // private requestImportOrder(
   //   newOrders: {
