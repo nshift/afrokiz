@@ -80,9 +80,9 @@ export const options: {
     selected: false,
     soldOut: false,
     price: {
-      USD: 7200,
-      EUR: 6700,
-      THB: 259000,
+      USD: 6500,
+      EUR: 6000,
+      THB: 233000,
     },
   },
   'heneco-mc-option': {
@@ -94,9 +94,9 @@ export const options: {
     selected: false,
     soldOut: false,
     price: {
-      USD: 7200,
-      EUR: 6700,
-      THB: 259000,
+      USD: 6500,
+      EUR: 6000,
+      THB: 233000,
     },
   },
   'all-mc-option': {
@@ -108,9 +108,9 @@ export const options: {
     selected: false,
     soldOut: false,
     price: {
-      USD: 10000,
-      EUR: 9200,
-      THB: 349000,
+      USD: 9500,
+      EUR: 8800,
+      THB: 331500,
     },
   },
 }
