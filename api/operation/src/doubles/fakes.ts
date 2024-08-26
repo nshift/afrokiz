@@ -1,3 +1,4 @@
+import { EmailTemplate } from '../adapters/email/email.template'
 import { Sales } from '../entities/sales'
 
 export const awdeshSales: Sales = {
@@ -16,6 +17,7 @@ export const awdeshSales: Sales = {
   total: { amount: 7000, currency: 'USD' },
   paymentStatus: 'success',
 }
+
 export const achiSales: Sales = {
   id: 'achi-sales',
   email: 'achi@gmail.com',
@@ -34,4 +36,17 @@ export const achiSales: Sales = {
   ],
   total: { amount: 250000, currency: 'THB' },
   paymentStatus: 'success',
+}
+
+export const testEmailTemplate: EmailTemplate = {
+  name: 'EmailDoublesTemplate',
+  subject: 'Email template testing',
+  html: `
+  Hi,
+
+  This is a test made by {{author}}.
+
+  Best regards,
+  `.replace(/\n/g, '<br />'),
+  destinations: [{ toAddresses: ['romain.asnar@gmail.com'], data: { author: 'Uncle Bob' } }],
 }

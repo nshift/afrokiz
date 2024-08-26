@@ -6,7 +6,13 @@ import * as path from 'path'
 import 'source-map-support/register'
 import { createDocumentBucket } from './bucket'
 import { makeCheckoutEndpoints } from './checkout.endpoint'
-import { createEventTable, createImportOrderTable, createOrderTable, createSalesTable } from './dynamodb'
+import {
+  createEventTable,
+  createGuestTable,
+  createImportOrderTable,
+  createOrderTable,
+  createSalesTable,
+} from './dynamodb'
 import { makeOperationEndpoints } from './operation.endpoint'
 import { getStripeSecrets } from './secret'
 import { createImportOrderQueue } from './sqs'
@@ -20,6 +26,7 @@ const documentBucket = createDocumentBucket(stack)
 const eventTable = createEventTable(stack)
 const orderTable = createOrderTable(stack)
 const salesTable = createSalesTable(stack)
+const guestTable = createGuestTable(stack)
 const importOrdersTable = createImportOrderTable(stack)
 const stripeSecrets = getStripeSecrets(stack)
 const context = {
@@ -29,6 +36,7 @@ const context = {
   eventTable,
   orderTable,
   salesTable,
+  guestTable,
   importOrdersTable,
   stripeSecrets,
 }

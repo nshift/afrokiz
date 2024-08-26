@@ -1,9 +1,17 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
+import { S3 } from '@aws-sdk/client-s3'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
 import { Sales } from '../../entities/sales'
+import { Environment } from '../../environment'
+import { GuestCheckIn } from '../../guest-check-in'
+import { GuestRegistration } from '../../guest-registration'
 import { SalesReporting } from '../../sales.reporting'
+import { StorageAdapter } from '../document/storage.adapter'
+import { S3Storage } from '../document/storage.s3'
 import { DynamoDbAdapter } from '../dynamodb/dynamodb'
+import { SESEmailService } from '../email/ses'
+import { QrCodeGenerator } from '../qr-code/qr-code.generator'
 
 const repository = new DynamoDbAdapter(
   DynamoDBDocumentClient.from(new DynamoDB({}), {
@@ -85,6 +93,62 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
   }
 }
 
+export const preGuestRegistration = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  const body = JSON.parse(event.body ?? '{}')
+  if (!body.email || !body.fullname) {
+    return invalidRequestErrorResponse('Email and fullname is required.')
+  }
+  try {
+    const emailAdapter = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
+    const qrCodeGenerator = new QrCodeGenerator()
+    const s3Client = new S3Storage(new S3({}), Environment.DocumentBucketName())
+    const documentAdapter = new StorageAdapter(s3Client)
+    const guestRegistration = new GuestRegistration(repository, emailAdapter, qrCodeGenerator, documentAdapter)
+    await guestRegistration.preRegister({ email: body.email, fullname: body.fullname })
+    return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const getGuest = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  const guestId = event.pathParameters?.email
+  if (!guestId) {
+    return notFoundErrorResponse('Guest id is required.')
+  }
+  try {
+    const guestCheckIn = new GuestCheckIn(repository)
+    const guest = await guestCheckIn.getGuest(guestId)
+    return successResponse({
+      email: guest.email,
+      fullname: guest.fullname,
+      checked_in: guest.checkedIn,
+    })
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const checkInGuest = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  const body = JSON.parse(event.body ?? '{}')
+  if (!body.email) {
+    return notFoundErrorResponse('Guest email is required.')
+  }
+  try {
+    const guestCheckIn = new GuestCheckIn(repository)
+    await guestCheckIn.checkIn(body.email)
+    return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
 const convertToCSV = (json: any) => {
   const items = json
   const replacer = (key: any, value: any) => (!value ? '' : value)
@@ -95,10 +159,34 @@ const convertToCSV = (json: any) => {
   ].join('\r\n')
 }
 
+const successfullyCreatedResponse = () => ({
+  statusCode: 201,
+  headers,
+  body: '',
+})
+
 const successCSVResponse = (body: any) => ({
   statusCode: 200,
   headers: { ...headers, 'Content-Type': 'text/csv', 'Content-disposition': 'attachment; filename=sales_report.csv' },
   body: body,
+})
+
+const successResponse = (body: any) => ({
+  statusCode: 200,
+  headers,
+  body: JSON.stringify(body),
+})
+
+const invalidRequestErrorResponse = (message: string) => ({
+  statusCode: 400,
+  headers,
+  body: JSON.stringify({ message }),
+})
+
+const notFoundErrorResponse = (message: string) => ({
+  statusCode: 404,
+  headers,
+  body: JSON.stringify({ message }),
 })
 
 const internalServerErrorResponse = (error: any) => ({

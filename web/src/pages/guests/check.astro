@@ -1,0 +1,113 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Card from "../../components/Card.astro";
+import { PaymentAPI } from "../../payment-api/payment.api";
+
+const queryParams = Astro.url.searchParams
+const email = queryParams.get('email')
+const authToken = Astro.cookies.get('STAFF_AUTH_TOKEN')?.value ?? ''
+const authorized = !(!email || !authToken || authToken != 'ab65bb3c-80e5-463b-8097-57bd0593da43')
+if (!authorized) {
+  return Astro.redirect('/staff/unauthorized')
+}
+const requestToCheckedIn = queryParams.get('check_in') == "1"
+const paymentApi = new PaymentAPI()
+if (requestToCheckedIn) {
+  await paymentApi.guestCheckIn(email)
+}
+const guest = await paymentApi.getGuest(email)
+const checkedIn = guest.checkedIn
+---
+
+<Layout title=`Guest ${guest} | Afrokiz Bkk Festival Edition 2``>
+  <main>
+    <div class="grid">
+      <div class="list">
+        <Card classes={["ticket-card"]}>
+          <div class="lines">
+            <h1>{guest.fullname}</h1>
+            <p>{guest.email}</p>
+            <p>Guest</p>
+          </div>
+        </Card>
+        <Card classes={["ticket-card", "check-in", checkedIn ? "green" : "blue"]}>
+          {checkedIn ? 
+              <i class="large-icon fa-solid fa-check"></i>
+              <p>Checked In</p>
+            : <a href=`/guests/check?email=${email}&check_in=1`>
+              <i class="large-icon fa-solid fa-check"></i>
+              <p>Check In</p>
+            </a>}
+        </Card>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  .ticket-card {
+    width: calc((100% / 2) - 0.8rem) !important;
+    min-height: 175px !important;
+  }
+  .ticket-card .text {
+    width: 100%;
+    padding: 2rem;
+    word-break: break-word;
+  }
+  .check-in.green {
+    background-color: #39c440;
+  }
+  .check-in.green a {
+    color: white;
+    text-decoration: none;
+  }
+  .check-in.blue {
+    background-color: #3b79ff;
+  }
+  .check-in.blue a {
+    color: white;
+    text-decoration: none;
+  }
+</style>
+
+<style>
+  main {
+    margin-top: 1rem;
+    font-size: 120%;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: var(--grid-lg-gap);
+    padding: 0 var(--grid-side-padding);
+  }
+  .list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    grid-column: span 12;
+    justify-content: center;
+    align-items: stretch;
+    text-align: center;
+  }
+  .lines {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .icon {
+    font-size: 2rem;
+  }
+
+  .large-icon {
+    font-size: 3rem;
+  }
+  .value {
+    font-size: 4rem;
+    font-weight: bold;
+  }
+</style>

@@ -88,6 +88,32 @@ export class PaymentAPI {
     })
   }
 
+  async guestCheckIn(email: string): Promise<void> {
+    await this.request({
+      method: 'POST',
+      path: `/guests/check-in`,
+      body: JSON.stringify({ email }),
+    })
+  }
+
+  async preRegister({ email, fullname }: { email: string; fullname: string }) {
+    await this.request({
+      method: 'POST',
+      path: `/guests/pregister`,
+      body: JSON.stringify({ email, fullname }),
+    })
+  }
+
+  async getGuest(email: string): Promise<Guest> {
+    const json = await this.request({ method: 'GET', path: '/guests/' + email })
+    return {
+      id: json.id,
+      email: json.email,
+      fullname: json.fullname,
+      checkedIn: json.checked_in ?? false,
+    }
+  }
+
   async request(options: {
     path: string
     method: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -149,4 +175,11 @@ export type NewOrder = {
     amount: number
     total: { amount: number; currency: 'USD' | 'EUR' | 'THB' }
   }[]
+}
+
+export type Guest = {
+  id: string
+  email: string
+  fullname: string
+  checkedIn: boolean
 }
