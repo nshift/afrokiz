@@ -16,6 +16,7 @@ type Checkout = {
   customer: Customer
   promoCode: string | null
   payment: { status: PaymentStatus; intent: PaymentIntent | null }
+  checkedIn: boolean
 }
 
 export interface ProceedToCheckoutEvent extends Event<Checkout> {}
@@ -49,6 +50,7 @@ export const mapToOrder = (
   customer: Customer
   promoCode: string | null
   payment: { status: PaymentStatus; intent: PaymentIntent | null }
+  checkedIn: boolean
 } => ({
   order: checkout.order,
   customer: checkout.customer,
@@ -62,4 +64,5 @@ export const mapToOrder = (
         }
       : null,
   },
+  checkedIn: checkout.checkedIn,
 })

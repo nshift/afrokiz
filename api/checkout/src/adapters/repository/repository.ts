@@ -13,6 +13,7 @@ export interface SavingCheckout {
     customer: Customer
     promoCode: string | null
     payment: { status: PaymentStatus; intent: PaymentIntent | null }
+    checkedIn: boolean
   }): Promise<void>
   saveCheckouts(
     checkout: {
@@ -21,6 +22,7 @@ export interface SavingCheckout {
       customer: Customer
       promoCode: string | null
       payment: { status: PaymentStatus; intent: PaymentIntent | null }
+      checkedIn: boolean
     }[]
   ): Promise<void>
 }
@@ -31,6 +33,7 @@ export interface GettingOrders {
     customer: Customer
     promoCode: string | null
     payment: { status: PaymentStatus; intent: PaymentIntent | null }
+    checkedIn: boolean
   } | null>
   // getOrderByPaymentIntentId(paymentIntentId: string): Promise<Order | null>
 }
@@ -61,6 +64,10 @@ export interface SavingSales {
   updateOrdersForRegistrationCampaign(orderIds: string[]): Promise<void>
 }
 
+export interface UpdatingOrder {
+  updateOrderCheckIn(orderId: string, value: boolean): Promise<void>
+}
+
 export interface Repository
   extends GettingOrders,
     GettingPromotions,
@@ -69,4 +76,5 @@ export interface Repository
     SavingImportOrder,
     GettingImportOrder,
     SavingSales,
-    GettingSales {}
+    GettingSales,
+    UpdatingOrder {}

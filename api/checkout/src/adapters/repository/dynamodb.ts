@@ -11,6 +11,7 @@ import { Sales } from '../../types/sales'
 import { DateGenerator } from '../date.generator'
 import { UUIDGenerator } from '../uuid.generator'
 import { EventStore } from './event-store'
+import { processUpdateOrderCheckInEvent } from './events/check-in.event'
 import { Event } from './events/event'
 import { mapToOrder, proceedToCheckoutEvent, processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event'
@@ -63,6 +64,7 @@ export class DynamoDbRepository implements Repository {
     customer: Customer
     promoCode: string | null
     payment: { status: PaymentStatus; intent: PaymentIntent | null }
+    checkedIn: boolean
   }): Promise<void> {
     await processProceedToCheckoutEvent(this.dynamodb, this.uuidGenerator, this.dateGenerator, checkout)
   }
@@ -74,6 +76,7 @@ export class DynamoDbRepository implements Repository {
       customer: Customer
       promoCode: string | null
       payment: { status: PaymentStatus; intent: PaymentIntent | null }
+      checkedIn: boolean
     }[]
   ): Promise<void> {
     if (checkouts.length == 0) {
@@ -211,5 +214,12 @@ export class DynamoDbRepository implements Repository {
   async getImportOrdersByFingerprints(fingerprints: string[]): Promise<ImportOrder[]> {
     const response = await this.dynamodb.send(getImportOrdersByFingerprintsRequest(fingerprints))
     return importOrdersResponse(response.Responses?.[Environment.ImportOrderTableName()] ?? [])
+  }
+
+  async updateOrderCheckIn(orderId: string, value: boolean): Promise<void> {
+    await processUpdateOrderCheckInEvent(this.dynamodb, this.uuidGenerator, this.dateGenerator, {
+      id: orderId,
+      checkedIn: value,
+    })
   }
 }

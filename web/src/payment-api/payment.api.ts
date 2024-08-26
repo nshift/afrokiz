@@ -29,6 +29,7 @@ export class PaymentAPI {
       dancerType: json.dancer_type,
       passId: json.pass_id,
       date: json.date,
+      checkedIn: false,
       paymentIntentId: json.paymentIntentId,
       paymentStatus: json.paymentStatus,
       items: json.items.map((item: any) => ({
@@ -53,6 +54,7 @@ export class PaymentAPI {
       date: json.date,
       paymentIntentId: json.paymentIntentId,
       paymentStatus: json.paymentStatus,
+      checkedIn: json.checked_in,
       items: json.items.map((item: any) => ({
         id: item.id,
         title: item.title,
@@ -78,6 +80,14 @@ export class PaymentAPI {
     } as DiscountPromotion | GiveAwayPromotion
   }
 
+  async checkIn(orderId: string): Promise<void> {
+    await this.request({
+      method: 'POST',
+      path: `/check-in/${orderId}`,
+      body: JSON.stringify({}),
+    })
+  }
+
   async request(options: {
     path: string
     method: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -93,6 +103,9 @@ export class PaymentAPI {
       },
       body: options.body,
     })
+    if (response.status == 201) {
+      return {}
+    }
     const json = await response.json()
     if (response.status < 200 || response.status > 299) {
       throw new Error(`Failed to request ${options.path}: ${JSON.stringify(json)}`)
@@ -109,6 +122,7 @@ export type Order = {
   passId: string
   date: Date
   promoCode?: string
+  checkedIn: boolean
   paymentIntentId: string
   paymentStatus: 'pending' | 'success' | 'failed'
   items: {

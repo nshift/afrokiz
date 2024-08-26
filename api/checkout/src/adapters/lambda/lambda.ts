@@ -50,9 +50,9 @@ export const proceedToCheckout = async (event: APIGatewayEvent, context: Context
   const body = JSON.parse(event.body ?? '{}')
   const request = buildProceedToCheckoutRequest(body)
   try {
-    const { order, customer, promoCode, payment } = await checkout.proceed(request)
+    const { order, customer, promoCode, payment, checkedIn } = await checkout.proceed(request)
     return successResponse({
-      ...buildOrderResponse({ order, customer, promoCode, payment }),
+      ...buildOrderResponse({ order, customer, promoCode, payment, checkedIn }),
       clientSecret: payment.intent.secret,
     })
   } catch (error) {
@@ -192,6 +192,20 @@ export const sendRegistrationCampaign = async (
   try {
     const data = await checkout.sendRegistrationCampaign()
     return successResponse({ numberOfOrderProcessed: data.length, orders: data.map((order) => order.sale.id) })
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const checkIn = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  const orderId = event.pathParameters?.id
+  if (!orderId) {
+    return notFoundErrorResponse('Order id is required.')
+  }
+  try {
+    await checkout.checkIn(orderId)
+    return successfullyCreatedResponse()
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)

@@ -33,6 +33,7 @@ export const transformCreateOrderEvent = (event: CreateOrderEvent): ProceedToChe
       },
       promoCode: event.data.order.promoCode,
       payment: { status: event.data.order.paymentStatus, intent: { id: event.data.order.paymentIntentId, secret: '' } },
+      checkedIn: false,
     },
   })
 }

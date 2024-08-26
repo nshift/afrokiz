@@ -9,11 +9,13 @@ export const buildOrderResponse = ({
   customer,
   promoCode,
   payment,
+  checkedIn,
 }: {
   order: Order
   customer: Customer
   promoCode: string | null
   payment: { status: PaymentStatus; intent: PaymentIntent | null }
+  checkedIn: boolean
 }) => ({
   id: order.id,
   paymentIntentId: payment.intent ? payment.intent.id : null,
@@ -24,6 +26,7 @@ export const buildOrderResponse = ({
   promo_code: promoCode,
   pass_id: order.items[0].id,
   date: order.date.toISOString(),
+  checked_in: checkedIn,
   items: order.items.map((item) => ({
     id: item.id,
     title: item.title,

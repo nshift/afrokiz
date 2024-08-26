@@ -2,7 +2,6 @@
 import Layout from "../../layouts/Layout.astro";
 import Card from "../../components/Card.astro";
 import { PaymentAPI } from "../../payment-api/payment.api";
-import { Environment } from "../../environment";
 
 const queryParams = Astro.url.searchParams
 const orderId = queryParams.get('order_id')
@@ -11,9 +10,14 @@ const authorized = !(!orderId || !authToken || authToken != 'ab65bb3c-80e5-463b-
 if (!orderId || !authorized) {
   return Astro.redirect('/staff/unauthorized')
 }
+const requestToCheckedIn = queryParams.get('check_in') == "1"
+console.log(">>>>> checkIn: ", requestToCheckedIn)
 const paymentApi = new PaymentAPI()
+if (requestToCheckedIn) {
+  await paymentApi.checkIn(orderId)
+}
 const order = await paymentApi.getOrderById(orderId)
-const checkedIn = false
+const checkedIn = order.checkedIn
 const includedItems = order.items.flatMap((item) => item.includes)
 
 function getNumber(pattern: string) {
@@ -72,10 +76,13 @@ function getPassName(passId: string) {
           </div>
         </Card>
         <Card classes={["ticket-card", "check-in", checkedIn ? "green" : "blue"]}>
-          <a href="">
-            <i class="large-icon fa-solid fa-check"></i>
-            {checkedIn ? <p>Checked In</p> : <p>Check In</p>}
-          </a>
+          {checkedIn ? 
+              <i class="large-icon fa-solid fa-check"></i>
+              <p>Checked In</p>
+            : <a href=`/staff/check?order_id=${order.id}&check_in=1`>
+              <i class="large-icon fa-solid fa-check"></i>
+              <p>Check In</p>
+            </a>}
         </Card>
         {
           items.map((item) => 
@@ -102,6 +109,8 @@ function getPassName(passId: string) {
   }
   .ticket-card .text {
     width: 100%;
+    padding: 2rem;
+    word-break: break-word;
   }
   .check-in.green {
     background-color: #39c440;
@@ -129,7 +138,7 @@ function getPassName(passId: string) {
     color: black !important;
   }
   .purple {
-    background-color: #371b58 !important;
+    background-color: var(--primary-darker-color) !important;
     color: white !important;
   }
   .purple a {
@@ -165,7 +174,6 @@ function getPassName(passId: string) {
     gap: 1rem;
     justify-content: center;
     align-items: center;
-    padding: 2rem;
     text-align: center;
   }
   .list2 > * {

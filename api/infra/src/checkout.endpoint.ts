@@ -26,6 +26,7 @@ export const makeCheckoutEndpoints = (props: {
     makeResendConfirmationEmailEndpoint({ ...props, ...context }),
     makeRequestImportOrderEndpoint({ ...props, ...context }),
     makeRequestSendRegistrationCampaignEndpoint({ ...props, ...context }),
+    makeCheckInEndpoint({ ...props, ...context }),
     // makeMarkPaymentAsSucceedEndpoint({ ...props, ...context }),
   ]
 }
@@ -287,6 +288,38 @@ const makeRequestSendRegistrationCampaignEndpoint = (props: {
   )
   props.orderTable.grant(endpoint.lambda, 'dynamodb:UpdateItem', 'dynamodb:Scan')
   props.documentBucket.grantPut(endpoint.lambda)
+  return endpoint
+}
+
+const makeCheckInEndpoint = (props: {
+  stack: cdk.Stack
+  codeUri: string
+  api: cdk.aws_apigatewayv2.CfnApi
+  sharedLayer: cdk.aws_lambda.LayerVersion
+  eventTable: cdk.aws_dynamodb.Table
+  orderTable: cdk.aws_dynamodb.Table
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
+}) => {
+  const endpoint = createEndpoint('MarkPaymentAsSucceed', {
+    handler: 'adapters/lambda/lambda.checkIn',
+    method: 'POST',
+    path: '/check-in/{id}',
+    environment: {
+      NODE_ENV: 'PROD',
+      LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
+      EVENT_TABLE_NAME: props.eventTable.tableName,
+      ORDER_TABLE_NAME: props.orderTable.tableName,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
+      WEB_APP_HOST: Environment.WebAppHost(),
+    },
+    memorySize: 2048,
+    ...props,
+  })
+  props.eventTable.grant(endpoint.lambda, 'dynamodb:PutItem')
+  props.orderTable.grant(endpoint.lambda, 'dynamodb:UpdateItem')
   return endpoint
 }
 

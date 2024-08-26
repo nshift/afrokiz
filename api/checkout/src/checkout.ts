@@ -66,6 +66,7 @@ export class Checkout {
     customer: Customer
     promoCode: string | null
     payment: { status: PaymentStatus; intent: PaymentIntent | null }
+    checkedIn: boolean
   } | null> {
     return this.repository.getOrderById(id)
   }
@@ -135,6 +136,10 @@ export class Checkout {
     return data
   }
 
+  async checkIn(orderId: string) {
+    await this.repository.updateOrderCheckIn(orderId, true)
+  }
+
   private async createCheckout({
     newOrder,
     customer,
@@ -156,6 +161,7 @@ export class Checkout {
       customer,
       promoCode,
       payment: { status: 'pending' as PaymentStatus, intent: paymentIntent },
+      checkedIn: false,
     }
   }
 
@@ -232,6 +238,7 @@ export class Checkout {
         customer: order.customer,
         promoCode: order.promoCode,
         payment: { status: 'pending', intent: null },
+        checkedIn: false,
       }))
     )
   }

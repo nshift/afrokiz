@@ -113,6 +113,7 @@ export type OrderSchema = {
   customer: Customer
   promoCode: string | null
   payment: { status: PaymentStatus; intent: PaymentIntent | null }
+  checkedIn: boolean
 }
 
 export const saveOrdersRequest = (orders: OrderSchema[]) =>
@@ -183,6 +184,7 @@ export const orderV2Response = (item: any): OrderSchema => ({
       : null,
   },
   promoCode: item.promoCode,
+  checkedIn: item.checkedIn ?? false,
 })
 
 export const orderV1Response = (item: any): OrderSchema => ({
@@ -214,6 +216,7 @@ export const orderV1Response = (item: any): OrderSchema => ({
     },
   },
   promoCode: item.promoCode,
+  checkedIn: item.checkedIn ?? false,
 })
 
 export const updatePaymentOrdersRequest = (data: { orderId: string; paymentStatus: PaymentStatus }) =>
