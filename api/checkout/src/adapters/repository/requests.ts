@@ -290,6 +290,12 @@ export const listOrdersWithoutCampaignRequest = (campaignName: string) =>
     FilterExpression: `attribute_not_exists(${campaignName})`,
   })
 
+export const listDinnerCruiseCampaignOrdersRequest = (campaignName: string) =>
+  new ScanCommand({
+    TableName: Environment.OrderTableName(),
+    FilterExpression: `attribute_not_exists(${campaignName})`,
+  })
+
 export const salesResponse = (response: any): SaleSchema[] =>
   response?.map(
     (item: any): SaleSchema => ({
@@ -313,7 +319,7 @@ export const salesResponse = (response: any): SaleSchema[] =>
     })
   ) ?? []
 
-export const listOrdersResponse = (response: any) =>
+export const listOrdersResponse = (response: any): Sales[] =>
   response?.map(
     (item: any): Sales => ({
       id: item.id,

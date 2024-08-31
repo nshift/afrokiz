@@ -31,6 +31,7 @@ import {
   getImportOrdersByFingerprintsRequest,
   getOrderByIdRequest,
   importOrdersResponse,
+  listDinnerCruiseCampaignOrdersRequest,
   listOrdersResponse,
   listOrdersWithoutCampaignRequest,
   orderResponse,
@@ -119,11 +120,31 @@ export class DynamoDbRepository implements Repository {
     return listOrdersResponse(response.Items)
   }
 
+  async getAllCruiseCampaignSales(): Promise<Sales[]> {
+    const response = await this.dynamodb.send(listDinnerCruiseCampaignOrdersRequest('cruise_campaign'))
+    const sales = listOrdersResponse(response.Items)
+    return sales.filter(
+      (sale) =>
+        sale.paymentStatus == 'success' &&
+        sale.items.some(
+          (item) =>
+            item.includes.includes('Exclusive Dinner Cruise Party') ||
+            item.includes.includes('Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)')
+        )
+    )
+  }
+
   async updateOrdersForRegistrationCampaign(orderIds: string[]): Promise<void> {
     await Promise.all(
       orderIds.map(
         async (orderId) => await this.dynamodb.send(updateSalesCampaignRequest(orderId, 'registration_campaign'))
       )
+    )
+  }
+
+  async updateOrdersForCruiseCampaign(orderIds: string[]): Promise<void> {
+    await Promise.all(
+      orderIds.map(async (orderId) => await this.dynamodb.send(updateSalesCampaignRequest(orderId, 'cruise_campaign')))
     )
   }
 

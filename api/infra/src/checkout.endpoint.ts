@@ -26,6 +26,7 @@ export const makeCheckoutEndpoints = (props: {
     makeResendConfirmationEmailEndpoint({ ...props, ...context }),
     makeRequestImportOrderEndpoint({ ...props, ...context }),
     makeRequestSendRegistrationCampaignEndpoint({ ...props, ...context }),
+    makeRequestSendDinnerCruiseCampaignEndpoint({ ...props, ...context }),
     makeCheckInEndpoint({ ...props, ...context }),
     // makeMarkPaymentAsSucceedEndpoint({ ...props, ...context }),
   ]
@@ -267,6 +268,45 @@ const makeRequestSendRegistrationCampaignEndpoint = (props: {
     handler: 'adapters/lambda/lambda.sendRegistrationCampaign',
     method: 'POST',
     path: '/campaign/registration',
+    environment: {
+      NODE_ENV: 'PROD',
+      LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
+      ORDER_TABLE_NAME: props.orderTable.tableName,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
+      WEB_APP_HOST: Environment.WebAppHost(),
+    },
+    memorySize: 2048,
+    ...props,
+  })
+  endpoint.lambda.addToRolePolicy(
+    new cdk.aws_iam.PolicyStatement({
+      actions: ['ses:CreateTemplate', 'ses:DeleteTemplate', 'ses:SendBulkTemplatedEmail', 'ses:SendRawEmail'],
+      resources: ['*'],
+      effect: cdk.aws_iam.Effect.ALLOW,
+    })
+  )
+  props.orderTable.grant(endpoint.lambda, 'dynamodb:UpdateItem', 'dynamodb:Scan')
+  props.documentBucket.grantPut(endpoint.lambda)
+  return endpoint
+}
+
+const makeRequestSendDinnerCruiseCampaignEndpoint = (props: {
+  stack: cdk.Stack
+  codeUri: string
+  api: cdk.aws_apigatewayv2.CfnApi
+  sharedLayer: cdk.aws_lambda.LayerVersion
+  eventTable: cdk.aws_dynamodb.Table
+  orderTable: cdk.aws_dynamodb.Table
+  salesTable: cdk.aws_dynamodb.Table
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
+}) => {
+  const endpoint = createEndpoint('SendDinnerCruiseCampaign', {
+    handler: 'adapters/lambda/lambda.sendDinnerCruiseCampaign',
+    method: 'POST',
+    path: '/campaign/cruise',
     environment: {
       NODE_ENV: 'PROD',
       LOG_LEVEL: 'info',

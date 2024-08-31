@@ -25,6 +25,15 @@ export class S3Storage {
 
   getDocument = (path: string): Promise<Buffer> => this.download(path)
 
+  getFileUrl = async (path: string): Promise<string | null> => {
+    try {
+      await this.client.headObject({ Bucket: this.bucketName, Key: path })
+      return `https://${this.bucketName}.s3.${Environment.Region()}.amazonaws.com/${path}`
+    } catch {
+      return null
+    }
+  }
+
   private upload(buffer: Buffer, path: string, contentType: string) {
     return this.client.putObject({
       Bucket: this.bucketName,

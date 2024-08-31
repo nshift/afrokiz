@@ -22,7 +22,7 @@ import { DynamoDbRepository } from './dynamodb'
 import { processCreateOrderEvent } from './events/create-order.event'
 import { processSuccessfulPaymentEvent } from './events/successful-payment.event'
 
-describe.skip('Dynamodb', () => {
+describe('Dynamodb', () => {
   let dynamodb: DynamoDBDocumentClient
   let repository: DynamoDbRepository
   let uuid = 1
@@ -172,7 +172,12 @@ describe.skip('Dynamodb', () => {
     console.log(sales)
     expect(sales).toEqual(expect.arrayContaining([{ ...fakeSales, id: 'id-3', date: new Date(`1990-01-02 10:03`) }]))
   })
-  it.only('should migrate events', async () => {
+  it('should migrate events', async () => {
     await repository.migrateEvents({ from: new Date('2023-01-01'), to: new Date('2025-01-03') })
+  })
+  it.only('should get all cruise campaign sales', async () => {
+    const sales = await repository.getAllCruiseCampaignSales()
+    console.log(sales.length)
+    console.log(sales[0].items)
   })
 })

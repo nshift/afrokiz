@@ -58,10 +58,12 @@ export interface GettingImportOrder {
 
 export interface GettingSales {
   getAllRegistrationCampaignSales(): Promise<Sales[]>
+  getAllCruiseCampaignSales(): Promise<Sales[]>
 }
 
 export interface SavingSales {
   updateOrdersForRegistrationCampaign(orderIds: string[]): Promise<void>
+  updateOrdersForCruiseCampaign(orderIds: string[]): Promise<void>
 }
 
 export interface UpdatingOrder {

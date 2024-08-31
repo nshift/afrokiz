@@ -28,6 +28,10 @@ export class StorageAdapter implements GetOrders, UploadQrCode {
     return link
   }
 
+  async getQrCodeUrl(orderId: string): Promise<string | null> {
+    return this.s3Storage.getFileUrl(`qrcode/${orderId}.png`)
+  }
+
   private mapCustomer = (customer: any): Customer => ({
     email: customer['Email'],
     fullname: customer['Name'],

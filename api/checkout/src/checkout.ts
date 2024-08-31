@@ -1,6 +1,7 @@
 import { DateGenerator } from './adapters/date.generator'
 import { GetOrders, UploadQrCode } from './adapters/document/storage.gateway'
 import { confirmationEmail } from './adapters/email/email.confirmation'
+import { cruiseEmail } from './adapters/email/email.cruise'
 import { SendingBulkEmails, SendingEmail } from './adapters/email/email.gateway'
 import { registrationEmail } from './adapters/email/email.registration'
 import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
@@ -87,6 +88,7 @@ export class Checkout {
   }
 
   async requestImportOrders(csvPath: string): Promise<Order[]> {
+    this.queueAdapter
     const orders = await this.documentAdapter.getOrdersFromImports(csvPath)
     const newOrders = await this.getNewOrders(orders)
     if (newOrders.length == 0) {
@@ -133,6 +135,27 @@ export class Checkout {
     )
     await this.emailApi.sendBulkEmails(registrationEmail(data))
     await this.repository.updateOrdersForRegistrationCampaign(sales.map((sale) => sale.id))
+    return data
+  }
+
+  async sendDinnerCruiseCampaign() {
+    const sales = await this.repository.getAllCruiseCampaignSales()
+    if (sales.length == 0) {
+      return []
+    }
+    const data = await Promise.all(
+      sales.map(async (sale) => {
+        const existingLink = await this.documentAdapter.getQrCodeUrl(sale.id)
+        if (existingLink) {
+          return { sale, qrCodeUrl: existingLink }
+        }
+        const qrCode = await this.qrCodeGenerator.generateOrderQrCode({ id: sale.id })
+        const link = await this.documentAdapter.uploadQrCode(sale.id, qrCode)
+        return { sale: { ...sale, email: 'romain.asnar+cruise@gmail.com' }, qrCodeUrl: link }
+      })
+    )
+    await this.emailApi.sendBulkEmails(cruiseEmail(data))
+    await this.repository.updateOrdersForCruiseCampaign(sales.map((sale) => sale.id))
     return data
   }
 

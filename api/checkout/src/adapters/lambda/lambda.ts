@@ -198,6 +198,19 @@ export const sendRegistrationCampaign = async (
   }
 }
 
+export const sendDinnerCruiseCampaign = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const data = await checkout.sendDinnerCruiseCampaign()
+    return successResponse({ numberOfOrderProcessed: data.length, orders: data.map((order) => order.sale.id) })
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
 export const checkIn = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const orderId = event.pathParameters?.id
   if (!orderId) {
