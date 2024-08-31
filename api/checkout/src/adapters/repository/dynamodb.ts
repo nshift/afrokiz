@@ -120,6 +120,11 @@ export class DynamoDbRepository implements Repository {
     return listOrdersResponse(response.Items)
   }
 
+  async getAllRegistrationReminderCampaignSales(): Promise<Sales[]> {
+    const response = await this.dynamodb.send(listOrdersWithoutCampaignRequest('registration_reminder_campaign'))
+    return listOrdersResponse(response.Items)
+  }
+
   async getAllCruiseCampaignSales(): Promise<Sales[]> {
     const response = await this.dynamodb.send(listDinnerCruiseCampaignOrdersRequest('cruise_campaign'))
     const sales = listOrdersResponse(response.Items)
@@ -138,6 +143,15 @@ export class DynamoDbRepository implements Repository {
     await Promise.all(
       orderIds.map(
         async (orderId) => await this.dynamodb.send(updateSalesCampaignRequest(orderId, 'registration_campaign'))
+      )
+    )
+  }
+
+  async updateOrdersForRegistrationReminderCampaign(orderIds: string[]): Promise<void> {
+    await Promise.all(
+      orderIds.map(
+        async (orderId) =>
+          await this.dynamodb.send(updateSalesCampaignRequest(orderId, 'registration_reminder_campaign'))
       )
     )
   }

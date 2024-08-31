@@ -4,6 +4,7 @@ import { confirmationEmail } from './adapters/email/email.confirmation'
 import { cruiseEmail } from './adapters/email/email.cruise'
 import { SendingBulkEmails, SendingEmail } from './adapters/email/email.gateway'
 import { registrationEmail } from './adapters/email/email.registration'
+import { registrationReminderEmail } from './adapters/email/email.registration-reminder'
 import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { GeneratingQRCode } from './adapters/qr-code/qr-code.gateway'
 import { ImportOrderQueueRequest } from './adapters/queue.gateway'
@@ -151,11 +152,33 @@ export class Checkout {
         }
         const qrCode = await this.qrCodeGenerator.generateOrderQrCode({ id: sale.id })
         const link = await this.documentAdapter.uploadQrCode(sale.id, qrCode)
-        return { sale: { ...sale, email: 'romain.asnar+cruise@gmail.com' }, qrCodeUrl: link }
+        return { sale, qrCodeUrl: link }
       })
     )
     await this.emailApi.sendBulkEmails(cruiseEmail(data))
     await this.repository.updateOrdersForCruiseCampaign(sales.map((sale) => sale.id))
+    return data
+  }
+
+  async sendRegistrationReminderCampaign() {
+    const allSales = (await this.repository.getAllRegistrationReminderCampaignSales()).slice(0, 3)
+    const sales = allSales.filter((sale) => sale.paymentStatus == 'success')
+    if (sales.length == 0) {
+      return []
+    }
+    const data = await Promise.all(
+      sales.map(async (sale) => {
+        const existingLink = await this.documentAdapter.getQrCodeUrl(sale.id)
+        if (existingLink) {
+          return { sale, qrCodeUrl: existingLink }
+        }
+        const qrCode = await this.qrCodeGenerator.generateOrderQrCode({ id: sale.id })
+        const link = await this.documentAdapter.uploadQrCode(sale.id, qrCode)
+        return { sale: { ...sale, email: 'romain.asnar+reminder@gmail.com' }, qrCodeUrl: link }
+      })
+    )
+    await this.emailApi.sendBulkEmails(registrationReminderEmail(data))
+    await this.repository.updateOrdersForRegistrationReminderCampaign(sales.map((sale) => sale.id))
     return data
   }
 
