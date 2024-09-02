@@ -4,7 +4,7 @@ import { Environment } from '../../environment'
 
 export const saveGuestRequest = (guest: Guest) =>
   new PutCommand({
-    TableName: Environment.GuestTablName(),
+    TableName: Environment.GuestTableName(),
     Item: {
       email: guest.email,
       fullname: guest.fullname,
@@ -14,7 +14,7 @@ export const saveGuestRequest = (guest: Guest) =>
 
 export const getGuestByEmailRequest = (email: string) =>
   new QueryCommand({
-    TableName: Environment.GuestTablName(),
+    TableName: Environment.GuestTableName(),
     KeyConditionExpression: '#email = :email',
     ExpressionAttributeNames: { '#email': 'email' },
     ExpressionAttributeValues: { ':email': email },
@@ -32,9 +32,19 @@ export const guestResponse = (response: any): Guest[] =>
 
 export const updateGuestCheckInRequest = (guest: { email: string; checkedIn: boolean }) =>
   new UpdateCommand({
-    TableName: Environment.GuestTablName(),
+    TableName: Environment.GuestTableName(),
     Key: { email: guest.email },
     UpdateExpression: 'SET #checkedIn = :checkedIn',
     ExpressionAttributeNames: { '#checkedIn': 'checkedIn' },
     ExpressionAttributeValues: { ':checkedIn': guest.checkedIn },
+  })
+
+export const saveSametGuestRequest = (guest: Guest) =>
+  new PutCommand({
+    TableName: Environment.SametTableName(),
+    Item: {
+      email: guest.email,
+      fullname: guest.fullname,
+      id: guest.id,
+    },
   })

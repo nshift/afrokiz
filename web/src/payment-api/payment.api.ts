@@ -104,6 +104,14 @@ export class PaymentAPI {
     })
   }
 
+  async preRegisterSametGetaway({ email, fullname }: { email: string; fullname: string }) {
+    await this.request({
+      method: 'POST',
+      path: `/samet/pre-register`,
+      body: JSON.stringify({ email, fullname }),
+    })
+  }
+
   async getGuest(email: string): Promise<Guest> {
     const json = await this.request({ method: 'GET', path: '/guests/' + email })
     return {

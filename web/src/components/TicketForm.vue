@@ -192,7 +192,15 @@ const shouldDisabled = (id: string) => {
   <form class="grid" @submit.prevent="submit">
     <Card :class="['ticket']">
       <div class="title">
-        <h2>{{ optionIds.includes('couple-option') ? 'Couple ' + pass.name : 'Single ' + pass.name }}</h2>
+        <h2>
+          {{
+            optionIds.includes('couple-option')
+              ? 'Couple ' + pass.name
+              : pass.id != 'fullpass-edition3'
+              ? 'Single ' + pass.name
+              : pass.name
+          }}
+        </h2>
         <div class="promotion-price" v-if="pass.price.EUR != pass.doorPrice.EUR">
           <p>
             <b>
@@ -310,7 +318,7 @@ const shouldDisabled = (id: string) => {
           <p class="validation-error" v-if="emailValidationError">Your email is incomplete.</p>
         </div>
         <div id="payment-element"></div>
-        <div class="information-element">
+        <div class="information-element" v-if="pass.id != 'fullpass-edition3'">
           <label>Promo Code</label>
           <div class="field-container">
             <input

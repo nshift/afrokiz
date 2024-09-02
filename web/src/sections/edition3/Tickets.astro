@@ -1,0 +1,79 @@
+---
+import Card from "../../components/Card.astro";
+import Currency from "../../components/Currency.vue"
+import { type Pass, calculateTotal, defaultPasses } from "../../data/edition3/pass";
+
+const pass = defaultPasses.fullPass
+
+function calculatePrice(pass: Pass) {
+  return calculateTotal(pass, Object.values(pass.options).filter((option) => option.selected).map((option) => option.id))
+}
+---
+
+<div  id="tickets" class="container">
+  <div class="list">
+    <Card classes={["dual-card", "ticket-card"]}>
+      <div class="container-column">
+        <div>
+          <h2><Currency price={calculatePrice(pass)} client:only /></h2>
+          <p>Limited to 30 people</p>
+          <h3>{pass.name}</h3>
+        </div>
+        <div class="button-container">
+          { !pass.isSoldOut && <a href={"/pass/" + pass.id} class="button action">Buy Now</a> }
+          { pass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+        </div>
+      </div>
+    </Card>
+    <Card classes={["dual-card",  "ticket-card", "samet"]}>
+      <div class="container-column">
+        <div>
+          <h2>Samet Getaway</h2>
+          <p>4 Days In Koh Samet Island</p>
+          <p>Kizomba Workshops & Parties</p>
+          <p>Outdoor Activities</p>
+        </div>
+        <div class="button-container">
+          { !pass.isSoldOut && <a href="/samet" class="button action">Pre-Register Now</a> }
+          { pass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+        </div>
+      </div>
+    </Card>
+  </div>
+</div>
+
+<style is:global>
+  .container-column {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-lg-gap);
+    text-align: center;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--grid-lg-gap);
+  }
+  .samet {
+    background-color: #ccc0ed !important;
+    color: var(--primary-darker-color) !important;
+  }
+  .ticket-card .text {
+    min-width: 300px !important;
+  }
+  .ticket-card h3 {
+    margin-top: 0.75rem;
+  }
+  @media only screen and (max-width: 920px) {
+    .ticket-card {
+      width: 100% !important;
+    }
+    .ticket-card .text {
+      min-width: 250px !important;
+    }
+  }
+</style>

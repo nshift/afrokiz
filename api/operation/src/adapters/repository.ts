@@ -7,6 +7,7 @@ export interface ListAllSales {
 
 export interface SaveGuest {
   saveGuest(guest: Guest): Promise<void>
+  saveSametGuest(guest: Guest): Promise<void>
   updateGuestCheckIn(guestEmail: string, value: boolean): Promise<void>
 }
 

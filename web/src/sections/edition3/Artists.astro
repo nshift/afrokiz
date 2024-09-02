@@ -1,0 +1,43 @@
+---
+import Card from "../../components/Card.astro";
+import { artists } from "../../data/edition3/artist";
+---
+
+<div class="container">
+  <div class="list">
+    {
+      artists.map((artist) => (
+        <Card backgroundPath={artist.image} classes={["dual-card artist-card"]}>
+          {artist.name}
+        </Card>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .artist-card {
+    height: 475px !important;
+    align-items: end !important;
+  }
+  .artist-card .text {
+    margin-bottom: 1rem;
+    font-size: var(--h3-font-size);
+    font-weight: bold;
+    text-shadow: 0px 0px 5px black;
+  }
+  .artist-card .background {
+    border-radius: 20px !important;
+  }
+  .artist-card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+  }
+  @media only screen and (max-width: 920px) {
+    .artist-card {
+      height: 275px !important;
+    }
+    .artist-card .text {
+      font-size: var(--h4-font-size);
+    }
+  }
+</style>

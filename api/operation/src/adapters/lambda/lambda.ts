@@ -7,6 +7,7 @@ import { Environment } from '../../environment'
 import { GuestCheckIn } from '../../guest-check-in'
 import { GuestRegistration } from '../../guest-registration'
 import { SalesReporting } from '../../sales.reporting'
+import { SametRegistration } from '../../samet-registration'
 import { StorageAdapter } from '../document/storage.adapter'
 import { S3Storage } from '../document/storage.s3'
 import { DynamoDbAdapter } from '../dynamodb/dynamodb'
@@ -112,6 +113,25 @@ export const preGuestRegistration = async (
     const documentAdapter = new StorageAdapter(s3Client)
     const guestRegistration = new GuestRegistration(repository, emailAdapter, qrCodeGenerator, documentAdapter)
     await guestRegistration.preRegister({ email: body.email, fullname: body.fullname })
+    return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const preRegistraterForSametGetaway = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  const body = JSON.parse(event.body ?? '{}')
+  if (!body.email || !body.fullname) {
+    return invalidRequestErrorResponse('Email and fullname is required.')
+  }
+  try {
+    const emailAdapter = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
+    const sametRegistration = new SametRegistration(repository, emailAdapter)
+    await sametRegistration.preRegister({ email: body.email, fullname: body.fullname })
     return successfullyCreatedResponse()
   } catch (error) {
     console.error(error)

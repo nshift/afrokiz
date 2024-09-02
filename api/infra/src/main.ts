@@ -12,6 +12,7 @@ import {
   createImportOrderTable,
   createOrderTable,
   createSalesTable,
+  createSametTable,
 } from './dynamodb'
 import { makeOperationEndpoints } from './operation.endpoint'
 import { getStripeSecrets } from './secret'
@@ -27,6 +28,7 @@ const eventTable = createEventTable(stack)
 const orderTable = createOrderTable(stack)
 const salesTable = createSalesTable(stack)
 const guestTable = createGuestTable(stack)
+const sametTable = createSametTable(stack)
 const importOrdersTable = createImportOrderTable(stack)
 const stripeSecrets = getStripeSecrets(stack)
 const context = {
@@ -37,6 +39,7 @@ const context = {
   orderTable,
   salesTable,
   guestTable,
+  sametTable,
   importOrdersTable,
   stripeSecrets,
 }

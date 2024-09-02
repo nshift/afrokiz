@@ -1,6 +1,7 @@
 export class Environment {
   static OrderTableName = () => required('ORDER_TABLE_NAME')
-  static GuestTablName = () => required('GUEST_TABLE_NAME')
+  static GuestTableName = () => required('GUEST_TABLE_NAME')
+  static SametTableName = () => required('SAMET_TABLE_NAME')
   static DocumentBucketName = () => required('DOCUMENT_BUCKET_NAME')
   static WebAppHost = () => required('WEB_APP_HOST')
   // static StripeSecretKey = () => required('STRIPE_SECRET_KEY')

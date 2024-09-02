@@ -32,3 +32,6 @@ export const createImportOrderTable = (stack: cdk.Stack) =>
 
 export const createGuestTable = (stack: cdk.Stack) =>
   createDynamoDbTable('GuestTable', { partitionKey: { name: 'email', type: STRING }, stack })
+
+export const createSametTable = (stack: cdk.Stack) =>
+  createDynamoDbTable('SametTable', { partitionKey: { name: 'email', type: STRING }, stack })

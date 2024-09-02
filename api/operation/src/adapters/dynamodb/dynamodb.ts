@@ -2,7 +2,13 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { Guest } from '../../entities/guest'
 import { Sales } from '../../entities/sales'
 import { GetGuest, ListAllSales, SaveGuest } from '../repository'
-import { getGuestByEmailRequest, guestResponse, saveGuestRequest, updateGuestCheckInRequest } from './guest'
+import {
+  getGuestByEmailRequest,
+  guestResponse,
+  saveGuestRequest,
+  saveSametGuestRequest,
+  updateGuestCheckInRequest,
+} from './guest'
 import { listOrdersRequest, listOrdersResponse } from './list-orders'
 
 export class DynamoDbAdapter implements ListAllSales, SaveGuest, GetGuest {
@@ -24,5 +30,9 @@ export class DynamoDbAdapter implements ListAllSales, SaveGuest, GetGuest {
 
   async updateGuestCheckIn(guestEmail: string, value: boolean): Promise<void> {
     await this.dynamodb.send(updateGuestCheckInRequest({ email: guestEmail, checkedIn: value }))
+  }
+
+  async saveSametGuest(guest: Guest): Promise<void> {
+    await this.dynamodb.send(saveSametGuestRequest(guest))
   }
 }
