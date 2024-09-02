@@ -52,7 +52,11 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
                   ? 1
                   : 0,
               Ginga: sale.includes.includes('2H Ginga Styling bootcamp (video recorded)') ? 1 : 0,
-              Massage: sale.includes.filter((option) => option == '1H Foot Massage at Lek Massage').length,
+              Massage:
+                sale.includes.filter((option) => option == '1H Foot Massage at Lek Massage').length ||
+                sale.includes.filter((option) => option == '2H Foot Massage at Lek Massage').length * 2 ||
+                sale.includes.filter((option) => option == '1H Foot Massage at Lek Massage per person').length ||
+                sale.includes.filter((option) => option == '2H Foot Massage at Lek Massage per person').length * 2,
               'Promo Code': sale.promoCode,
               Amount: String(sale.total.amount / 100),
               Currency: sale.total.currency,
