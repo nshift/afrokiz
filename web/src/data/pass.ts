@@ -31,7 +31,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   party: {
     id: 'party',
     name: 'Party Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: (() => {
       const promotions = [
         makePromotion({
@@ -239,7 +239,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   dj: {
     id: 'dj',
     name: 'DJ Master Class By DJ Lenhy',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 9900, EUR: 8900, THB: 339000 },
     doorPrice: { USD: 9900, EUR: 8900, THB: 339000 },
     includes: [
@@ -451,7 +451,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   friNight: {
     id: 'fri-night',
     name: 'Friday Party Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 4500, EUR: 4000, THB: 159000 },
     doorPrice: { USD: 5200, EUR: 4500, THB: 179000 },
     includes: ['Includes 2 welcome drinks', 'Party until 3 am.', '"Earthen Elegance" Theme'],
@@ -462,7 +462,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   satNight: {
     id: 'sat-night',
     name: 'Saturday Party Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 4900, EUR: 4500, THB: 169000 },
     doorPrice: { USD: 5500, EUR: 5000, THB: 189000 },
     includes: ['Includes 2 welcome drinks', 'Party until 4 am.', '"Hot Gala Night" Theme'],
@@ -473,7 +473,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   sunNight: {
     id: 'sun-night',
     name: 'Sunday Party Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 4500, EUR: 4000, THB: 159000 },
     doorPrice: { USD: 5200, EUR: 4500, THB: 179000 },
     includes: ['Includes 2 welcome drinks', 'Party until 3 am.', '"Y2K" Theme'],
