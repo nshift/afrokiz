@@ -80,7 +80,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   fullPass: {
     id: 'fullpass',
     name: 'Full Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: (() => {
       const promotions = [
         makePromotion({
@@ -338,7 +338,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   oneDay: {
     id: 'one-day',
     name: 'One Day Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 11500, EUR: 10500, THB: 420000 },
     doorPrice: { USD: 11500, EUR: 10500, THB: 420000 },
     includes: [
@@ -359,7 +359,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   friSat: {
     id: 'fri-sat',
     name: 'Friday & Saturday Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 17000, EUR: 15500, THB: 595000 },
     doorPrice: { USD: 18000, EUR: 16500, THB: 650000 },
     includes: [
@@ -377,7 +377,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   satSun: {
     id: 'sat-sun',
     name: 'Saturday & Sunday Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 17000, EUR: 15500, THB: 595000 },
     doorPrice: { USD: 18000, EUR: 16500, THB: 650000 },
     includes: [
@@ -394,7 +394,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   fri: {
     id: 'fri',
     name: 'Friday Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 8400, EUR: 7600, THB: 295000 },
     doorPrice: { USD: 10000, EUR: 9200, THB: 350000 },
     includes: [
@@ -411,7 +411,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   sat: {
     id: 'sat',
     name: 'Saturday Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 9500, EUR: 8500, THB: 330000 },
     doorPrice: { USD: 10900, EUR: 9900, THB: 380000 },
     includes: [
@@ -431,7 +431,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   sun: {
     id: 'sun',
     name: 'Sunday Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 9500, EUR: 8500, THB: 330000 },
     doorPrice: { USD: 10900, EUR: 9900, THB: 380000 },
     includes: [
