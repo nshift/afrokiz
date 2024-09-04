@@ -161,7 +161,7 @@ export class Checkout {
   }
 
   async sendRegistrationReminderCampaign() {
-    const allSales = (await this.repository.getAllRegistrationReminderCampaignSales()).slice(0, 3)
+    const allSales = await this.repository.getAllRegistrationReminderCampaignSales()
     const sales = allSales.filter((sale) => sale.paymentStatus == 'success')
     if (sales.length == 0) {
       return []
@@ -174,7 +174,7 @@ export class Checkout {
         }
         const qrCode = await this.qrCodeGenerator.generateOrderQrCode({ id: sale.id })
         const link = await this.documentAdapter.uploadQrCode(sale.id, qrCode)
-        return { sale: { ...sale, email: 'romain.asnar+reminder@gmail.com' }, qrCodeUrl: link }
+        return { sale, qrCodeUrl: link }
       })
     )
     await this.emailApi.sendBulkEmails(registrationReminderEmail(data))
