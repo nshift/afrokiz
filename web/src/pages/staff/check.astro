@@ -37,6 +37,10 @@ function getPassColorClass(passId: string) {
     {
       'vip-silver': 'silver',
       'vip-gold': 'gold',
+      'fri': 'pink',
+      'sun': 'orange',
+      'party': 'yellow',
+      'party-bundle': 'yellow'
     }[passId] ?? 'purple'
   )
 }
@@ -142,6 +146,27 @@ function getPassName(passId: string) {
   }
   .purple a {
     color: white !important;
+  }
+  .yellow {
+    background-color: yellow !important;
+    color: black !important;
+  }
+  .yellow a {
+    color: black !important;
+  }
+  .pink {
+    background-color: pink !important;
+    color: black !important;
+  }
+  .pink a {
+    color: black !important;
+  }
+  .orange {
+    background-color: #f56342 !important;
+    color: black !important;
+  }
+  .orange a {
+    color: black !important;
   }
 </style>
 
