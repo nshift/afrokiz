@@ -15,7 +15,7 @@ export const listOrdersResponse = (response: any) =>
       pass: item.items[0].id,
       promoCode: item.promoCode,
       customerType: item.customer?.type ?? item.dancerType,
-      includes: item.items.flatMap((item: any) => item.includes),
+      includes: item.items.flatMap((item: any) => ((item.includes?.length ?? 0) > 0 ? item.includes : [item.title])),
       paymentStatus: item.payment.status,
       total: {
         amount: item.items.reduce((total: number, item: any) => (total += item.total.amount), 0),
