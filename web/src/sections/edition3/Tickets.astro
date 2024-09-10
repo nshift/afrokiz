@@ -34,8 +34,7 @@ function calculatePrice(pass: Pass) {
           <p>Outdoor Activities</p>
         </div>
         <div class="button-container">
-          { !pass.isSoldOut && <a href="/samet" class="button action">Pre-Register Now</a> }
-          { pass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+          <a href="/samet" class="button action">Pre-Register Now</a>
         </div>
       </div>
     </Card>

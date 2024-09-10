@@ -26,7 +26,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   fullPass: {
     id: 'fullpass-edition3',
     name: 'SUPER EARLY BIRD Full Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 8900, EUR: 8000, THB: 300000 },
     doorPrice: { USD: 8900, EUR: 8000, THB: 300000 },
     includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
