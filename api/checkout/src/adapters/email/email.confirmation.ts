@@ -36,7 +36,7 @@ export const confirmationEmail = (
       passName: getPassName(order.items[0].id),
     },
   })),
-  subject: 'Confirmation - AfroKiz Bangkok #2',
+  subject: 'Confirmation - AfroKiz Bangkok #3',
   html: fs.readFileSync(path.join(__dirname, 'confirmation.html')).toString(),
 })
 
