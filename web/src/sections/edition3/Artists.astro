@@ -6,9 +6,19 @@ import { artists } from "../../data/edition3/artist";
 <div class="container">
   <div class="list">
     {
-      artists.map((artist) => (
+      [artists.audilaura, artists.tpeak].map((artist) => (
         <Card backgroundPath={artist.image} classes={["dual-card artist-card"]}>
           {artist.name}
+          {/* <br/> */}
+          {/* <div class="subtitle">{artist.musicStyle}</div> */}
+        </Card>
+      ))
+    }
+    {
+      [artists.quinn, artists.oncleKani, artists.david, artists.stef, artists.ploy, artists.selva].map((artist) => (
+        <Card backgroundPath={artist.image} classes={["dual-card artist-card small-artist-card"]}>
+          {artist.name}<br/>
+          <div class="subtitle">{artist.musicStyle}</div>
         </Card>
       ))
     }
@@ -20,11 +30,24 @@ import { artists } from "../../data/edition3/artist";
     height: 475px !important;
     align-items: end !important;
   }
+  .small-artist-card {
+    width: calc((100% / 6) - 1rem) !important;
+    height: 275px !important;
+  }
+  .small-artist-card .text {
+    font-size: var(--h4-font-size) !important;
+  }
   .artist-card .text {
     margin-bottom: 1rem;
     font-size: var(--h3-font-size);
     font-weight: bold;
     text-shadow: 0px 0px 5px black;
+  }
+  .artist-card .text .subtitle {
+    font-size: var(--text-font-size);
+    font-weight: normal;
+    text-shadow: none;
+    text-align: center;
   }
   .artist-card .background {
     border-radius: 20px !important;
@@ -36,8 +59,13 @@ import { artists } from "../../data/edition3/artist";
     .artist-card {
       height: 275px !important;
     }
+    .small-artist-card {
+      width: calc((100% / 3) - 0.8rem) !important;
+      height: 100px !important;
+    }
     .artist-card .text {
-      font-size: var(--h4-font-size);
+      padding: 0.75rem !important;
+      margin-bottom: 0.5rem;
     }
   }
 </style>

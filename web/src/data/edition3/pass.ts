@@ -22,7 +22,7 @@ export type Pass = {
   options: { [key: string]: Option }
 }
 
-export const defaultPasses: { [key: string]: Pass } = {
+export const superEarlyBirdPasses: { [key: string]: Pass } = {
   fullPass: {
     id: 'fullpass-edition3',
     name: 'SUPER EARLY BIRD Full Pass',
@@ -35,6 +35,22 @@ export const defaultPasses: { [key: string]: Pass } = {
     options: {},
   },
 }
+
+export const earlyBirdPasses: { [key: string]: Pass } = {
+  fullPass: {
+    id: 'early-bird-fullpass-edition3',
+    name: 'EARLY BIRD Full Pass',
+    isSoldOut: false,
+    price: { USD: 11000, EUR: 10500, THB: 380000 },
+    doorPrice: { USD: 11000, EUR: 10500, THB: 380000 },
+    includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
+    giveAways: [],
+    isPromoted: true,
+    options: {},
+  },
+}
+
+export const defaultPasses: { [key: string]: Pass } = earlyBirdPasses
 
 export function calculateTotal(
   pass: Pass,
