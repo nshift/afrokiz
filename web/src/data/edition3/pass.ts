@@ -40,7 +40,7 @@ export const earlyBirdPasses: { [key: string]: Pass } = {
   fullPass: {
     id: 'early-bird-fullpass-edition3',
     name: 'EARLY BIRD Full Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 11000, EUR: 10500, THB: 380000 },
     doorPrice: { USD: 11000, EUR: 10500, THB: 380000 },
     includes: [
