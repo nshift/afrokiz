@@ -182,7 +182,6 @@ const selectOption = (id: string) => {
 const shouldDisabled = (id: string) => {
   return (
     (optionIds.value.includes('all-mc-option') && ['said-mc-option', 'heneco-mc-option'].includes(id)) ||
-    pass.options[id].selected == true ||
     pass.options[id].soldOut == true
   )
 }

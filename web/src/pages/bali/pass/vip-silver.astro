@@ -1,0 +1,15 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Header from "../../../sections/bali/Header.astro";
+import Footer from "../../../sections/Footer.astro";
+import TicketForm from "../../../components/TicketForm.vue";
+import { defaultPasses } from "../../../data/bali/pass";
+---
+
+<Layout title={`${defaultPasses.vipSilverPass.name} | Afrokiz Bkk Festival Edition 3`}>
+  <Header />
+  <main>
+    <TicketForm client:load pass={defaultPasses.vipSilverPass} />
+  </main>
+  <Footer />
+</Layout>

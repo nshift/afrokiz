@@ -29,7 +29,7 @@ function calculatePrice(pass: Pass) {
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(fullpass)} client:only /></h2>
-          <p>Limited to 20 people</p>
+          { fullpass.price.EUR != fullpass.doorPrice.EUR && <p><s><Currency price={fullpass.doorPrice} client:only /></s></p> }
           <h3>{fullpass.name}</h3>
         </div>
         <div class="button-container">
@@ -42,7 +42,7 @@ function calculatePrice(pass: Pass) {
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(vipSilverPass)} client:only /></h2>
-          <p>Limited to 20 people</p>
+          { vipSilverPass.price.EUR != vipSilverPass.doorPrice.EUR && <p><s><Currency price={vipSilverPass.doorPrice} client:only /></s></p> }
           <h3>{vipSilverPass.name}</h3>
         </div>
         <div class="button-container">
@@ -55,7 +55,7 @@ function calculatePrice(pass: Pass) {
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(sametBangkokPass)} client:only /></h2>
-          <p>Limited to 20 people</p>
+          { sametBangkokPass.price.EUR != sametBangkokPass.doorPrice.EUR && <p><s><Currency price={sametBangkokPass.doorPrice} client:only /></s></p> }
           <h3>{sametBangkokPass.name}</h3>
         </div>
         <div class="button-container">
@@ -68,7 +68,7 @@ function calculatePrice(pass: Pass) {
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(sametPass)} client:only /></h2>
-          <p>Limited to 20 people</p>
+          { sametPass.price.EUR != sametPass.doorPrice.EUR && <p><s><Currency price={sametPass.doorPrice} client:only /></s></p> }
           <h3>{sametPass.name}</h3>
         </div>
         <div class="button-container">
@@ -81,7 +81,7 @@ function calculatePrice(pass: Pass) {
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(vipGoldPass)} client:only /></h2>
-          <p>Limited to 20 people</p>
+          { vipGoldPass.price.EUR != vipGoldPass.doorPrice.EUR && <p><s><Currency price={vipGoldPass.doorPrice} client:only /></s></p> }
           <h3>{vipGoldPass.name}</h3>
         </div>
         <div class="button-container">
