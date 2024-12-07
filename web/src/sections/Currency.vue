@@ -49,4 +49,9 @@ const changeCurrency = () => {
 .form-control {
   width: auto;
 }
+@media only screen and (max-width: 920px) {
+  .currencies {
+    padding: calc(var(--s-padding) / 2) var(--s-padding);
+  }
+}
 </style>
