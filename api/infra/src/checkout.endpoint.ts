@@ -184,7 +184,7 @@ const makeResendConfirmationEmailEndpoint = (props: {
       STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
       WEB_APP_HOST: Environment.WebAppHost(),
     },
-    memorySize: 768,
+    memorySize: 2048,
     ...props,
   })
   endpoint.lambda.addToRolePolicy(
@@ -195,6 +195,7 @@ const makeResendConfirmationEmailEndpoint = (props: {
     })
   )
   props.orderTable.grant(endpoint.lambda, 'dynamodb:Query')
+  props.documentBucket.grantPut(endpoint.lambda)
   return endpoint
 }
 
