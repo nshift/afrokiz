@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Header from "../sections/Header.astro";
+import Header from "../sections/edition3/Header.astro";
 import Footer from "../sections/Footer.astro";
 import Card from "../components/Card.astro";
 import OrderVue from "../components/Order.vue";
@@ -17,7 +17,7 @@ const order = await paymentApi.getOrderById(orderId)
 const pass = Object.values(passes).filter((pass) => pass.id == order.passId)[0]
 ---
 
-<Layout title={`Order #${order.id} | Afrokiz Bkk Festival Edition 2`}>
+<Layout title={`Order #${order.id} | Afrokiz Bkk Festival Edition 3`}>
   <Header />
   <main>
     <OrderVue client:load pass={pass} order={order} />

@@ -1,15 +1,15 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Header from "../../sections/Header.astro";
+import Header from "../../sections/edition3/Header.astro";
 import Footer from "../../sections/Footer.astro";
 import TicketForm from "../../components/TicketForm.vue";
-import { passes } from "../../data/promotion";
+import { defaultPasses } from "../../data/edition3/pass";
 ---
 
-<Layout title={`${passes.vipSilver.name} | Afrokiz Bkk Festival Edition 2`}>
+<Layout title={`${defaultPasses.vipSilverPass.name} | Afrokiz Bkk Festival Edition 3`}>
   <Header />
   <main>
-    <TicketForm client:load pass={passes.vipSilver} />
+    <TicketForm client:load pass={defaultPasses.vipSilverPass} />
   </main>
   <Footer />
 </Layout>

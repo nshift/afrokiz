@@ -1,13 +1,13 @@
 ---
 import Card from "../../components/Card.astro";
-import { artists } from "../../data/edition3/artist";
+import { artists } from "../../data/edition3.old/artist";
 ---
 
 <div class="container">
   <div class="list">
     {
-      [artists.audilaura, artists.tpeak, artists.ozyshine].map((artist) => (
-        <Card backgroundPath={artist.image} classes={["dual-card artist-card featured-card"]}>
+      [artists.audilaura, artists.tpeak].map((artist) => (
+        <Card backgroundPath={artist.image} classes={["dual-card artist-card"]}>
           {artist.name}
           {/* <br/> */}
           {/* <div class="subtitle">{artist.musicStyle}</div> */}
@@ -27,11 +27,8 @@ import { artists } from "../../data/edition3/artist";
 
 <style is:global>
   .artist-card {
-    height: 375px !important;
+    height: 475px !important;
     align-items: end !important;
-  }
-  .featured-card {
-    width: calc((100% / 3) - 0.8rem) !important;
   }
   .small-artist-card {
     width: calc((100% / 6) - 1rem) !important;

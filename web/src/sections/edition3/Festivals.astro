@@ -3,26 +3,68 @@ import Card from "../../components/Card.astro";
 ---
 
 <div class="container">
-  <div class="list">
-    <Card classes={["dual-card", "festival-card"]} backgroundPath="/images/mahanakhon.png">
-      <h2>5-8 Sep 2025</h2>
-      <p>Bangkok, Thailand</p>
+    <Card classes={["festival-card intro"]}>
+      <video loop autoplay playsinline muted>
+        <h1>AfroKiz Bangkok Festival Edition 3</h1>
+        <source src="https://d3evtkvyiaiw3n.cloudfront.net/afrokiz3.mp4" type="video/mp4">
+      </video>
     </Card>
-    <Card classes={["dual-card", "festival-card"]} backgroundPath="/images/koh-samet.jpg">
-      <h2>9-12 Sep 2025</h2>
-      <p>Koh Samet, Thailand</p>
+    <Card classes={["festival-card", "key-metrics"]} backgroundPath="/images/afro-anim.jpg">
+      <h2>100% Kizomba During 8 Days</h2>
+      <p>Last edition 300+ dancers joined us in Bangkok. Afrokiz Edition 3 will happen in Bangkok and Koh Samet island.</p>
     </Card>
-  </div>
+    <Card classes={["festival-card", "artists"]} backgroundPath="/images/room3.png">
+      <h2>1 Room, All Styles</h2>
+      <p>Kizomba, Semba, Urban Kiz, Tarraxo, Tarraxinha, Konpa, Ghetto Zouk, Douceur, Afrobeats.</p>
+    </Card>
 </div>
 
 <style is:global>
+  .container {
+    display: grid;
+    grid-template-areas: 
+      "intro intro intro intro intro intro intro key-metrics key-metrics key-metrics key-metrics key-metrics"
+      "intro intro intro intro intro intro intro artists artists artists artists artists";
+  }
   .festival-card {
-    height: 375px !important;
+    min-height: var(--card-m-height);
+  }
+  .festival-card .text {
+    padding: var(--lg-padding);
+  }
+  .card.intro {
+    min-height: var(--card-lg-height);
+    grid-area: intro;
+    padding: 0;
+    overflow: hidden;
+  }
+  .card.intro .text {
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .card.intro video {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  .card.artists {
+    width: 100%;
+    grid-area: artists;
+  }
+  .card.key-metrics {
+    width: 100%;
+    grid-area: key-metrics;
   }
   @media only screen and (max-width: 920px) {
-    .festival-card {
-      width: 100% !important;
-      height: 200px !important;
+    .container {
+      display: grid;
+      grid-template-areas: 
+        "intro intro intro intro intro intro intro intro intro intro intro intro"
+        "key-metrics key-metrics key-metrics key-metrics key-metrics key-metrics artists artists artists artists artists artists";
+    }
+    .card.intro {
+      min-height: 300px;
     }
   }
   .festival-card .background .overlay {
