@@ -2,10 +2,9 @@
 import Layout from "../layouts/Layout.astro";
 import Header from "../sections/edition3/Header.astro";
 import Footer from "../sections/Footer.astro";
-import Card from "../components/Card.astro";
 import OrderVue from "../components/Order.vue";
 import { PaymentAPI } from "../payment-api/payment.api";
-import { passes } from "../data/promotion";
+import { defaultPasses } from "../data/edition3/pass";
 
 const queryParams = Astro.url.searchParams
 const orderId = queryParams.get('order_id')
@@ -14,7 +13,7 @@ if (!orderId) {
 }
 const paymentApi = new PaymentAPI()
 const order = await paymentApi.getOrderById(orderId)
-const pass = Object.values(passes).filter((pass) => pass.id == order.passId)[0]
+const pass = Object.values(defaultPasses).filter((pass) => pass.id == order.passId)[0]
 ---
 
 <Layout title={`Order #${order.id} | Afrokiz Bkk Festival Edition 3`}>
