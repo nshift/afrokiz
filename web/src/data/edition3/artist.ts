@@ -10,7 +10,7 @@ export const artists: { [key: string]: { name: string; musicStyle: string; image
     image: '/images/artists/tpeak.jpg',
   },
   ozyshine: {
-    name: 'Ozy Shine 🇫🇷',
+    name: 'Ozy Shyne 🇫🇷',
     musicStyle: '',
     image: '/images/artists/ozy-shine.jpg',
   },

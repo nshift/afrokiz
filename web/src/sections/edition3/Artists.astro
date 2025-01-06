@@ -6,7 +6,7 @@ import { artists } from "../../data/edition3/artist";
 <div class="container">
   <div class="list">
     {
-      [artists.audilaura, artists.tpeak, artists.ozyshine].map((artist) => (
+      [artists.audilaura, artists.tpeak, artists.asia, artists.ozyshine].map((artist) => (
         <Card backgroundPath={artist.image} classes={["dual-card artist-card featured-card"]}>
           {artist.name}
           {/* <br/> */}
@@ -31,7 +31,7 @@ import { artists } from "../../data/edition3/artist";
     align-items: end !important;
   }
   .featured-card {
-    width: calc((100% / 3) - 0.8rem) !important;
+    width: calc((100% / 4) - 0.8rem) !important;
   }
   .small-artist-card {
     width: calc((100% / 6) - 1rem) !important;

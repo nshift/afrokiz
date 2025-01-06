@@ -1,7 +1,7 @@
 ---
 import Card from "../../components/Card.astro";
 import Currency from "../../components/Currency.vue"
-import { type Pass, calculateTotal, defaultPasses } from "../../data/bali/pass";
+import { type Pass, calculateTotal, defaultPasses } from "../../data/edition3/pass";
 
 const fullpass = defaultPasses.fullPass
 const vipSilverPass = defaultPasses.vipSilverPass
@@ -18,7 +18,7 @@ function calculatePrice(pass: Pass) {
     <Card classes={["date-card", "bangkok"]} backgroundPath="/images/mahanakhon.png">
       <h2>5-8 Sep 2025</h2>
       <h4>Bangkok, Thailand</h4>
-      <p style="margin-top: 1rem;">16H Workshops<br/>Exclusive Diner Cruise<br/>Afternoon Social</p>
+      <p style="margin-top: 1rem;">13H Workshops<br/>6H Masterclass<br/>30H of Dancing<br/>Exclusive Party Cruise<br/>Day Time Social</p>
     </Card>
     <Card classes={["date-card", "samet"]} backgroundPath="/images/koh-samet.jpg">
       <h2>9-12 Sep 2025</h2>
