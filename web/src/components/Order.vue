@@ -192,9 +192,8 @@ const shouldDisabled = (id: string) => {
               </div>
               <div id="payment-element"></div>
               <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
-              <button class="button action disabled" disabled>Pay</button>
-              <!-- <button class="button action" v-if="!submitting && optionIds.length > 0">Pay</button>
-              <button class="button action disabled" v-if="!submitting && optionIds.length == 0" disabled>Pay</button> -->
+              <button class="button action" v-if="!submitting && optionIds.length > 0">Pay</button>
+              <button class="button action disabled" v-if="!submitting && optionIds.length == 0" disabled>Pay</button>
               <p class="validation-error card-error" v-if="cardDeclinedError">{{ cardDeclinedErrorMessage }}</p>
             </div>
           </Card>
