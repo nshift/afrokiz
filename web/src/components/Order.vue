@@ -105,13 +105,20 @@ const selectOption = (id: string) => {
   if (optionIds.value.includes('all-mc-option')) {
     optionIds.value = optionIds.value.filter((option) => !['said-mc-option', 'heneco-mc-option'].includes(option))
   }
+  if (optionIds.value.includes('vip-silver-upgrade')) {
+    optionIds.value = optionIds.value.filter((option) => !['cruise-option'].includes(option))
+  }
+  if (optionIds.value.includes('vip-gold-upgrade')) {
+    optionIds.value = optionIds.value.filter((option) => !['cruise-option', 'vip-silver-upgrade'].includes(option))
+  }
 }
 
 const shouldDisabled = (id: string) => {
   return (
     (optionIds.value.includes('all-mc-option') && ['said-mc-option', 'heneco-mc-option'].includes(id)) ||
-    pass.options[id].selected == true ||
-    order.items.map((item) => item.id).includes(id)
+    (optionIds.value.includes('vip-silver-upgrade') && ['cruise-option'].includes(id)) ||
+    (optionIds.value.includes('vip-gold-upgrade') && ['cruise-option', 'vip-silver-upgrade'].includes(id)) ||
+    pass.options[id].soldOut == true
   )
 }
 </script>
