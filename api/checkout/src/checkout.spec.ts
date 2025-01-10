@@ -2,10 +2,12 @@ import { beforeEach, describe, expect, it } from '@jest/globals'
 import { StorageAdapter } from './adapters/document/storage.adapter'
 import { confirmationEmail } from './adapters/email/email.confirmation'
 import { SendingEmail } from './adapters/email/email.gateway'
+import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { ImportOrderQueueRequest } from './adapters/queue.gateway'
 import { Checkout } from './checkout'
 import {
   order as fakeOrder,
+  orderWithOptions as fakeOrderWithOptions,
   paymentIntent as fakePaymentIntent,
   qrCode as fakeQrCode,
   massagePromotion,
@@ -19,6 +21,7 @@ import { PaymentIntent } from './types/payment-intent'
 let checkout: Checkout
 let emailGateway: SendingEmail
 let queueAdapter: ImportOrderQueueRequest
+let paymentAdapter: CreatingPaymentIntent
 let repository: InMemoryRepository
 let storageAdapter: StorageAdapter
 
@@ -26,18 +29,21 @@ beforeEach(() => {
   emailGateway = mock()
   storageAdapter = mock()
   queueAdapter = mock()
-  repository = new InMemoryRepository()
-  checkout = new Checkout(
-    repository,
-    {
-      createPaymentIntent: async (input: {
+  paymentAdapter = mock({
+    createPaymentIntent: jest.fn(
+      async (input: {
         order: { id: string }
         total: { amount: number; currency: Currency }
       }): Promise<PaymentIntent> => ({
         id: fakePaymentIntent.id,
         secret: fakePaymentIntent.secret,
-      }),
-    },
+      })
+    ),
+  })
+  repository = new InMemoryRepository()
+  checkout = new Checkout(
+    repository,
+    paymentAdapter,
     emailGateway,
     { generateOrderQrCode: async (order: { id: string }) => fakeQrCode },
     storageAdapter,
@@ -59,6 +65,32 @@ describe('Create an order when checking out', () => {
   it('should create a payment intent', async () => {
     const { payment } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer, promoCode: null })
     expect(fakePaymentIntent.secret).toEqual(payment.intent.secret)
+  })
+  describe('with existing order', () => {
+    it('should create a payment intent with the amount of the new items', async () => {
+      const { order: oldOrder } = await checkout.proceed({
+        newOrder: fakeOrder,
+        customer: romainCustomer,
+        promoCode: null,
+      })
+      const { order: newOrder, payment } = await checkout.proceed({
+        newOrder: { ...fakeOrderWithOptions, id: oldOrder.id },
+        customer: romainCustomer,
+        promoCode: null,
+      })
+      expect(paymentAdapter.createPaymentIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          total: { amount: 20000, currency: 'USD' },
+        })
+      )
+      expect(newOrder).toMatchObject(oldOrder)
+      expect({
+        order: { ...newOrder, id: oldOrder.id },
+        payment: { status: 'pending', intent: fakePaymentIntent },
+        customer: romainCustomer,
+        promoCode: null,
+      }).toEqual(await repository.getOrderById(oldOrder.id))
+    })
   })
 })
 

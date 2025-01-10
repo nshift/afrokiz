@@ -72,6 +72,32 @@ export const order: Order = {
   total: { amount: 30000, currency: 'USD' },
 }
 
+export const orderWithOptions: Order = {
+  id: 'order-1',
+  // passId: 'pass-1',
+  date: new Date('1990-01-01'),
+  // promoCode: 'MASSAGE',
+  // paymentIntentId: paymentIntent.id,
+  // paymentStatus: 'pending',
+  items: [
+    {
+      id: 'vip-gold',
+      title: 'VIP Gold Pass',
+      includes: ['All parties and workshops'],
+      amount: 1,
+      total: { amount: 30000, currency: 'USD' },
+    },
+    {
+      id: 'special-option',
+      title: 'Special Option',
+      includes: ['Special option'],
+      amount: 1,
+      total: { amount: 20000, currency: 'USD' },
+    },
+  ],
+  total: { amount: 50000, currency: 'USD' },
+}
+
 export const romainCustomer: Customer = {
   email: 'romain.asnar@gmail.com',
   fullname: 'Romain Asnar',

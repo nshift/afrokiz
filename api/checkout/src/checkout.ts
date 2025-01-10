@@ -9,7 +9,12 @@ import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { GeneratingQRCode } from './adapters/qr-code/qr-code.gateway'
 import { ImportOrderQueueRequest } from './adapters/queue.gateway'
 import { Repository } from './adapters/repository/repository'
-import { calculateOrderTotal, isPromotionAppliable, isPromotionExpired } from './checkout.rules'
+import {
+  calculateNewOptionTotal,
+  calculateOrderTotal,
+  isPromotionAppliable,
+  isPromotionExpired,
+} from './checkout.rules'
 import { Currency } from './types/currency'
 import { Customer } from './types/customer'
 import { NewOrder, Order, makeFingerprint, makeOrderId } from './types/order'
@@ -198,9 +203,10 @@ export class Checkout {
     const total = calculateOrderTotal(newOrder.items)
     const order =
       (newOrder.id ? (await this.getOrder(newOrder.id))?.order : undefined) ?? this.createOrder(newOrder, total)
+    let paymentAmount = calculateNewOptionTotal(order.items, newOrder.items)
     order.items = newOrder.items
     order.total = total
-    const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total })
+    const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total: paymentAmount })
     return {
       order,
       total,
