@@ -33,7 +33,7 @@ export const confirmationEmail = (
         currency: order.total.currency,
       },
       passHexColor: getPassColor(order.items[0].id),
-      passName: getPassName(order.items[0].id),
+      passName: order.items[0].title,
     },
   })),
   subject: 'Confirmation - AfroKiz Bangkok #3',
@@ -46,25 +46,5 @@ function getPassColor(passId: string) {
       'vip-silver': '#808080',
       'vip-gold': '#ed9e00',
     }[passId] ?? '#371b58'
-  )
-}
-
-function getPassName(passId: string) {
-  return (
-    {
-      party: 'Party Pass',
-      'party-bundle': 'Party Combo Pass',
-      fullpass: 'Full Pass',
-      'fullpass-bundle': 'Full Pass + Masterclass',
-      heneco: 'Heneco Full Pass',
-      said: 'Said Full Pass',
-      'vip-silver': 'VIP Silver Pass',
-      'vip-gold': 'VIP Gold Pass',
-      'fri-sat': 'Friday & Saturday Pass',
-      'sat-sun': 'Saturday & Sunday Pass',
-      fri: 'Friday Pass',
-      sat: 'Saturday Pass',
-      sun: 'Sunday Pass',
-    }[passId] ?? passId.replace('-', ' ') + ' Pass'
   )
 }

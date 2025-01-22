@@ -7,6 +7,12 @@ import Stripe from 'stripe'
 import { v4 as uuid } from 'uuid'
 import { Checkout } from '../../checkout'
 import { Environment } from '../../environment'
+import {
+  mapCustomer as mapEdition2Customer,
+  mapOrder as mapEdition2Order,
+  mapPromoCode as mapEdition2PromoCode,
+} from '../document/csv/edition2-order.map'
+import { mapCustomer, mapOrder, mapPromoCode } from '../document/csv/edition3-order.map'
 import { StorageAdapter } from '../document/storage.adapter'
 import { S3Storage } from '../document/storage.s3'
 import { SESEmailService } from '../email/ses'
@@ -23,28 +29,6 @@ import {
   buildUpdateOrderPaymentRequest,
 } from './request'
 import { buildOrderResponse, buildPromotionResponse } from './response'
-
-const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
-  marshallOptions: { removeUndefinedValues: true },
-})
-const dateGenerator = { today: () => new Date() }
-const repository = new DynamoDbRepository(dynamodb, { generate: uuid }, dateGenerator)
-const stripe = new Stripe(Environment.StripeSecretKey())
-const paymentAdapter = new StripePaymentAdapter(stripe)
-const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
-const qrCodeGenerator = new QrCodeGenerator()
-const s3Client = new S3Storage(new S3({}), Environment.DocumentBucketName())
-const documentAdapter = new StorageAdapter(s3Client, dateGenerator)
-const queueAdapter = new QueueAdapter(new SQSClient({}))
-const checkout = new Checkout(
-  repository,
-  paymentAdapter,
-  emailApi,
-  qrCodeGenerator,
-  documentAdapter,
-  queueAdapter,
-  dateGenerator
-)
 
 export const proceedToCheckout = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body ?? '{}')
@@ -154,9 +138,27 @@ export const resendConfirmationEmail = async (
 }
 
 export const requestImportOrders = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  const checkout = makeEdition2Checkout()
   const request = buildRequestImportOrdersRequest(event)
   try {
     const orders = await checkout.requestImportOrders(request.csvPath)
+    return successResponse({
+      numberOfImports: orders.length,
+      orderIds: orders.map((order) => order.id),
+    })
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const requestImportEdition3Orders = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  const request = buildRequestImportOrdersRequest(event)
+  try {
+    const orders = await checkout.requestImportEdition3Orders(request.csvPath)
     return successResponse({
       numberOfImports: orders.length,
       orderIds: orders.map((order) => order.id),
@@ -237,6 +239,61 @@ export const checkIn = async (event: APIGatewayEvent, context: Context): Promise
     return internalServerErrorResponse(error)
   }
 }
+
+const makeCheckout = () => {
+  const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
+    marshallOptions: { removeUndefinedValues: true },
+  })
+  const dateGenerator = { today: () => new Date() }
+  const repository = new DynamoDbRepository(dynamodb, { generate: uuid }, dateGenerator)
+  const paymentAdapter = new StripePaymentAdapter(stripe)
+  const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
+  const qrCodeGenerator = new QrCodeGenerator()
+  const s3Client = new S3Storage(new S3({}), Environment.DocumentBucketName())
+  const documentAdapter = new StorageAdapter(s3Client, { mapCustomer, mapOrder, mapPromoCode }, dateGenerator)
+  const queueAdapter = new QueueAdapter(new SQSClient({}))
+  const checkout = new Checkout(
+    repository,
+    paymentAdapter,
+    emailApi,
+    qrCodeGenerator,
+    documentAdapter,
+    queueAdapter,
+    dateGenerator
+  )
+  return checkout
+}
+
+const makeEdition2Checkout = () => {
+  const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
+    marshallOptions: { removeUndefinedValues: true },
+  })
+  const dateGenerator = { today: () => new Date() }
+  const repository = new DynamoDbRepository(dynamodb, { generate: uuid }, dateGenerator)
+  const paymentAdapter = new StripePaymentAdapter(stripe)
+  const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
+  const qrCodeGenerator = new QrCodeGenerator()
+  const s3Client = new S3Storage(new S3({}), Environment.DocumentBucketName())
+  const documentAdapter = new StorageAdapter(
+    s3Client,
+    { mapCustomer: mapEdition2Customer, mapOrder: mapEdition2Order, mapPromoCode: mapEdition2PromoCode },
+    dateGenerator
+  )
+  const queueAdapter = new QueueAdapter(new SQSClient({}))
+  const checkout = new Checkout(
+    repository,
+    paymentAdapter,
+    emailApi,
+    qrCodeGenerator,
+    documentAdapter,
+    queueAdapter,
+    dateGenerator
+  )
+  return checkout
+}
+
+const stripe = new Stripe(Environment.StripeSecretKey())
+const checkout = makeCheckout()
 
 // const unauthorizedErrorResponse = (message: string) => ({
 //   statusCode: 401,

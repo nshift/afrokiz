@@ -114,6 +114,27 @@ export class Checkout {
     return newOrders.map(({ order }) => order)
   }
 
+  async requestImportEdition3Orders(csvPath: string): Promise<Order[]> {
+    this.queueAdapter
+    const orders = await this.documentAdapter.getOrdersFromImports(csvPath)
+    const newOrders = await this.getNewOrders(orders)
+    if (newOrders.length == 0) {
+      return []
+    }
+    await this.saveImportOrders(newOrders)
+    await this.saveCheckouts(newOrders)
+    const ordersWithQrCode = await Promise.all(
+      newOrders.map(async ({ order, customer, promoCode }) => {
+        await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
+        const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+        const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
+        return { order, customer, promoCode, qrCodeUrl: link }
+      })
+    )
+    await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode))
+    return newOrders.map(({ order }) => order)
+  }
+
   async importOrder(orderId: string) {
     const result = await this.repository.getOrderById(orderId)
     if (!result) {
