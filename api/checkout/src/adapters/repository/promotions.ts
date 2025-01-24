@@ -43,12 +43,22 @@ export const makeGiveAwayPromotion = (promotion: Omit<GiveAwayPromotion, 'apply'
   }),
 })
 
-export const makePromoterDiscount = (code: string) =>
+export const makeEdition2PromoterDiscount = (code: string) =>
   makeDiscountPromotion({
     id: `promoter-${code.toLowerCase()}`,
     isActive: true,
     code: code.toUpperCase(),
     expirationDate: new Date('2024-09-01'),
+    discount: 0.95,
+    isAppliable: (passId: string) => !['party-bundle'].includes(passId),
+  })
+
+export const makeEdition3PromoterDiscount = (code: string) =>
+  makeDiscountPromotion({
+    id: `promoter-${code.toLowerCase()}`,
+    isActive: true,
+    code: code.toUpperCase(),
+    expirationDate: new Date('2025-09-01'),
     discount: 0.95,
     isAppliable: (passId: string) => !['party-bundle'].includes(passId),
   })

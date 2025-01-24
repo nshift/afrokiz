@@ -16,13 +16,7 @@ import { Event } from './events/event'
 import { mapToOrder, proceedToCheckoutEvent, processProceedToCheckoutEvent } from './events/proceed-to-checkout.event'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event'
 import { transformCreateOrderEvent, transformFailedPaymentEvent, transformSuccessfulPaymentEvent } from './migration'
-import {
-  makeCNEDiscount,
-  makeDashDiscount,
-  makePromoterDiscount,
-  makeSensualDiscount,
-  makeTarrakizSGDiscount,
-} from './promotions'
+import { makeEdition3PromoterDiscount } from './promotions'
 import { Repository } from './repository'
 import {
   OrderSchema,
@@ -164,31 +158,18 @@ export class DynamoDbRepository implements Repository {
 
   async getAllPromotions(passId: string): Promise<{ [key: string]: Promotion }> {
     return {
-      AIDANCE: makePromoterDiscount('AIDANCE'),
-      ARIEL: makePromoterDiscount('ARIEL'),
-      ASANKA: makePromoterDiscount('ASANKA'),
-      CNE: makeCNEDiscount(passId),
-      DAVID: makePromoterDiscount('DAVID'),
-      DASH: makeDashDiscount,
-      DJDRZ: makePromoterDiscount('DJDRZ'),
-      HITOMI: makePromoterDiscount('HITOMI'),
-      JAY: makePromoterDiscount('JAY'),
-      KEVIN: makePromoterDiscount('KEVIN'),
-      KIW: makePromoterDiscount('KIW'),
-      LUCERNE: makePromoterDiscount('LUCERNE'),
-      MANLUO: makePromoterDiscount('MANLUO'),
-      NARUTONYA: makePromoterDiscount('NARUTONYA'),
-      RAJ: makePromoterDiscount('RAJ'),
-      RITA: makePromoterDiscount('RITA'),
-      SANJAYA: makePromoterDiscount('SANJAYA'),
-      SATOMI: makePromoterDiscount('SATOMI'),
-      SENSUAL: makeSensualDiscount,
-      SIRI: makePromoterDiscount('SIRI'),
-      SOULKIZDANANG: makePromoterDiscount('SOULKIZDANANG'),
-      STEFANOS: makePromoterDiscount('STEFANOS'),
-      TARRAKIZSG: makeTarrakizSGDiscount,
-      THEO: makePromoterDiscount('THEO'),
-      ZIKIMMY: makePromoterDiscount('ZIKIMMY'),
+      NEIL: makeEdition3PromoterDiscount('NEIL'),
+      AIKIZ: makeEdition3PromoterDiscount('AIKIZ'),
+      LIYA: makeEdition3PromoterDiscount('LIYA'),
+      WINO: makeEdition3PromoterDiscount('WINO'),
+      FRANK: makeEdition3PromoterDiscount('FRANK'),
+      THEONE: makeEdition3PromoterDiscount('THEONE'),
+      RUSLADA: makeEdition3PromoterDiscount('RUSLADA'),
+      KAMARAD: makeEdition3PromoterDiscount('KAMARAD'),
+      TRIXIE: makeEdition3PromoterDiscount('TRIXIE'),
+      CHU: makeEdition3PromoterDiscount('CHU'),
+      MOU: makeEdition3PromoterDiscount('MOU'),
+      KIW: makeEdition3PromoterDiscount('KIW'),
     }
   }
 
