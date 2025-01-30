@@ -558,7 +558,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'samet',
     name: 'Samet Getaway Pass',
     isSoldOut: false,
-    price: { USD: 35000, EUR: 3400, THB: 1200000 },
+    price: { USD: 35000, EUR: 34000, THB: 1200000 },
     doorPrice: { USD: 60000, EUR: 56800, THB: 2000000 },
     includes: [
       'All workshops at Koh Samet only',
