@@ -158,18 +158,21 @@ export class DynamoDbRepository implements Repository {
 
   async getAllPromotions(passId: string): Promise<{ [key: string]: Promotion }> {
     return {
-      NEIL: makeEdition3PromoterDiscount('NEIL'),
       AIKIZ: makeEdition3PromoterDiscount('AIKIZ'),
-      LIYA: makeEdition3PromoterDiscount('LIYA'),
-      WINO: makeEdition3PromoterDiscount('WINO'),
-      FRANK: makeEdition3PromoterDiscount('FRANK'),
-      THEONE: makeEdition3PromoterDiscount('THEONE'),
-      RUSLADA: makeEdition3PromoterDiscount('RUSLADA'),
-      KAMARAD: makeEdition3PromoterDiscount('KAMARAD'),
-      TRIXIE: makeEdition3PromoterDiscount('TRIXIE'),
+      ANAKIZ: makeEdition3PromoterDiscount('ANAKIZ'),
       CHU: makeEdition3PromoterDiscount('CHU'),
-      MOU: makeEdition3PromoterDiscount('MOU'),
+      FRANK: makeEdition3PromoterDiscount('FRANK'),
+      KAMARAD: makeEdition3PromoterDiscount('KAMARAD'),
       KIW: makeEdition3PromoterDiscount('KIW'),
+      LIYA: makeEdition3PromoterDiscount('LIYA'),
+      MOU: makeEdition3PromoterDiscount('MOU'),
+      NEIL: makeEdition3PromoterDiscount('NEIL'),
+      RUSLADA: makeEdition3PromoterDiscount('RUSLADA'),
+      SANJAYA: makeEdition3PromoterDiscount('SANJAYA'),
+      THEONE: makeEdition3PromoterDiscount('THEONE'),
+      TRIXIE: makeEdition3PromoterDiscount('TRIXIE'),
+      ULIANA: makeEdition3PromoterDiscount('ULIANA'),
+      WINO: makeEdition3PromoterDiscount('WINO'),
     }
   }
 
