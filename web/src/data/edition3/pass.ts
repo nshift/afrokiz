@@ -22,6 +22,65 @@ export type Pass = {
   options: { [key: string]: Option }
 }
 
+export const masterClassOptions: { [key: string]: Option } = {
+  'audi-laura-masterclass': {
+    id: 'audi-laura-masterclass',
+    icon: 'fa-user-group',
+    title: 'Audi & Laura Masterclass',
+    includesInShortDescription: ['2H Masterclass'],
+    includes: ['2H Audi & Laura Masterclass'],
+    selected: false,
+    soldOut: false,
+    price: {
+      USD: 7500,
+      EUR: 7200,
+      THB: 250000,
+    },
+  },
+  'tpeak-masterclass': {
+    id: 'tpeak-masterclass',
+    icon: 'fa-user-group',
+    title: "T'Peak Masterclass",
+    includesInShortDescription: ['2H Masterclass'],
+    includes: ["2H T'Peak Masterclass"],
+    selected: false,
+    soldOut: false,
+    price: {
+      USD: 7500,
+      EUR: 7200,
+      THB: 250000,
+    },
+  },
+  'asia-masterclass': {
+    id: 'asia-masterclass',
+    icon: 'fa-user-group',
+    title: 'Asia Masterclass',
+    includesInShortDescription: ['2H Masterclass'],
+    includes: ['2H Asia Masterclass'],
+    selected: false,
+    soldOut: false,
+    price: {
+      USD: 7500,
+      EUR: 7200,
+      THB: 250000,
+    },
+  },
+  'all-masterclass': {
+    id: 'all-masterclass',
+    icon: 'fa-user-group',
+    title: 'All Masterclass',
+    includesInShortDescription: ['6H Masterclass'],
+    includes: ['2H Audi & Laura Masterclass', "2H T'Peak Masterclass", '2H Asia Masterclass'],
+    selected: false,
+    soldOut: false,
+    price: {
+      USD: 15000,
+      EUR: 14500,
+      THB: 520000,
+    },
+  },
+}
+
 export const superEarlyBirdPasses: { [key: string]: Pass } = {
   fullPass: {
     id: 'fullpass-edition3',
@@ -100,7 +159,7 @@ export const baliPasses: { [key: string]: Pass } = {
       'Day time social',
       'Evening parties during September 5-7',
       '3 welcome drinks per person',
-      '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)',
+      '3 Nights Stay at I-Residence Silom Hotel (breakfast included)',
       'Exclusive Cruise Party',
       '1H Foot Massage at Lek Massage per person',
       'Non-refundable',
@@ -226,6 +285,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      ...masterClassOptions,
       'cruise-option': {
         id: 'cruise-option',
         icon: 'fa-ship',
@@ -458,6 +518,7 @@ export const defaultPasses: { [key: string]: Pass } = {
       'Evening parties during September 5-7',
       '2H Masterclass by Audi & Laura',
       "2H Masterclass by T'Peak",
+      '2H Masterclass by Asia',
       '3 welcome drinks per person',
       '3 Nights Stay at I-Residence Silom Bangkok Hotel (breakfast included)',
       'Airport Pick up',
