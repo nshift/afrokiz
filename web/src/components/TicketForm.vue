@@ -181,6 +181,13 @@ const selectOption = (id: string) => {
   if (optionIds.value.includes('said-mc-option') && optionIds.value.includes('heneco-mc-option')) {
     optionIds.value = optionIds.value.concat(['all-mc-option'])
   }
+  if (
+    optionIds.value.includes('asia-masterclass') &&
+    optionIds.value.includes('tpeak-masterclass') &&
+    optionIds.value.includes('audi-laura-masterclass')
+  ) {
+    optionIds.value = optionIds.value.concat(['all-masterclass'])
+  }
   if (optionIds.value.includes('all-mc-option')) {
     optionIds.value = optionIds.value.filter((option) => !['said-mc-option', 'heneco-mc-option'].includes(option))
   }
@@ -189,6 +196,11 @@ const selectOption = (id: string) => {
   }
   if (optionIds.value.includes('vip-gold-upgrade')) {
     optionIds.value = optionIds.value.filter((option) => !['cruise-option', 'vip-silver-upgrade'].includes(option))
+  }
+  if (optionIds.value.includes('all-masterclass')) {
+    optionIds.value = optionIds.value.filter(
+      (option) => !['asia-masterclass', 'tpeak-masterclass', 'audi-laura-masterclass'].includes(option)
+    )
   }
 }
 

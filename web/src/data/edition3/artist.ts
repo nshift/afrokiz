@@ -14,6 +14,11 @@ export const artists: { [key: string]: { name: string; musicStyle: string; image
     musicStyle: '',
     image: '/images/artists/ozy-shine.jpg',
   },
+  asia: {
+    name: 'Asia 🇺🇦',
+    musicStyle: '',
+    image: '/images/artists/asia.jpg',
+  },
   quinn: {
     name: 'Quinn 🇨🇳',
     musicStyle: '',
