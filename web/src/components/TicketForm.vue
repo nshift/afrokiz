@@ -7,6 +7,12 @@ import { PaymentAPI, type NewOrder, type Order } from '../payment-api/payment.ap
 import { type DiscountPromotion, type GiveAwayPromotion } from '../payment-api/promotion'
 
 const { pass } = defineProps<{ pass: Pass }>()
+const isValentinePass = [
+  'fullpass-edition3',
+  'fullpass-valentine',
+  'vip-silver-valentine',
+  'vip-gold-valentine',
+].includes(pass.id)
 const defaultCurrency = 'USD'
 let stripe: Stripe
 let elements: StripeElements
@@ -16,6 +22,7 @@ const applying = ref(false)
 const applied = ref(false)
 const fullNameValidationError = ref(false)
 const fullName = ref('')
+const fullName2 = ref('')
 const promoCode = ref<string | undefined>(undefined)
 const promoCodeValidationError = ref(false)
 const emailValidationError = ref(false)
@@ -74,7 +81,7 @@ const submit = async () => {
   const options = optionIds.value.map((option) => pass.options[option])
   const order: NewOrder = {
     email: email.value,
-    fullname: fullName.value,
+    fullname: [fullName.value, fullName2.value].join(', '),
     dancerType: optionIds.value.includes('couple-option') ? 'couple' : dancerType.value[0],
     passId: pass.id,
     date: new Date(),
@@ -199,15 +206,20 @@ const shouldDisabled = (id: string) => {
   <form class="grid" @submit.prevent="submit">
     <Card :class="['ticket']">
       <div class="title">
-        <h2>
-          {{
-            optionIds.includes('couple-option')
-              ? 'Couple ' + pass.name
-              : pass.id != 'fullpass-edition3'
-              ? 'Single ' + pass.name
-              : pass.name
-          }}
-        </h2>
+        <p>
+          <h2>
+            {{
+              optionIds.includes('couple-option')
+                ? 'Couple ' + pass.name
+                : !['fullpass-edition3', 'fullpass-valentine', 'vip-silver-valentine', 'vip-gold-valentine'].includes(
+                    pass.id
+                  )
+                ? 'Single ' + pass.name
+                : pass.name
+            }}
+          </h2>
+          <p v-if="isValentinePass">This pass is strictly reserved to a female and male participants.</p>
+        </p>
         <div class="promotion-price" v-if="pass.price.EUR != pass.doorPrice.EUR">
           <p>
             <b>
@@ -270,7 +282,13 @@ const shouldDisabled = (id: string) => {
         <div class="total">
           <h2>Total: {{ currency }} {{ (total / 100).toFixed(2) }}</h2>
         </div>
-        <div class="information-element" v-if="!optionIds.includes('couple-option') && pass.id != 'dj'">
+        <div
+          class="information-element"
+          v-if="
+            !optionIds.includes('couple-option') &&
+            !['dj', 'fullpass-valentine', 'vip-silver-valentine', 'vip-gold-valentine'].includes(pass.id)
+          "
+        >
           <div class="dancer-type-options">
             <div
               :class="[
@@ -282,7 +300,7 @@ const shouldDisabled = (id: string) => {
               @click="dancerType = ['leader']"
             >
               <input type="checkbox" value="leader" v-model="dancerType" />
-              <div class="option"><p>Leader</p></div>
+              <div class="option"><p>Male</p></div>
             </div>
             <div
               :class="[
@@ -294,20 +312,31 @@ const shouldDisabled = (id: string) => {
               @click="dancerType = ['follower']"
             >
               <input type="checkbox" value="follower" v-model="dancerType" />
-              <div class="option"><p>Follower</p></div>
+              <div class="option"><p>Female</p></div>
             </div>
           </div>
-          <p v-if="!dancerTypeValidationError">We are aiming for a reasonable balance between leaders and followers.</p>
           <p class="validation-error" v-if="dancerTypeValidationError">Your dancer type is incomplete.</p>
         </div>
         <div class="information-element">
-          <label>Full name</label>
+          <label>{{ isValentinePass ? 'Miss full name' : 'Full name' }}</label>
           <div class="field-container">
             <input
               :class="['field', fullNameValidationError ? 'validation-error' : '']"
               type="text"
               placeholder="Full name"
               v-model="fullName"
+            />
+          </div>
+          <p class="validation-error" v-if="fullNameValidationError">Your full name is incomplete.</p>
+        </div>
+        <div class="information-element" v-if="isValentinePass">
+          <label>Mister full name</label>
+          <div class="field-container">
+            <input
+              :class="['field', fullNameValidationError ? 'validation-error' : '']"
+              type="text"
+              placeholder="Full name"
+              v-model="fullName2"
             />
           </div>
           <p class="validation-error" v-if="fullNameValidationError">Your full name is incomplete.</p>

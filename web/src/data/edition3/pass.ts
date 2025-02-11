@@ -215,7 +215,81 @@ export const baliPasses: { [key: string]: Pass } = {
   },
 }
 
+export const valentinePasses: { [key: string]: Pass } = {
+  fullPassValentine: {
+    id: 'fullpass-valentine',
+    name: 'Full Pass For Couple',
+    isSoldOut: false,
+    price: { USD: 26900, EUR: 26000, THB: 910000 },
+    doorPrice: { USD: 20000 * 2, EUR: 19000 * 2, THB: 680000 * 2 },
+    includes: [
+      'All workshops',
+      'All parties in main venue',
+      '3 welcome drinks per person',
+      '1H Foot Massage at Lek Massage per person',
+    ],
+    giveAways: [],
+    isPromoted: false,
+    options: {
+      'cruise-option': {
+        id: 'cruise-option',
+        icon: 'fa-ship',
+        title: 'Cruise Party',
+        includesInShortDescription: ['3H party & Carribean Tappas'],
+        includes: ['Exclusive Cruise Party'],
+        selected: false,
+        soldOut: false,
+        price: { USD: 5500 * 2, EUR: 5000 * 2, THB: 191000 * 2 },
+      },
+    },
+  },
+  vipSilverValentine: {
+    id: 'vip-silver-valentine',
+    name: 'Vip Silver For Couple',
+    isSoldOut: false,
+    price: { USD: 59900, EUR: 58000, THB: 2000000 },
+    doorPrice: { USD: 40000 * 2, EUR: 37800 * 2, THB: 1360000 * 2 },
+    includes: [
+      'All workshops',
+      'Day time social',
+      'Evening parties during September 5-7',
+      '3 welcome drinks per person',
+      '3 Nights Stay at I-Residence Silom Bangkok Hotel (breakfast included)',
+      'Exclusive Cruise Party',
+      '1H Foot Massage at Lek Massage per person',
+      'Non-refundable',
+    ],
+    giveAways: [],
+    isPromoted: false,
+    options: {},
+  },
+  vipGoldValentine: {
+    id: 'vip-gold-valentine',
+    name: 'Vip Gold For Couple',
+    isSoldOut: false,
+    price: { USD: 79900, EUR: 77000, THB: 2700000 },
+    doorPrice: { USD: 50000 * 2, EUR: 47500 * 2, THB: 1700000 * 2 },
+    includes: [
+      'All workshops',
+      'Day time social',
+      'Evening parties during September 5-7',
+      '2H Masterclass by Audi & Laura',
+      "2H Masterclass by T'Peak",
+      '3 welcome drinks per person',
+      '3 Nights Stay at I-Residence Silom Bangkok Hotel (breakfast included)',
+      'Airport Pick up',
+      'Exclusive Cruise Party',
+      '1H Foot Massage at Lek Massage per person',
+      'Non-refundable',
+    ],
+    giveAways: [],
+    isPromoted: false,
+    options: {},
+  },
+}
+
 export const defaultPasses: { [key: string]: Pass } = {
+  ...valentinePasses,
   fullPass: {
     id: 'fullpass',
     name: 'Full Pass',

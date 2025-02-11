@@ -3,6 +3,9 @@ import Card from "../../components/Card.astro";
 import Currency from "../../components/Currency.vue"
 import { type Pass, calculateTotal, defaultPasses } from "../../data/edition3/pass";
 
+const fullpassValentine = defaultPasses.fullPassValentine
+const vipSilverValentine = defaultPasses.vipSilverValentine
+const vipGoldValentine = defaultPasses.vipGoldValentine
 const fullpass = defaultPasses.fullPass
 const vipSilverPass = defaultPasses.vipSilverPass
 const vipGoldPass = defaultPasses.vipGoldPass
@@ -15,6 +18,52 @@ function calculatePrice(pass: Pass) {
 ---
 
 <div id="tickets" class="container">
+    <Card classes={["ticket-card", "ticket", "fullpassValentine"]}>
+      <div class="heart">💝</div>
+      <div class="container-column">
+        <div>
+          <h2><Currency price={calculatePrice(fullpassValentine)} client:only /></h2>
+          { fullpassValentine.price.EUR != fullpassValentine.doorPrice.EUR && <p><s><Currency price={fullpassValentine.doorPrice} client:only /></s></p> }
+          <h3>{fullpassValentine.name}</h3>
+          <p>+ 1H Massage per person</p>
+          <p>Limited to 14 couples</p>
+        </div>
+        <div class="button-container">
+          { !fullpassValentine.isSoldOut && <a href={"/pass/" + fullpassValentine.id} class="button action">Buy Now</a> }
+          { fullpassValentine.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+        </div>
+      </div>
+    </Card>
+    <Card classes={["ticket-card", "ticket", "vipSilverValentine"]}>
+      <div class="heart">💝</div>
+      <div class="container-column">
+        <div>
+          <h2><Currency price={calculatePrice(vipSilverValentine)} client:only /></h2>
+          { vipSilverValentine.price.EUR != vipSilverValentine.doorPrice.EUR && <p><s><Currency price={vipSilverValentine.doorPrice} client:only /></s></p> }
+          <h3>{vipSilverValentine.name}</h3>
+          <p>Limited to 14 couples</p>
+        </div>
+        <div class="button-container">
+          { !vipSilverValentine.isSoldOut && <a href={"/pass/" + vipSilverValentine.id} class="button action">Buy Now</a> }
+          { vipSilverValentine.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+        </div>
+      </div>
+    </Card>
+    <Card classes={["ticket-card", "ticket", "vipGoldValentine"]}>
+      <div class="heart">💝</div>
+      <div class="container-column">
+        <div>
+          <h2><Currency price={calculatePrice(vipGoldValentine)} client:only /></h2>
+          { vipGoldValentine.price.EUR != vipGoldValentine.doorPrice.EUR && <p><s><Currency price={vipGoldValentine.doorPrice} client:only /></s></p> }
+          <h3>{vipGoldValentine.name}</h3>
+          <p>Limited to 14 couples</p>
+        </div>
+        <div class="button-container">
+          { !vipGoldValentine.isSoldOut && <a href={"/pass/" + vipGoldValentine.id} class="button action">Buy Now</a> }
+          { vipGoldValentine.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+        </div>
+      </div>
+    </Card>
     <Card classes={["date-card", "bangkok"]} backgroundPath="/images/mahanakhon.png">
       <h2>5-8 Sep 2025</h2>
       <h4>Bangkok, Thailand</h4>
@@ -98,6 +147,7 @@ function calculatePrice(pass: Pass) {
   }
   #tickets {
     grid-template-areas:
+      "fullpassValentine fullpassValentine fullpassValentine fullpassValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine"
       "bangkok bangkok bangkok bangkok bangkok bangkok samet samet samet samet samet samet"
       "fullpass fullpass fullpass vipSilver vipSilver vipSilver bangkokSamet bangkokSamet bangkokSamet sametGetaway sametGetaway sametGetaway"
       "vipGold vipGold vipGold none none none none none none none none none";
@@ -107,6 +157,30 @@ function calculatePrice(pass: Pass) {
   }
   .samet {
     grid-area: samet;
+  }
+  .heart {
+    position: absolute;
+    top: -0.65em;
+    left: 40px;
+    font-size: 2.25em;
+  }
+  .fullpassValentine {
+    grid-area: fullpassValentine;
+    
+  }
+  .fullpassValentine, .vipSilverValentine, .vipGoldValentine {
+    background-color: var(--secondary-color) !important;
+  }
+  .fullpassValentine .button-container .button,
+  .vipSilverValentine .button-container .button,
+  .vipGoldValentine .button-container .button {
+    background-color: var(--primary-color) !important;
+  }
+  .vipSilverValentine {
+    grid-area: vipSilverValentine;
+  }
+  .vipGoldValentine {
+    grid-area: vipGoldValentine;
   }
   .fullpass {
     grid-area: fullpass;
@@ -173,6 +247,8 @@ function calculatePrice(pass: Pass) {
     }
     #tickets {
       grid-template-areas:
+        "fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine"
+        "vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine"
         "bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok"
         "fullpass fullpass fullpass fullpass vipSilver vipSilver vipSilver vipSilver vipGold vipGold vipGold vipGold"
         "samet samet samet samet samet samet samet samet samet samet samet samet"
