@@ -181,7 +181,7 @@ export const baliPasses: { [key: string]: Pass } = {
       '2H Masterclass by Audi & Laura',
       "2H Masterclass by T'Peak",
       '3 welcome drinks per person',
-      '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)',
+      '3 Nights Stay at I-Residence Silom Bangkok Hotel (breakfast included)',
       'Airport Pick up',
       'Exclusive Cruise Party',
       '1H Foot Massage at Lek Massage per person',
