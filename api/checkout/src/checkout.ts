@@ -224,10 +224,14 @@ export class Checkout {
     const total = calculateOrderTotal(newOrder.items)
     const order =
       (newOrder.id ? (await this.getOrder(newOrder.id))?.order : undefined) ?? this.createOrder(newOrder, total)
+    let isNewOrder = newOrder.id != order.id
     let paymentAmount = calculateNewOptionTotal(order.items, newOrder.items)
     order.items = newOrder.items
     order.total = total
-    const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total: paymentAmount })
+    const paymentIntent = await this.paymentAdapter.createPaymentIntent({
+      order,
+      total: isNewOrder ? total : paymentAmount,
+    })
     return {
       order,
       total,
