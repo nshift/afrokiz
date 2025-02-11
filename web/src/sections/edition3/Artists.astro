@@ -13,7 +13,7 @@ import { artists } from "../../data/edition3/artist";
       ))
     }
     {
-      [artists.quinn, artists.oncleKani, artists.david, artists.stef, artists.ploy, artists.selva].map((artist) => (
+      [artists.quinn, artists.oncleKani, artists.david, artists.tonya, artists.stef, artists.ploy, artists.selva, artists.lucerne].map((artist) => (
         <Card backgroundPath={artist.image} classes={["dual-card artist-card small-artist-card"]}>
           {artist.name}<br/>
           <div class="subtitle">{artist.musicStyle}</div>
@@ -32,7 +32,7 @@ import { artists } from "../../data/edition3/artist";
     width: calc((100% / 4) - 0.8rem) !important;
   }
   .small-artist-card {
-    width: calc((100% / 6) - 1rem) !important;
+    width: calc((100% / 4) - 1rem) !important;
     height: 275px !important;
   }
   .small-artist-card .text {

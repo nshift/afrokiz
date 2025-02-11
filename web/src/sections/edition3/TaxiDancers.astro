@@ -1,0 +1,39 @@
+---
+import Card from "../../components/Card.astro";
+import { taxiDancers } from "../../data/edition3/artist";
+---
+
+<div class="container">
+  <h2 class="title">Meet our taxi dancers</h2>
+  <div class="list">
+    {
+      taxiDancers.map((artist) => (
+        <Card backgroundPath={artist.image} classes={["dual-card artist-card small-taxi-dancer-card"]}>
+          {artist.name}
+        </Card>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .small-taxi-dancer-card {
+    width: calc((100% / 6) - 1rem) !important;
+    height: 275px !important;
+  }
+  
+  @media only screen and (max-width: 920px) {
+    .small-taxi-dancer-card {
+      width: calc((100% / 3) - 0.8rem) !important;
+      height: 100px !important;
+    }
+  }
+</style>
+
+<style>
+  .title {
+    color: var(--text-primary-color);
+    margin-top: var(--m-padding);
+    grid-column: span 12;
+  }
+</style>

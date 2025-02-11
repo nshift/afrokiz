@@ -49,4 +49,81 @@ export const artists: { [key: string]: { name: string; musicStyle: string; image
     musicStyle: '',
     image: '/images/artists/selva.png',
   },
+  tonya: {
+    name: 'TonyA & Naru 🇻🇳',
+    musicStyle: '',
+    image: '/images/artists/tonya.jpg',
+  },
+  lucerne: {
+    name: 'DJ Spacebar 🇻🇳',
+    musicStyle: '',
+    image: '/images/artists/lucerne.jpg',
+  },
 }
+
+export const taxiDancers: { name: string; image: string }[] = [
+  {
+    name: '🇮🇩 Elda',
+    image: '/images/taxi-dancers/elda.png',
+  },
+  {
+    name: '🇵🇭 Kim',
+    image: '/images/taxi-dancers/kim.png',
+  },
+  {
+    name: '🇮🇳 Neha',
+    image: '/images/taxi-dancers/neha.png',
+  },
+  {
+    name: '🇲🇦 Ouss',
+    image: '/images/taxi-dancers/ouss.png',
+  },
+  {
+    name: '🇷🇺 Rita',
+    image: '/images/taxi-dancers/rita.png',
+  },
+  {
+    name: '🇮🇳 Paul',
+    image: '/images/taxi-dancers/paul.png',
+  },
+  {
+    name: '🇰🇿 Ruslana',
+    image: '/images/taxi-dancers/ruslana.png',
+  },
+  {
+    name: '🇳🇱 Ryan',
+    image: '/images/taxi-dancers/ryan.png',
+  },
+  {
+    name: '🇻🇳 Trixie',
+    image: '/images/taxi-dancers/trixie.png',
+  },
+  {
+    name: '🇷🇴 Tudor',
+    image: '/images/taxi-dancers/tudor.png',
+  },
+  {
+    name: '🇺🇦 Yuliya',
+    image: '/images/taxi-dancers/yu-liya.png',
+  },
+  {
+    name: '🇲🇾 Wino',
+    image: '/images/taxi-dancers/wino.png',
+  },
+  {
+    name: '🇮🇩 Upi',
+    image: '/images/taxi-dancers/upi.png',
+  },
+  {
+    name: '🇨🇳 Frank',
+    image: '/images/taxi-dancers/frank.png',
+  },
+  {
+    name: '🇦🇺🇲🇾 Neil',
+    image: '/images/taxi-dancers/neil.png',
+  },
+  {
+    name: '🇰🇷 The One',
+    image: '/images/taxi-dancers/theone.png',
+  },
+]
