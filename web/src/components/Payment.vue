@@ -50,7 +50,8 @@
             <label :class="['checkbox', installmentTermsApprovementError ? 'validation-error-checkbox' : '']"
               ><input type="checkbox" value="approved" v-model="installmentTermsApprovement"
             /></label>
-            By using the installment program, the ticket will not be refundable and transferable.
+            By using the installment program, you agree on the
+            <a href="/terms-conditions" target="_blank">Terms & Conditions</a>.
           </p>
           <ul class="steplist installments">
             <li v-for="(installment, index) in installments" :key="installment.id" class="installment">

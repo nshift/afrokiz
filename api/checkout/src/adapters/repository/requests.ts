@@ -158,7 +158,30 @@ export const updateOrderPaymentStatusRequest = (orderId: string, paymentStructur
     Key: { id: orderId },
     UpdateExpression: 'SET #paymentStructures = :paymentStructures',
     ExpressionAttributeNames: { '#paymentStructures': 'paymentStructures' },
-    ExpressionAttributeValues: { ':paymentStructures': paymentStructures },
+    ExpressionAttributeValues: {
+      ':paymentStructures': paymentStructures.map((paymentStructure) =>
+        isInstallment(paymentStructure)
+          ? {
+              principalAmount: paymentStructure.principalAmount,
+              currency: paymentStructure.currency,
+              frequency: paymentStructure.frequency,
+              term: paymentStructure.term,
+              dueDates: paymentStructure.dueDates.map((dueDate) => ({
+                amount: dueDate.amount,
+                currency: dueDate.currency,
+                dueDate: dueDate.dueDate.toISOString(),
+                status: dueDate.status,
+                paymentId: dueDate.paymentId,
+              })),
+            }
+          : {
+              amount: paymentStructure.amount,
+              currency: paymentStructure.currency,
+              status: paymentStructure.status,
+              paymentId: paymentStructure.paymentId,
+            }
+      ),
+    },
   })
 
 export const saveOrdersRequest = (orders: OrderSchema[]) => {
