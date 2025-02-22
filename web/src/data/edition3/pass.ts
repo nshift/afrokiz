@@ -85,7 +85,7 @@ export const superEarlyBirdPasses: { [key: string]: Pass } = {
   fullPass: {
     id: 'fullpass-edition3',
     name: 'SUPER EARLY BIRD Full Pass',
-    isSoldOut: true,
+    isSoldOut: false,
     price: { USD: 8900, EUR: 8000, THB: 300000 },
     doorPrice: { USD: 8900, EUR: 8000, THB: 300000 },
     includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
@@ -99,7 +99,7 @@ export const earlyBirdPasses: { [key: string]: Pass } = {
   fullPass: {
     id: 'early-bird-fullpass-edition3',
     name: 'EARLY BIRD Full Pass',
-    isSoldOut: true,
+    isSoldOut: false,
     price: { USD: 11000, EUR: 10500, THB: 380000 },
     doorPrice: { USD: 11000, EUR: 10500, THB: 380000 },
     includes: [
@@ -420,7 +420,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   'fullpass-edition3': {
     id: 'fullpass-edition3',
     name: 'SUPER EARLY BIRD Full Pass',
-    isSoldOut: true,
+    isSoldOut: false,
     price: { USD: 8900, EUR: 8000, THB: 300000 },
     doorPrice: { USD: 8900, EUR: 8000, THB: 300000 },
     includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
@@ -485,7 +485,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   'early-bird-fullpass-edition3': {
     id: 'early-bird-fullpass-edition3',
     name: 'EARLY BIRD Full Pass',
-    isSoldOut: true,
+    isSoldOut: false,
     price: { USD: 11000, EUR: 10500, THB: 380000 },
     doorPrice: { USD: 11000, EUR: 10500, THB: 380000 },
     includes: ['Includes all workshops', 'Day time social', 'Evening parties during September 5-7', 'Non-refundable'],
