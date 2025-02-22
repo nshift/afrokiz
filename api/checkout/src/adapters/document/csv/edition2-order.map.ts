@@ -113,6 +113,7 @@ export const mapOrder = (order: any, today: Date): Order => {
   })()
   return {
     id: makeOrderId(),
+    status: 'paid',
     date: today,
     items: [pass],
     total: { amount, currency: 'THB' },

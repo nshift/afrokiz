@@ -34,7 +34,7 @@ export const updatePaymentStatusEvent = (
   }
   return {
     ...event,
-    process: () => requests,
+    process: async () => requests,
   }
 }
 
@@ -50,7 +50,7 @@ export const processUpdatePaymentStatusEvent = async (
     name: 'UpdatePaymentStatus',
     time: dateGenerator.today(),
     data: {
-      sales: data.paymentStatus == 'success' ? sales : undefined,
+      sales: data.paymentStatus == 'completed' ? sales : undefined,
       orderId: data.order.id,
       paymentStatus: data.paymentStatus,
     },

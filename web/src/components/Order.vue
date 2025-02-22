@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref, inject, watch } from 'vue'
+import { ref, type Ref, inject, watch } from 'vue'
 import Card from '../components/Card.vue'
 import { type Pass, sumPrices } from '../data/pass'
-import { loadStripe, Stripe, type StripeElements } from '../stripe'
-import { PaymentAPI, type Order } from '../payment-api/payment.api'
+import { isInstallment, type Order } from '../payment-api/payment.api'
 import type { Option } from '../data/options'
+import Payment from './Payment.vue'
+import { DateTime } from 'luxon'
 
 const { pass, order } = defineProps<{ pass: Pass; order: Order }>()
-const defaultCurrency = 'USD'
-let stripe: Stripe
-let elements: StripeElements
-const currency: Ref<'USD' | 'EUR' | 'THB'> | undefined = inject('currency')
-const submitting = ref(false)
-const cardDeclinedError = ref(false)
-const cardDeclinedErrorMessage = ref('')
+const currency: Ref<'USD' | 'EUR' | 'THB'> = inject('currency') ?? ref('USD')
 const options: Option[] = Object.values(pass.options)
   .filter((option) => !['couple-option'].includes(option.id))
   .filter(
@@ -24,8 +19,6 @@ const options: Option[] = Object.values(pass.options)
           ['said-mc-option', 'heneco-mc-option'].includes(option.id))
       )
   )
-let optionsFeatures: () => string[] = () =>
-  optionIds.value.flatMap((option) => pass.options[option].includes).filter((x): x is string => x !== undefined)
 const optionIds = ref<string[]>(
   Object.values(options)
     .filter((option) => option.selected)
@@ -33,63 +26,19 @@ const optionIds = ref<string[]>(
 )
 const calculatePrice = () => {
   const selectedOptions = Object.values(options).filter((option) => optionIds.value.includes(option.id))
-  return sumPrices(selectedOptions.map((option) => option.price))[currency?.value ?? defaultCurrency]
+  return sumPrices(selectedOptions.map((option) => option.price))[currency.value]
 }
 const total = ref(calculatePrice())
-
-onMounted(async () => {
-  stripe = await loadStripe()
-  const price = calculatePrice()
-  const currentCurrency = currency?.value ?? defaultCurrency
-  elements = stripe.elements({
-    amount: price > 0 ? price : currentCurrency == 'THB' ? 10000 : 100,
-    currency: currentCurrency.toLowerCase(),
-  })
-  stripe.mountElements(elements, '#payment-element')
-})
 
 if (currency) {
   watch(currency, () => {
     total.value = calculatePrice()
-    elements = stripe.elements({
-      amount: calculatePrice(),
-      currency: (currency?.value ?? defaultCurrency).toLowerCase(),
-    })
-    stripe.mountElements(elements, '#payment-element')
   })
 }
 
 watch(optionIds, () => {
   total.value = calculatePrice()
 })
-
-const submit = async () => {
-  submitting.value = true
-  const selectedOptions = optionIds.value.map((option) => pass.options[option])
-  order.items = order.items.concat(
-    ...selectedOptions.flatMap((option) =>
-      option.includes.map((include) => ({
-        id: option.id,
-        title: include,
-        includes: [include],
-        amount: optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1,
-        total: {
-          amount:
-            option.price[currency?.value ?? defaultCurrency] *
-            (optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1),
-          currency: currency?.value ?? defaultCurrency,
-        },
-      }))
-    )
-  )
-  const { error } = await stripe.confirmPayment(elements, order)
-  submitting.value = false
-  if (error) {
-    cardDeclinedError.value = true
-    cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
-    return console.error('Confirm payment error: ', error)
-  }
-}
 
 const selectOption = (id: string) => {
   const disbaled = shouldDisabled(id)
@@ -121,10 +70,19 @@ const shouldDisabled = (id: string) => {
     pass.options[id].soldOut == true
   )
 }
+
+const paymentStatusIcon = {
+  pending: 'fa-circle-pause',
+  overdue: 'fa-circle-exclamation',
+  default: 'fa-circle-exclamation',
+  completed: 'fa-circle-check',
+  success: 'fa-circle-check',
+  failed: 'fa-circle-exclamation',
+}
 </script>
 
 <template>
-  <form class="grid" @submit.prevent="submit">
+  <div class="grid">
     <Card :class="['checkout-card']">
       <div class="title">
         <p>Order #{{ order.id }}</p>
@@ -165,6 +123,39 @@ const shouldDisabled = (id: string) => {
               </tfoot>
             </table>
           </div>
+          <div class="payment-section">
+            <div>
+              <h3>Payments</h3>
+              <table class="payment-structures">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody v-for="(paymentStructure, index) in order.paymentStructures" :key="'ps-' + index">
+                  <tr
+                    v-if="isInstallment(paymentStructure)"
+                    v-for="(installment, installmentIndex) in paymentStructure.dueDates"
+                    :key="'ins-' + index + installmentIndex"
+                  >
+                    <td><i :class="['fa-solid', paymentStatusIcon[installment.status] ?? '']"></i></td>
+                    <td>{{ installment.currency }} {{ (installment.amount / 100).toFixed(2) }}</td>
+                    <td>{{ DateTime.fromJSDate(installment.dueDate).toISODate() }}</td>
+                    <td>{{ installment.status }}</td>
+                  </tr>
+                  <tr v-if="!isInstallment(paymentStructure)">
+                    <td><i :class="['fa-solid', paymentStatusIcon[paymentStructure.status] ?? '']"></i></td>
+                    <td>{{ paymentStructure.currency }} {{ (paymentStructure.amount / 100).toFixed(2) }}</td>
+                    <td>{{ DateTime.fromJSDate(order.date).toISODate() ?? 'null' }}</td>
+                    <td>{{ paymentStructure.status }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
         <div class="section" v-if="options.length > 0">
           <Card :class="['options']">
@@ -186,28 +177,24 @@ const shouldDisabled = (id: string) => {
                 <div class="price">
                   <p>
                     {{ currency }}
-                    {{ (option.price[currency ?? defaultCurrency] / 100).toFixed(2) }}
+                    {{ (option.price[currency] / 100).toFixed(2) }}
                   </p>
                 </div>
               </li>
             </ul>
           </Card>
-          <Card :class="['payment']">
-            <div class="container">
-              <div class="total">
-                <h2>Total: {{ currency }} {{ (total / 100).toFixed(2) }}</h2>
-              </div>
-              <div id="payment-element"></div>
-              <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
-              <button class="button action" v-if="!submitting && optionIds.length > 0">Pay</button>
-              <button class="button action disabled" v-if="!submitting && optionIds.length == 0" disabled>Pay</button>
-              <p class="validation-error card-error" v-if="cardDeclinedError">{{ cardDeclinedErrorMessage }}</p>
-            </div>
-          </Card>
+          <Payment
+            :class="['payment']"
+            :order="order"
+            :pass="pass"
+            :total="total"
+            :currency="currency"
+            :optionIds="optionIds"
+          />
         </div>
       </div>
     </Card>
-  </form>
+  </div>
 </template>
 
 <style>
@@ -224,7 +211,7 @@ ul {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: var(--grid-lg-gap);
+  gap: var(--grid-m-gap);
   list-style: none;
 }
 .options li {
@@ -241,7 +228,7 @@ ul {
   transform: translate(-8px, -8px) scale(1.3);
 }
 .options .price {
-  padding: var(--m-padding);
+  padding: var(--xs-padding);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -256,16 +243,16 @@ ul {
   justify-content: center;
   text-align: center;
   gap: 0.5rem;
-  padding: var(--m-padding);
+  padding: var(--s-padding);
   background-color: var(--primary-very-dark-color);
   border-radius: 8px;
   border: 1px solid white;
-  width: 100px;
-  min-height: 100px;
+  width: 70px;
+  font-size: 0.9rem;
 }
 .options .option h4 {
   margin: 0;
-  font-size: var(--h4-font-size);
+  font-size: 1.1rem;
 }
 
 .couple-option {
@@ -275,26 +262,64 @@ ul {
   font-weight: bold;
 }
 
-.information-element {
+.checkout-card {
+  grid-column: span 12;
+  align-items: start !important;
+  justify-content: start !important;
+}
+.checkout-card a {
+  color: white;
+  font-weight: bold;
+}
+.checkout-card > .text > .title {
+  text-align: center;
+  padding: var(--m-padding);
+  background-color: var(--success-color);
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 1rem;
 }
-
-.field.validation-error {
-  border: 2px solid rgb(223, 27, 65);
+.checkout-card .content {
+  padding: var(--lg-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-lg-gap);
 }
-
-p.validation-error {
-  color: rgb(223, 27, 65);
+.checkout-card .text {
+  width: 100%;
 }
-p.card-error {
-  text-align: center;
+.payments {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
-.field-container {
+.payment-structure {
   display: flex;
   flex-direction: row;
-  gap: var(--grid-m-gap);
+  justify-content: space-between;
+}
+.payment-structures {
+  padding-top: 1.5rem;
+  width: 100%;
+}
+.payment-structures tbody tr td,
+.payment-structures thead tr th {
+  text-align: left;
+  padding: 0.5rem;
+}
+.payment-structures .fa-circle-pause {
+  font-size: 1.25rem;
+  color: #4580ff;
+}
+.payment-structures .fa-circle-exclamation {
+  font-size: 1.25rem;
+  color: #ffca45;
+}
+.payment-structures .fa-circle-check {
+  font-size: 1.25rem;
+  color: #85e645;
 }
 </style>
 
@@ -369,6 +394,20 @@ p.card-error {
   .section > * {
     width: 100%;
   }
+  .options {
+    gap: 1.5rem;
+  }
+  .options .option {
+    width: 60px;
+    font-size: 0.7rem;
+  }
+  .options .option h4 {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .options .price {
+    width: 60px;
+  }
 }
 </style>
 
@@ -388,7 +427,6 @@ p.card-error {
   grid-column: span 5;
   color: rgb(26, 26, 26) !important;
   background-color: white !important;
-  min-height: 400px !important;
   align-items: start !important;
   justify-content: start !important;
 }

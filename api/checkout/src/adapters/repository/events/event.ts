@@ -1,4 +1,10 @@
-import { BatchWriteCommand, DeleteCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import {
+  BatchWriteCommand,
+  DeleteCommand,
+  DynamoDBDocumentClient,
+  PutCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb'
 
 export interface Event<T> {
   id: string
@@ -6,5 +12,5 @@ export interface Event<T> {
   time: Date
   data: T
 
-  process(): (UpdateCommand | PutCommand | DeleteCommand | BatchWriteCommand)[]
+  process(client: DynamoDBDocumentClient): Promise<(UpdateCommand | PutCommand | DeleteCommand | BatchWriteCommand)[]>
 }

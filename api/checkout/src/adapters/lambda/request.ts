@@ -3,12 +3,14 @@ import Stripe from 'stripe'
 import { Environment } from '../../environment'
 import { Customer } from '../../types/customer'
 import { NewOrder } from '../../types/order'
+import { PaymentMethod, PaymentStructureType } from '../../types/payment'
 
 export const buildProceedToCheckoutRequest = (
   request: any
 ): {
   newOrder: NewOrder
   customer: Customer
+  paymentOption: { method: PaymentMethod; structure: PaymentStructureType }
   promoCode: string | null
 } => ({
   newOrder: {
@@ -28,6 +30,10 @@ export const buildProceedToCheckoutRequest = (
     fullname: request.fullname,
     type: request.dancer_type,
   },
+  paymentOption: {
+    method: request.payment_options.method,
+    structure: request.payment_options.structure,
+  },
   promoCode: request.promo_code,
 })
 
@@ -38,7 +44,11 @@ export const buildUpdateOrderPaymentRequest = (event: APIGatewayEvent, stripe: S
     throw new Error('Body and stripe signature are required.')
   }
   const stripeEvent = stripe.webhooks.constructEvent(body, signature, Environment.StripeWebhookSecretKey())
-  return { type: stripeEvent.type, orderId: (stripeEvent.data.object as Stripe.PaymentIntent).metadata.orderId }
+  return {
+    type: stripeEvent.type,
+    orderId: (stripeEvent.data.object as Stripe.PaymentIntent).metadata.orderId,
+    stripeId: (stripeEvent.data.object as Stripe.PaymentIntent).id,
+  }
 }
 
 export const buildResendConfirmationEmailRequest = (event: APIGatewayEvent) => {
@@ -58,5 +68,5 @@ export const buildImportOrderRequest = (record: SQSRecord) => {
 
 export const buildMarkPaymentAsSucceedRequest = (event: APIGatewayEvent) => {
   const body = JSON.parse(event.body ?? '{}')
-  return { orderId: body.orderId }
+  return { orderId: body.orderId, stripeId: body.stripeId }
 }

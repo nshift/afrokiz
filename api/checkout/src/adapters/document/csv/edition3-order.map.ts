@@ -31,7 +31,7 @@ export const mapOrder = (order: any, today: Date): Order => {
   const total = mapTotal(order)
   const passItem = mapPassItem(order, total)
   const options = mapOptions(order)
-  return { id: makeOrderId(), date: today, items: [passItem].concat(options), total }
+  return { id: makeOrderId(), status: 'paid', date: today, items: [passItem].concat(options), total }
 }
 
 const mapTotal = (order: any): { amount: number; currency: Currency } => ({

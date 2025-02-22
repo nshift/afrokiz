@@ -2,38 +2,62 @@ import { calculateOrderTotal } from '../../checkout.rules'
 import { UUIDGenerator } from '../uuid.generator'
 import { CreateOrderEvent } from './events/create-order.event'
 import { FailurePaymentEvent } from './events/failure-payment.event'
-import { ProceedToCheckoutEvent, proceedToCheckoutEvent } from './events/proceed-to-checkout.event'
+import { ProceedToCheckoutEvent, proceedToCheckoutEvent } from './events/proceed-to-checkout.event.v2'
 import { SuccessfulPaymentEvent } from './events/successful-payment.event'
 import { UpdatePaymentStatusEvent, updatePaymentStatusEvent } from './events/update-payment-status.event'
 
-export const transformCreateOrderEvent = (event: CreateOrderEvent): ProceedToCheckoutEvent => {
+export const transformCreateOrderEvent = (
+  event: CreateOrderEvent,
+  uuidGenerator: UUIDGenerator
+): ProceedToCheckoutEvent => {
   const total = calculateOrderTotal(event.data.order.items)
   return proceedToCheckoutEvent({
     id: event.id,
-    name: 'ProceedToCheckout',
+    name: 'ProceedToCheckoutV2',
     time: event.time,
     data: {
-      order: {
-        id: event.data.order.id,
-        date: event.data.order.date,
-        items: event.data.order.items.map((item) => ({
-          id: item.id,
-          title: item.title,
-          includes: item.includes,
-          amount: item.amount,
-          total: { amount: item.total.amount, currency: item.total.currency },
-        })),
-        total: { amount: total.amount, currency: total.currency },
+      checkout: {
+        order: {
+          id: event.data.order.id,
+          status: 'unknown',
+          date: event.data.order.date,
+          items: event.data.order.items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            includes: item.includes,
+            amount: item.amount,
+            total: { amount: item.total.amount, currency: item.total.currency },
+          })),
+          total: { amount: total.amount, currency: total.currency },
+        },
+        customer: {
+          email: event.data.order.email,
+          fullname: event.data.order.fullname,
+          type: event.data.order.dancerType,
+        },
+        promoCode: event.data.order.promoCode,
+        paymentStructures: [
+          {
+            amount: total.amount,
+            currency: total.currency,
+            status: event.data.order.paymentStatus,
+            paymentId: '',
+          },
+        ],
+        checkedIn: false,
       },
-      total: { amount: total.amount, currency: total.currency },
-      customer: {
-        email: event.data.order.email,
-        fullname: event.data.order.fullname,
-        type: event.data.order.dancerType,
-      },
-      promoCode: event.data.order.promoCode,
-      payment: { status: event.data.order.paymentStatus, intent: { id: event.data.order.paymentIntentId, secret: '' } },
-      checkedIn: false,
+      payments: [
+        {
+          id: uuidGenerator.generate(),
+          orderId: event.data.order.id,
+          amount: total.amount,
+          currency: total.currency,
+          status: event.data.order.paymentStatus,
+          stripeCustomerId: '',
+          stripePaymentIntentId: event.data.order.paymentIntentId,
+          stripePaymentIntentSecret: '',
+        },
+      ],
     },
   })
 }
@@ -69,7 +93,7 @@ export const transformSuccessfulPaymentEvent = (
         total: { amount: total.amount, currency: total.currency },
       },
       orderId: order.id,
-      paymentStatus: 'success',
+      paymentStatus: 'completed',
     },
   })
 }

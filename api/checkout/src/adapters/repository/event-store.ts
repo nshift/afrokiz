@@ -15,7 +15,7 @@ export class EventStore {
     await Promise.all(
       events.map(async (event) => {
         const saveEventCommand = this.saveEvent(event)
-        const commands = event.process()
+        const commands = await event.process(this.client)
         await this.commit([saveEventCommand, ...commands])
       })
     )

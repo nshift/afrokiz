@@ -9,6 +9,7 @@ export const makeCheckoutEndpoints = (props: {
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
   salesTable: cdk.aws_dynamodb.Table
+  paymentTable: cdk.aws_dynamodb.Table
   importOrdersTable: cdk.aws_dynamodb.Table
   importOrderQueue: cdk.aws_sqs.Queue
   documentBucket: cdk.aws_s3.Bucket
@@ -20,6 +21,7 @@ export const makeCheckoutEndpoints = (props: {
   const context = { sharedLayer, codeUri, stripeSecrets: props.stripeSecrets }
   return [
     makeProceedToCheckoutEndpoint({ ...props, ...context }),
+    makeProcessPendingPaymentsEndpoint({ ...props, ...context }),
     makeGetOrderEndpoint({ ...props, ...context }),
     makeUpdateOrderPaymentStatusEndpoint({ ...props, ...context }),
     makeGetPromotionEndpoint({ ...props, ...context }),
@@ -41,6 +43,7 @@ const makeProceedToCheckoutEndpoint = (props: {
   sharedLayer: cdk.aws_lambda.LayerVersion
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
+  paymentTable: cdk.aws_dynamodb.Table
   documentBucket: cdk.aws_s3.Bucket
   stripeSecrets: { secret: string; webhook: string }
 }) => {
@@ -54,6 +57,7 @@ const makeProceedToCheckoutEndpoint = (props: {
       DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
+      PAYMENT_TABLE_NAME: props.paymentTable.tableName,
       STRIPE_SECRET_KEY: props.stripeSecrets.secret,
       STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
     },
@@ -62,6 +66,39 @@ const makeProceedToCheckoutEndpoint = (props: {
   })
   props.eventTable.grant(endpoint.lambda, 'dynamodb:PutItem')
   props.orderTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem', 'dynamodb:Query')
+  props.paymentTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
+  return endpoint
+}
+
+const makeProcessPendingPaymentsEndpoint = (props: {
+  stack: cdk.Stack
+  codeUri: string
+  api: cdk.aws_apigatewayv2.CfnApi
+  sharedLayer: cdk.aws_lambda.LayerVersion
+  eventTable: cdk.aws_dynamodb.Table
+  orderTable: cdk.aws_dynamodb.Table
+  paymentTable: cdk.aws_dynamodb.Table
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
+}) => {
+  const endpoint = createEndpoint('ProcessPendingPayments', {
+    handler: 'adapters/lambda/lambda.processPendingPayments',
+    method: 'POST',
+    path: '/installment/process',
+    environment: {
+      NODE_ENV: 'PROD',
+      LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
+      EVENT_TABLE_NAME: props.eventTable.tableName,
+      ORDER_TABLE_NAME: props.orderTable.tableName,
+      PAYMENT_TABLE_NAME: props.paymentTable.tableName,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
+    },
+    memorySize: 2048,
+    ...props,
+  })
+  props.paymentTable.grant(endpoint.lambda, 'dynamodb:Query', 'dynamodb:PutItem')
   return endpoint
 }
 
@@ -101,6 +138,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
   salesTable: cdk.aws_dynamodb.Table
+  paymentTable: cdk.aws_dynamodb.Table
   documentBucket: cdk.aws_s3.Bucket
   stripeSecrets: { secret: string; webhook: string }
 }) => {
@@ -115,6 +153,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
       SALES_TABLE_NAME: props.salesTable.tableName,
+      PAYMENT_TABLE_NAME: props.paymentTable.tableName,
       STRIPE_SECRET_KEY: props.stripeSecrets.secret,
       STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
       WEB_APP_HOST: Environment.WebAppHost(),
@@ -132,6 +171,7 @@ const makeUpdateOrderPaymentStatusEndpoint = (props: {
   props.eventTable.grant(endpoint.lambda, 'dynamodb:PutItem')
   props.orderTable.grant(endpoint.lambda, 'dynamodb:UpdateItem', 'dynamodb:Query')
   props.salesTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem')
+  props.paymentTable.grant(endpoint.lambda, 'dynamodb:UpdateItem', 'dynamodb:Query')
   props.documentBucket.grantPut(endpoint.lambda)
   return endpoint
 }

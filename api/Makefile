@@ -31,7 +31,7 @@ PACKAGE_DIRECTORY 						:= node_modules
 BUILD_PACKAGE_DIRECTORY 			:= $(BUILD_DIRECTORY)/layer/nodejs/$(PACKAGE_DIRECTORY)
 LAYER_DIRECTORY 							:= $(SOURCE_DIRECTORY)/$(BUILD_DIRECTORY)
 
-USE_CASES_DIRECTORIES 				:= $(filter-out ./ ./infra/, $(sort $(dir $(wildcard ./*/))))
+USE_CASES_DIRECTORIES 				:= $(filter-out ./ ./infra/ ./stripe/, $(sort $(dir $(wildcard ./*/))))
 UNIT_TEST_DIRECTORIES 				:= $(USE_CASES_DIRECTORIES)
 INT_TEST_DIRECTORIES 					:= $(USE_CASES_DIRECTORIES)
 

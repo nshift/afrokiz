@@ -1,5 +1,6 @@
 import { BatchWriteCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { Environment } from '../../../environment'
+import { PaymentStatus } from '../../../types/payment'
 import { DateGenerator } from '../../date.generator'
 import { UUIDGenerator } from '../../uuid.generator'
 import { EventStore } from '../event-store'
@@ -14,7 +15,7 @@ export type CreateOrder = {
   date: Date
   promoCode: string | null
   paymentIntentId: string
-  paymentStatus: 'pending' | 'success' | 'failed'
+  paymentStatus: PaymentStatus
   items: {
     id: string
     title: string
@@ -59,7 +60,7 @@ const saveOrdersRequest = (orders: CreateOrder[]) =>
 
 export const createOrderEvent = (event: Omit<CreateOrderEvent, 'process'>): CreateOrderEvent => ({
   ...event,
-  process: () => [saveOrdersRequest([event.data.order])],
+  process: async () => [saveOrdersRequest([event.data.order])],
 })
 
 export const processCreateOrderEvent = async (

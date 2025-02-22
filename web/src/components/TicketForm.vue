@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref, inject, watch } from 'vue'
+import { ref, type Ref, inject, watch } from 'vue'
 import Card from '../components/Card.vue'
 import { type Pass, calculateTotal } from '../data/pass'
-import { loadStripe, Stripe, type StripeElements } from '../stripe'
-import { PaymentAPI, type NewOrder, type Order } from '../payment-api/payment.api'
-import { type DiscountPromotion, type GiveAwayPromotion } from '../payment-api/promotion'
+import Payment from './Payment.vue'
 
 const { pass } = defineProps<{ pass: Pass }>()
 const isValentinePass = [
@@ -14,23 +12,7 @@ const isValentinePass = [
   'vip-gold-valentine',
 ].includes(pass.id)
 const defaultCurrency = 'USD'
-let stripe: Stripe
-let elements: StripeElements
 const currency: Ref<'USD' | 'EUR' | 'THB'> | undefined = inject('currency')
-const submitting = ref(false)
-const applying = ref(false)
-const applied = ref(false)
-const fullNameValidationError = ref(false)
-const fullName = ref('')
-const fullName2 = ref('')
-const promoCode = ref<string | undefined>(undefined)
-const promoCodeValidationError = ref(false)
-const emailValidationError = ref(false)
-const dancerTypeValidationError = ref(false)
-const dancerType = ref<('leader' | 'follower')[]>([])
-const cardDeclinedError = ref(false)
-const cardDeclinedErrorMessage = ref('')
-const email = ref('')
 const discount = ref(1)
 const giveAways = ref<string[]>([])
 let optionsFeatures: () => string[] = () =>
@@ -40,135 +22,25 @@ const optionIds = ref<string[]>(
     .filter((option) => option.selected)
     .map((option) => option.id)
 )
-const calculatePrice = () => {
+
+const calculateTotalPrice = () => {
   return calculateTotal(pass, optionIds.value, discount.value)[currency?.value ?? defaultCurrency]
 }
-const total = ref(calculatePrice())
-
-onMounted(async () => {
-  stripe = await loadStripe()
-  elements = stripe.elements({
-    amount: calculatePrice(),
-    currency: (currency?.value ?? defaultCurrency).toLowerCase(),
-  })
-  stripe.mountElements(elements, '#payment-element')
-})
+const total = ref(calculateTotalPrice())
 
 if (currency) {
   watch(currency, () => {
-    total.value = calculatePrice()
-    elements = stripe.elements({
-      amount: calculatePrice(),
-      currency: (currency?.value ?? defaultCurrency).toLowerCase(),
-    })
-    stripe.mountElements(elements, '#payment-element')
+    total.value = calculateTotalPrice()
   })
 }
 
 watch(discount, () => {
-  total.value = calculatePrice()
+  total.value = calculateTotalPrice()
 })
 
 watch(optionIds, () => {
-  total.value = calculatePrice()
+  total.value = calculateTotalPrice()
 })
-
-const submit = async () => {
-  submitting.value = true
-  fullNameValidationError.value = !fullName.value
-  emailValidationError.value = !email.value
-  dancerTypeValidationError.value = dancerType.value.length == 0
-  const options = optionIds.value.map((option) => pass.options[option])
-  const order: NewOrder = {
-    email: email.value,
-    fullname: [fullName.value, fullName2.value].join(', '),
-    dancerType: optionIds.value.includes('couple-option') ? 'couple' : dancerType.value[0],
-    passId: pass.id,
-    date: new Date(),
-    promoCode: promoCode.value ?? undefined,
-    items: [
-      {
-        id: pass.id,
-        title: pass.name,
-        includes: pass.includes,
-        amount: 1,
-        total: { amount: pass.price[currency?.value ?? defaultCurrency], currency: currency?.value ?? defaultCurrency },
-      },
-    ].concat(
-      ...(discount.value != 1
-        ? [
-            {
-              id: 'dicount',
-              title: `Discount ${(100 - discount.value * 100).toFixed(0)}% off`,
-              includes: [],
-              amount: 1,
-              total: {
-                amount: Math.round((total.value / discount.value - total.value) * -1),
-                currency: currency?.value ?? defaultCurrency,
-              },
-            },
-          ]
-        : []),
-      ...giveAways.value.map((item) => ({
-        id: 'give-away',
-        title: item,
-        includes: [],
-        amount: optionIds.value.includes('couple-option') ? 2 : 1,
-        total: {
-          amount: 0,
-          currency: currency?.value ?? defaultCurrency,
-        },
-      })),
-      ...options.flatMap((option) =>
-        option.includes.map((include) => ({
-          id: option.id,
-          title: include,
-          includes: [include],
-          amount: optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1,
-          total: {
-            amount:
-              option.price[currency?.value ?? defaultCurrency] *
-              (optionIds.value.includes('couple-option') && option.id != 'couple-option' ? 2 : 1),
-            currency: currency?.value ?? defaultCurrency,
-          },
-        }))
-      )
-    ),
-  }
-  const { error } = await stripe.confirmPayment(elements, order)
-  submitting.value = false
-  if (error) {
-    cardDeclinedError.value = true
-    cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
-    return console.error('Confirm payment error: ', error)
-  }
-}
-
-const applyPromoCode = async () => {
-  applying.value = true
-  const api = new PaymentAPI()
-  if (promoCode.value) {
-    try {
-      const promotion = await api.applyPromoCode(pass.id, promoCode.value)
-      promoCodeValidationError.value = false
-      applying.value = false
-      const dicountPromotion = promotion as DiscountPromotion
-      const giveAwayPromotion = promotion as GiveAwayPromotion
-      applied.value = true
-      if (dicountPromotion.discount) {
-        discount.value = dicountPromotion.discount
-      } else if (giveAwayPromotion.options) {
-        giveAways.value = giveAwayPromotion.options.map((option) => option.description)
-      } else {
-        applied.value = false
-      }
-    } catch (error) {
-      applying.value = false
-      applied.value = false
-      promoCodeValidationError.value = true
-    }
-  }
-}
 
 const selectOption = (id: string) => {
   const disbaled = shouldDisabled(id)
@@ -215,7 +87,7 @@ const shouldDisabled = (id: string) => {
 </script>
 
 <template>
-  <form class="grid" @submit.prevent="submit">
+  <div class="grid">
     <Card :class="['ticket']">
       <div class="title">
         <p>
@@ -289,106 +161,14 @@ const shouldDisabled = (id: string) => {
         </ul>
       </div>
     </Card>
-    <Card :class="['payment']">
-      <div class="container">
-        <div class="total">
-          <h2>Total: {{ currency }} {{ (total / 100).toFixed(2) }}</h2>
-        </div>
-        <div
-          class="information-element"
-          v-if="
-            !optionIds.includes('couple-option') &&
-            !['dj', 'fullpass-valentine', 'vip-silver-valentine', 'vip-gold-valentine'].includes(pass.id)
-          "
-        >
-          <div class="dancer-type-options">
-            <div
-              :class="[
-                'dancer-type-option',
-                'field',
-                dancerTypeValidationError ? 'validation-error' : '',
-                dancerType.includes('leader') ? 'selected' : '',
-              ]"
-              @click="dancerType = ['leader']"
-            >
-              <input type="checkbox" value="leader" v-model="dancerType" />
-              <div class="option"><p>Male</p></div>
-            </div>
-            <div
-              :class="[
-                'dancer-type-option',
-                'field',
-                dancerTypeValidationError ? 'validation-error' : '',
-                dancerType.includes('follower') ? 'selected' : '',
-              ]"
-              @click="dancerType = ['follower']"
-            >
-              <input type="checkbox" value="follower" v-model="dancerType" />
-              <div class="option"><p>Female</p></div>
-            </div>
-          </div>
-          <p class="validation-error" v-if="dancerTypeValidationError">Your dancer type is incomplete.</p>
-        </div>
-        <div class="information-element">
-          <label>{{ isValentinePass ? 'Miss full name' : 'Full name' }}</label>
-          <div class="field-container">
-            <input
-              :class="['field', fullNameValidationError ? 'validation-error' : '']"
-              type="text"
-              placeholder="Full name"
-              v-model="fullName"
-            />
-          </div>
-          <p class="validation-error" v-if="fullNameValidationError">Your full name is incomplete.</p>
-        </div>
-        <div class="information-element" v-if="isValentinePass">
-          <label>Mister full name</label>
-          <div class="field-container">
-            <input
-              :class="['field', fullNameValidationError ? 'validation-error' : '']"
-              type="text"
-              placeholder="Full name"
-              v-model="fullName2"
-            />
-          </div>
-          <p class="validation-error" v-if="fullNameValidationError">Your full name is incomplete.</p>
-        </div>
-        <div class="information-element">
-          <label>Email</label>
-          <div class="field-container">
-            <input
-              :class="['field', emailValidationError ? 'validation-error' : '']"
-              type="email"
-              placeholder="Email"
-              v-model="email"
-            />
-          </div>
-          <p class="validation-error" v-if="emailValidationError">Your email is incomplete.</p>
-        </div>
-        <div id="payment-element"></div>
-        <div class="information-element" v-if="pass.id != 'fullpass-edition3'">
-          <label>Promo Code</label>
-          <div class="field-container">
-            <input
-              :class="['field', promoCodeValidationError ? 'validation-error' : '']"
-              type="text"
-              placeholder="Promo Code"
-              v-model="promoCode"
-              :disabled="applied"
-            />
-            <button class="button action" v-if="!applying && !applied" @click="applyPromoCode">Apply</button>
-            <button class="button action disabled" v-if="!applying && applied" disabled>Applied</button>
-            <button class="button action" v-if="applying" disabled><span class="loader"></span></button>
-          </div>
-          <p class="validation-error" v-if="promoCodeValidationError">The promo code is not valid.</p>
-        </div>
-        <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
-        <button class="button action" v-if="!submitting && !pass.isSoldOut">Pay</button>
-        <button class="button action disabled" v-if="!submitting && pass.isSoldOut" disabled>Sold Out</button>
-        <p class="validation-error card-error" v-if="cardDeclinedError">{{ cardDeclinedErrorMessage }}</p>
-      </div>
-    </Card>
-  </form>
+    <Payment 
+      :class="['payment']"  
+      :pass="pass" 
+      :total="total" 
+      :currency="currency ?? defaultCurrency" 
+      :optionIds="optionIds" 
+      />
+  </div>
 </template>
 
 <style>
@@ -535,40 +315,4 @@ ul {
   font-weight: bold;
 }
 
-.information-element {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.field.validation-error {
-  border: 2px solid rgb(223, 27, 65);
-}
-
-p.validation-error {
-  color: rgb(223, 27, 65);
-}
-p.card-error {
-  text-align: center;
-}
-.field-container {
-  display: flex;
-  flex-direction: row;
-  gap: var(--grid-m-gap);
-}
-.dancer-type-options {
-  display: flex;
-  flex-direction: row;
-  gap: var(--grid-m-gap);
-  cursor: pointer;
-}
-.dancer-type-option p {
-  text-align: center;
-}
-.dancer-type-option input[type='checkbox'] {
-  position: absolute;
-  transform: translate(-18px, -18px) scale(1.3);
-}
-@media only screen and (max-width: 920px) {
-}
 </style>

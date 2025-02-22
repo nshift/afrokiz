@@ -1,15 +1,18 @@
 import { DeleteCommand, DynamoDBDocumentClient, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import fs from 'fs'
+import { DateTime } from 'luxon'
 import path from 'path'
 import { Email } from '../adapters/email/email'
 import { EmailTemplate } from '../adapters/email/email.template'
 import { CreateOrder } from '../adapters/repository/events/create-order.event'
 import { SuccessfulPaymentOrder } from '../adapters/repository/events/successful-payment.event'
 import { makeDiscountPromotion, makeGiveAwayPromotion } from '../adapters/repository/promotions'
-import { SaleSchema } from '../adapters/repository/requests'
+import { DirectPaymentSchema, InstallmentPaymentSchema, SaleSchema } from '../adapters/repository/requests'
 import { Environment } from '../environment'
 import { Customer } from '../types/customer'
+import { InstallmentPayment } from '../types/installment'
 import { Order } from '../types/order'
+import { DirectPayment } from '../types/payment'
 import { PaymentIntent } from '../types/payment-intent'
 import { DiscountPromotion, GiveAwayPromotion } from '../types/promotion'
 import { Sales } from '../types/sales'
@@ -53,13 +56,57 @@ export const paymentIntent: PaymentIntent = {
   secret: 'client-secret',
 }
 
+export const stripeCustomer: { id: string } = {
+  id: 'stripe-customer-1',
+}
+
+export const directPaymentStructure = (amount: number): DirectPayment => ({
+  amount,
+  currency: 'USD',
+  status: 'pending',
+})
+
+export const directPaymentStructureSchema = (amount: number): DirectPaymentSchema => ({
+  amount,
+  currency: 'USD',
+  status: 'pending',
+  paymentId: 'id-1',
+})
+
+export const installmentPaymentStructure = (amount: number, dueDatesAmount: number[]): InstallmentPayment => ({
+  principalAmount: amount,
+  currency: 'USD',
+  frequency: 'monthly',
+  term: 3,
+  dueDates: dueDatesAmount.map((amount, index) => ({
+    amount,
+    currency: 'USD',
+    dueDate: DateTime.fromJSDate(new Date('2024-01-01')).plus({ month: index }).toJSDate(),
+    status: 'pending',
+  })),
+})
+
+export const installmentPaymentStructureSchema = (
+  amount: number,
+  dueDatesAmount: number[]
+): InstallmentPaymentSchema => ({
+  principalAmount: amount,
+  currency: 'USD',
+  frequency: 'monthly',
+  term: 3,
+  dueDates: dueDatesAmount.map((amount, index) => ({
+    amount,
+    currency: 'USD',
+    dueDate: DateTime.fromJSDate(new Date('2024-01-01')).plus({ month: index }).toJSDate(),
+    status: 'pending',
+    paymentId: 'id-' + (index + 1),
+  })),
+})
+
 export const order: Order = {
   id: 'order-1',
-  // passId: 'pass-1',
   date: new Date('1990-01-01'),
-  // promoCode: 'MASSAGE',
-  // paymentIntentId: paymentIntent.id,
-  // paymentStatus: 'pending',
+  status: 'paid',
   items: [
     {
       id: 'vip-gold',
@@ -74,11 +121,8 @@ export const order: Order = {
 
 export const orderWithOptions: Order = {
   id: 'order-1',
-  // passId: 'pass-1',
+  status: 'pending',
   date: new Date('1990-01-01'),
-  // promoCode: 'MASSAGE',
-  // paymentIntentId: paymentIntent.id,
-  // paymentStatus: 'pending',
   items: [
     {
       id: 'vip-gold',
@@ -108,7 +152,7 @@ export const createOrder: CreateOrder = {
   id: 'order-1',
   passId: 'pass-1',
   date: new Date('1990-01-01'),
-  // promoCode: 'MASSAGE',
+  promoCode: null,
   paymentIntentId: paymentIntent.id,
   paymentStatus: 'pending',
   items: [
@@ -129,7 +173,7 @@ export const successfulPaymentOrder: SuccessfulPaymentOrder = {
   id: 'order-1',
   passId: 'pass-1',
   date: new Date('1990-01-01'),
-  // promoCode: 'MASSAGE',
+  promoCode: null,
   paymentIntentId: paymentIntent.id,
   paymentStatus: 'success',
   items: [
@@ -171,15 +215,82 @@ export const discountPromotion: DiscountPromotion = makeDiscountPromotion({
 
 export const qrCode = fs.readFileSync(path.join(__dirname, 'qr-code.png'))
 
+export const qrCodeUrl = 'https://afrokizbkk.com/qr-code/42.png'
+
 export const checkoutEvent = {
-  id: 'id-1',
-  name: 'ProceedToCheckout',
-  time: new Date('1990-01-02 10:02'),
+  id: 'id-4',
+  name: 'ProceedToCheckoutV2',
+  time: new Date('1990-01-02 10:03'),
   data: {
-    order,
-    total: { amount: 30000, currency: 'USD' },
-    customer: romainCustomer,
-    payment: { status: 'pending', intent: paymentIntent },
+    checkout: {
+      order,
+      customer: romainCustomer,
+      paymentStructures: [directPaymentStructureSchema(30000)],
+      checkedIn: false,
+      promoCode: undefined,
+    },
+    payments: [
+      {
+        id: 'id-1',
+        orderId: order.id,
+        amount: 30000,
+        currency: 'USD',
+        status: 'pending',
+        stripeCustomerId: stripeCustomer.id,
+        stripePaymentIntentId: paymentIntent.id,
+        stripePaymentIntentSecret: paymentIntent.secret,
+      },
+    ],
+  },
+}
+
+export const checkoutInstallmentEvent = {
+  id: 'id-4',
+  name: 'ProceedToCheckoutV2',
+  time: new Date('1990-01-02 10:05'),
+  data: {
+    checkout: {
+      order,
+      customer: romainCustomer,
+      paymentStructures: [installmentPaymentStructureSchema(30000, [10000, 10000, 10000])],
+      checkedIn: false,
+      promoCode: undefined,
+    },
+    payments: [
+      {
+        id: 'id-1',
+        orderId: order.id,
+        amount: 10000,
+        currency: 'USD',
+        status: 'pending',
+        dueDate: new Date('2024-01-01'),
+        stripeCustomerId: stripeCustomer.id,
+        stripePaymentIntentId: paymentIntent.id,
+        stripePaymentIntentSecret: paymentIntent.secret,
+      },
+      {
+        id: 'id-2',
+        orderId: order.id,
+        amount: 10000,
+        currency: 'USD',
+        status: 'pending',
+        dueDate: new Date('2024-02-01'),
+        stripeCustomerId: stripeCustomer.id,
+        stripePaymentIntentId: null,
+        stripePaymentIntentSecret: null,
+      },
+      {
+        id: 'id-3',
+        orderId: order.id,
+        amount: 10000,
+        currency: 'USD',
+        status: 'pending',
+        dueDate: new Date('2024-03-01'),
+        stripeCustomerId: stripeCustomer.id,
+        stripePaymentIntentId: null,
+        stripePaymentIntentSecret: null,
+      },
+    ],
   },
 }
 
@@ -208,20 +319,21 @@ export const sales: Sales = {
 }
 
 export const salesSchema: SaleSchema = {
-  id: 'id-2',
+  id: 'id-3',
   orderId: 'order-1',
   date: new Date('1990-01-02'),
   customer: romainCustomer,
-  passId: 'item-1',
+  passId: 'vip-gold',
   items: [
     {
-      id: 'item-1',
+      id: 'vip-gold',
       title: 'VIP Gold Pass',
       includes: ['All parties and workshops'],
       amount: 1,
     },
   ],
   total: { amount: 30000, currency: 'USD' },
+  promoCode: null,
 }
 
 export const successPaymentStatusEvent = {
@@ -235,31 +347,28 @@ export const successPaymentStatusEvent = {
       date: new Date('1990-01-02 10:03'),
     },
     orderId: order.id,
-    paymentStatus: 'success',
+    paymentStatus: 'completed',
   },
 }
 
 export const successPaymentStatusEvent3 = {
   id: 'id-3',
-  name: 'UpdatePaymentStatus',
+  name: 'UpdatePaymentStatusV2',
   time: new Date('1990-01-02 10:04'),
   data: {
-    sales: {
-      ...salesSchema,
-      id: 'id-2',
-      date: new Date('1990-01-02 10:03'),
-    },
     orderId: order.id,
-    paymentStatus: 'success',
+    paymentId: 'id-1',
+    paymentStatus: 'completed',
   },
 }
 
 export const failedPaymentStatusEvent = {
   id: 'id-3',
-  name: 'UpdatePaymentStatus',
+  name: 'UpdatePaymentStatusV2',
   time: new Date('1990-01-02 10:04'),
   data: {
     orderId: order.id,
+    paymentId: 'id-1',
     paymentStatus: 'failed',
   },
 }
@@ -278,6 +387,10 @@ export function deleteOrderById(dynamodb: DynamoDBDocumentClient, id: string) {
 
 export function deleteSalesById(dynamodb: DynamoDBDocumentClient, id: string) {
   return dynamodb.send(new DeleteCommand({ TableName: Environment.SalesTableName(), Key: { id } }))
+}
+
+export function deletePaymentById(dynamodb: DynamoDBDocumentClient, id: string) {
+  return dynamodb.send(new DeleteCommand({ TableName: Environment.PaymentTableName(), Key: { id } }))
 }
 
 export async function dynamoDbQueryById(
@@ -309,8 +422,8 @@ export function formatDynamoDbJson(data: any): any {
       if (this[key] instanceof Date) {
         return this[key].toISOString()
       }
-      if (this[key] === undefined) {
-        return null
+      if (this[key] === null) {
+        return undefined
       }
       return value
     })

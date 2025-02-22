@@ -5,6 +5,7 @@ import { Customer } from './customer'
 export type Order = {
   id: string
   date: Date
+  status: 'pending' | 'paid' | 'partially-paid' | 'unknown'
   items: {
     id: string
     title: string

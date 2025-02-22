@@ -11,6 +11,7 @@ import {
   createGuestTable,
   createImportOrderTable,
   createOrderTable,
+  createPaymentTable,
   createSalesTable,
   createSametTable,
 } from './dynamodb'
@@ -29,6 +30,7 @@ const orderTable = createOrderTable(stack)
 const salesTable = createSalesTable(stack)
 const guestTable = createGuestTable(stack)
 const sametTable = createSametTable(stack)
+const paymentTable = createPaymentTable(stack)
 const importOrdersTable = createImportOrderTable(stack)
 const stripeSecrets = getStripeSecrets(stack)
 const context = {
@@ -40,6 +42,7 @@ const context = {
   salesTable,
   guestTable,
   sametTable,
+  paymentTable,
   importOrdersTable,
   stripeSecrets,
 }

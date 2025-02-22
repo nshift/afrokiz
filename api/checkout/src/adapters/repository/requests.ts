@@ -9,12 +9,13 @@ import {
 import { Environment } from '../../environment'
 import { Currency } from '../../types/currency'
 import { Customer } from '../../types/customer'
+import { InstallmentFrequency } from '../../types/installment'
 import { ImportOrder, Order } from '../../types/order'
-import { PaymentStatus } from '../../types/payment'
-import { PaymentIntent } from '../../types/payment-intent'
+import { isInstallment, Payment, PaymentStatus } from '../../types/payment'
 import { Sales } from '../../types/sales'
 import { Event } from './events/event'
-import { proceedToCheckoutEvent } from './events/proceed-to-checkout.event'
+import { proceedToCheckoutEvent as proceedToCheckoutEventV1 } from './events/proceed-to-checkout.event'
+import { proceedToCheckoutEvent } from './events/proceed-to-checkout.event.v2'
 import { updatePaymentStatusEvent } from './events/update-payment-status.event'
 
 export const saveEventRequest = (event: Event<any>) =>
@@ -75,7 +76,8 @@ export const eventResponse = (response: any[] | undefined): Event<any>[] =>
   response?.map((item: any): Event<any> => {
     const events: { [key: string]: (event: Omit<Event<any>, 'process'>) => Event<any> } = {
       UpdatePaymentStatus: updatePaymentStatusEvent,
-      ProceedToCheckout: proceedToCheckoutEvent,
+      ProceedToCheckout: proceedToCheckoutEventV1,
+      ProceedToCheckoutV2: proceedToCheckoutEvent,
     }
     const event = {
       id: item.id,
@@ -108,35 +110,92 @@ export const getOrderByIdRequest = (id: string) =>
     ExpressionAttributeValues: { ':id': id },
   })
 
+export type PaymentDueDateSchema = {
+  amount: number
+  currency: Currency
+  dueDate: Date
+  status: PaymentStatus
+  paymentId: string
+}
+
+export type InstallmentPaymentSchema = {
+  principalAmount: number
+  currency: Currency
+  frequency: InstallmentFrequency
+  term: number
+  dueDates: PaymentDueDateSchema[]
+}
+
+export type DirectPaymentSchema = {
+  amount: number
+  currency: Currency
+  status: PaymentStatus
+  paymentId: string
+}
+
+export type PaymentStructureSchema = DirectPaymentSchema | InstallmentPaymentSchema
+
 export type OrderSchema = {
   order: Order
   customer: Customer
   promoCode: string | null
-  payment: { status: PaymentStatus; intent: PaymentIntent | null }
+  paymentStructures: PaymentStructureSchema[]
   checkedIn: boolean
 }
 
-export const saveOrdersRequest = (orders: OrderSchema[]) =>
-  new BatchWriteCommand({
+export const updateOrderStatusRequest = (orderId: string, status: Order['status']) =>
+  new UpdateCommand({
+    TableName: Environment.OrderTableName(),
+    Key: { id: orderId },
+    UpdateExpression: 'SET #status = :status',
+    ExpressionAttributeNames: { '#status': 'status' },
+    ExpressionAttributeValues: { ':status': status },
+  })
+
+export const updateOrderPaymentStatusRequest = (orderId: string, paymentStructures: PaymentStructureSchema[]) =>
+  new UpdateCommand({
+    TableName: Environment.OrderTableName(),
+    Key: { id: orderId },
+    UpdateExpression: 'SET #paymentStructures = :paymentStructures',
+    ExpressionAttributeNames: { '#paymentStructures': 'paymentStructures' },
+    ExpressionAttributeValues: { ':paymentStructures': paymentStructures },
+  })
+
+export const saveOrdersRequest = (orders: OrderSchema[]) => {
+  return new BatchWriteCommand({
     RequestItems: {
-      [Environment.OrderTableName()]: orders.map(({ order, customer, payment, promoCode }) => ({
+      [Environment.OrderTableName()]: orders.map(({ order, customer, paymentStructures, promoCode }) => ({
         PutRequest: {
           Item: {
             id: order.id,
+            status: order.status,
             customer: {
               email: customer.email,
               fullname: customer.fullname,
               type: customer.type,
             },
-            payment: {
-              status: payment.status,
-              intent: payment.intent
+            paymentStructures: paymentStructures.map((paymentStructure) =>
+              isInstallment(paymentStructure)
                 ? {
-                    id: payment.intent.id,
-                    secret: payment.intent.secret,
+                    principalAmount: paymentStructure.principalAmount,
+                    currency: paymentStructure.currency,
+                    frequency: paymentStructure.frequency,
+                    term: paymentStructure.term,
+                    dueDates: paymentStructure.dueDates.map((dueDate) => ({
+                      amount: dueDate.amount,
+                      currency: dueDate.currency,
+                      dueDate: dueDate.dueDate.toISOString(),
+                      status: dueDate.status,
+                      paymentId: dueDate.paymentId,
+                    })),
                   }
-                : null,
-            },
+                : {
+                    amount: paymentStructure.amount,
+                    currency: paymentStructure.currency,
+                    status: paymentStructure.status,
+                    paymentId: paymentStructure.paymentId,
+                  }
+            ),
             date: order.date.toISOString(),
             promoCode: promoCode ?? null,
             items: order.items.map((item) => ({
@@ -152,13 +211,19 @@ export const saveOrdersRequest = (orders: OrderSchema[]) =>
       })),
     },
   })
+}
 
 export const orderResponse = (response: any): OrderSchema[] =>
-  response?.map((item: any): OrderSchema => (item.email ? orderV1Response(item) : orderV2Response(item)))
+  response?.map((item: any): OrderSchema => {
+    if (item.email) return orderV1Response(item)
+    else if (item.payment) return orderV2Response(item)
+    else return orderV3Response(item)
+  })
 
-export const orderV2Response = (item: any): OrderSchema => ({
+export const orderV3Response = (item: any): OrderSchema => ({
   order: {
     id: item.id,
+    status: item.status,
     date: new Date(item.date),
     total: { amount: item.total.amount, currency: item.total.currency },
     items: item.items.map((item: any) => ({
@@ -174,15 +239,60 @@ export const orderV2Response = (item: any): OrderSchema => ({
     fullname: item.customer.fullname,
     type: item.customer.type,
   },
-  payment: {
-    status: item.payment.status,
-    intent: item.payment.intent
-      ? {
-          id: item.payment.intent.id,
-          secret: item.payment.intent.secret,
-        }
-      : null,
+  paymentStructures:
+    item.paymentStructures?.map((paymentStructure: any) =>
+      isInstallment(paymentStructure)
+        ? {
+            principalAmount: paymentStructure.principalAmount,
+            currency: paymentStructure.currency,
+            frequency: paymentStructure.frequency,
+            term: paymentStructure.term,
+            dueDates: paymentStructure.dueDates.map((dueDate: any) => ({
+              amount: dueDate.amount,
+              currency: dueDate.currency,
+              dueDate: new Date(dueDate.dueDate),
+              status: dueDate.status,
+              paymentId: dueDate.paymentId,
+            })),
+          }
+        : {
+            amount: paymentStructure.amount,
+            currency: paymentStructure.currency,
+            status: paymentStructure.status,
+            paymentId: paymentStructure.paymentId,
+          }
+    ) ?? [],
+  promoCode: item.promoCode,
+  checkedIn: item.checkedIn ?? false,
+})
+
+export const orderV2Response = (item: any): OrderSchema => ({
+  order: {
+    id: item.id,
+    status: item.payment.status == 'success' ? 'paid' : 'pending',
+    date: new Date(item.date),
+    total: { amount: item.total.amount, currency: item.total.currency },
+    items: item.items.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      includes: item.includes,
+      amount: item.amount,
+      total: { amount: item.total.amount, currency: item.total.currency },
+    })),
   },
+  customer: {
+    email: item.customer.email,
+    fullname: item.customer.fullname,
+    type: item.customer.type,
+  },
+  paymentStructures: [
+    {
+      amount: item.total.amount,
+      currency: item.total.currency,
+      status: item.payment.status,
+      paymentId: '',
+    },
+  ],
   promoCode: item.promoCode,
   checkedIn: item.checkedIn ?? false,
 })
@@ -190,6 +300,7 @@ export const orderV2Response = (item: any): OrderSchema => ({
 export const orderV1Response = (item: any): OrderSchema => ({
   order: {
     id: item.id,
+    status: item.payment.status == 'success' ? 'paid' : 'pending',
     date: new Date(item.date),
     total: {
       amount: item.items.reduce((total: number, item: any) => (total += item.total.amount), 0),
@@ -208,13 +319,14 @@ export const orderV1Response = (item: any): OrderSchema => ({
     fullname: item.fullname,
     type: item.dancerType,
   },
-  payment: {
-    status: item.paymentStatus,
-    intent: {
-      id: item.paymentIntentId,
-      secret: '',
+  paymentStructures: [
+    {
+      amount: item.total.amount,
+      currency: item.total.currency,
+      status: item.paymentStatus,
+      paymentId: '',
     },
-  },
+  ],
   promoCode: item.promoCode,
   checkedIn: item.checkedIn ?? false,
 })
@@ -227,6 +339,98 @@ export const updatePaymentOrdersRequest = (data: { orderId: string; paymentStatu
     ExpressionAttributeNames: { '#status': 'status' },
     ExpressionAttributeValues: { ':status': data.paymentStatus },
   })
+
+export type PaymentSchema = {
+  id: string
+  orderId: string
+  amount: number
+  currency: string
+  dueDate?: Date
+  status: string
+  stripeCustomerId: string
+  stripePaymentIntentId: string | null
+  stripePaymentIntentSecret: string | null
+}
+
+export const savePaymentsRequest = (payments: PaymentSchema[]) =>
+  new BatchWriteCommand({
+    RequestItems: {
+      [Environment.PaymentTableName()]: payments.map((payment) => ({
+        PutRequest: {
+          Item: {
+            id: payment.id,
+            orderId: payment.orderId,
+            amount: payment.amount,
+            currency: payment.currency,
+            dueDate: payment.dueDate ? payment.dueDate.toISOString() : null,
+            status: payment.status,
+            stripeCustomerId: payment.stripeCustomerId,
+            stripePaymentIntentId: payment.stripePaymentIntentId ?? undefined,
+            stripePaymentIntentSecret: payment.stripePaymentIntentSecret ?? null,
+          },
+        },
+      })),
+    },
+  })
+
+export const getPendingPaymentsRequest = () =>
+  new QueryCommand({
+    TableName: Environment.PaymentTableName(),
+    IndexName: 'PaymentStatus',
+    KeyConditionExpression: '#status = :status',
+    ExpressionAttributeNames: { '#status': 'status' },
+    ExpressionAttributeValues: { ':status': 'pending' },
+  })
+
+export const getPaymentByStripeIdRequest = (stripeId: string) =>
+  new QueryCommand({
+    TableName: Environment.PaymentTableName(),
+    IndexName: 'PaymentIntentId',
+    KeyConditionExpression: '#stripeId = :stripeId',
+    ExpressionAttributeNames: { '#stripeId': 'stripePaymentIntentId' },
+    ExpressionAttributeValues: { ':stripeId': stripeId },
+  })
+
+export const updatePaymentStatusRequest = (data: { paymentId: string; paymentStatus: PaymentStatus }) => {
+  return new UpdateCommand({
+    TableName: Environment.PaymentTableName(),
+    Key: { id: data.paymentId },
+    UpdateExpression: 'SET #status = :status',
+    ExpressionAttributeNames: { '#status': 'status' },
+    ExpressionAttributeValues: { ':status': data.paymentStatus },
+  })
+}
+
+export const savePaymentRequest = (payment: Payment) =>
+  new PutCommand({
+    TableName: Environment.PaymentTableName(),
+    Item: {
+      id: payment.id,
+      orderId: payment.orderId,
+      amount: payment.amount,
+      currency: payment.currency,
+      dueDate: payment.dueDate ? payment.dueDate.toISOString() : null,
+      status: payment.status,
+      stripeCustomerId: payment.stripe.customerId,
+      stripePaymentIntentId: payment.stripe.id ?? undefined,
+      stripePaymentIntentSecret: payment.stripe.secret ?? null,
+    },
+  })
+
+export const paymentsResponse = (response: any): PaymentSchema[] =>
+  response?.map((item: any) => paymentResponse(item)) ?? []
+
+const paymentResponse = (item: any): PaymentSchema => ({
+  id: item.id,
+  orderId: item.orderId,
+  amount: item.amount,
+  currency: item.currency,
+  dueDate: item.dueDate ? new Date(item.dueDate) : item.dueDate,
+  status: item.status,
+  stripeCustomerId: item.stripeCustomerId,
+  stripePaymentIntentId: item.stripePaymentIntentId ?? null,
+  stripePaymentIntentSecret: item.stripePaymentIntentSecret ?? null,
+})
 
 export type SaleSchema = {
   id: string

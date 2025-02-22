@@ -1,7 +1,8 @@
+import type { Currency } from '../data/pass'
 import { Environment } from '../environment'
 import type { DiscountPromotion, GiveAwayPromotion, Promotion } from './promotion'
 export class PaymentAPI {
-  async createOrder(newOrder: NewOrder): Promise<{ order: Order; clientSecret: string }> {
+  async createOrder(newOrder: NewOrder, paymentOption: PaymentOption): Promise<{ order: Order; clientSecret: string }> {
     const json = await this.request({
       method: 'POST',
       path: '/checkout',
@@ -11,8 +12,9 @@ export class PaymentAPI {
         fullname: newOrder.fullname,
         dancer_type: newOrder.dancerType,
         pass_id: newOrder.passId,
-        date: newOrder.date,
+        date: newOrder.date.toISOString(),
         promo_code: newOrder.promoCode,
+        payment_options: { method: paymentOption.method, structure: paymentOption.structure },
         items: newOrder.items.map((item) => ({
           id: item.id,
           title: item.title,
@@ -28,7 +30,7 @@ export class PaymentAPI {
       fullname: json.fullname,
       dancerType: json.dancer_type,
       passId: json.pass_id,
-      date: json.date,
+      date: new Date(json.date),
       checkedIn: false,
       paymentIntentId: json.paymentIntentId,
       paymentStatus: json.paymentStatus,
@@ -39,6 +41,28 @@ export class PaymentAPI {
         amount: item.amount,
         total: { amount: item.total.amount, currency: item.total.currency },
       })),
+      paymentStructures:
+        json.paymentStructures?.map((paymentStructure: any) =>
+          isInstallment(paymentStructure)
+            ? {
+                principalAmount: paymentStructure.principalAmount,
+                currency: paymentStructure.currency,
+                frequency: paymentStructure.frequency,
+                term: paymentStructure.term,
+                dueDates:
+                  paymentStructure.dueDates?.map((dueDate) => ({
+                    amount: dueDate.amount,
+                    currency: dueDate.currency,
+                    dueDate: new Date(dueDate.dueDate),
+                    status: dueDate.status,
+                  })) ?? [],
+              }
+            : {
+                amount: paymentStructure.amount,
+                currency: paymentStructure.currency,
+                status: paymentStructure.status,
+              }
+        ) ?? [],
     }
     return { order, clientSecret: json.clientSecret }
   }
@@ -51,7 +75,7 @@ export class PaymentAPI {
       fullname: json.fullname,
       dancerType: json.dancer_type,
       passId: json.pass_id,
-      date: json.date,
+      date: new Date(json.date),
       paymentIntentId: json.paymentIntentId,
       paymentStatus: json.paymentStatus,
       checkedIn: json.checked_in,
@@ -62,6 +86,28 @@ export class PaymentAPI {
         amount: item.amount,
         total: { amount: item.total.amount, currency: item.total.currency },
       })),
+      paymentStructures:
+        json.paymentStructures?.map((paymentStructure: any) =>
+          isInstallment(paymentStructure)
+            ? {
+                principalAmount: paymentStructure.principalAmount,
+                currency: paymentStructure.currency,
+                frequency: paymentStructure.frequency,
+                term: paymentStructure.term,
+                dueDates:
+                  paymentStructure.dueDates?.map((dueDate) => ({
+                    amount: dueDate.amount,
+                    currency: dueDate.currency,
+                    dueDate: new Date(dueDate.dueDate),
+                    status: dueDate.status,
+                  })) ?? [],
+              }
+            : {
+                amount: paymentStructure.amount,
+                currency: paymentStructure.currency,
+                status: paymentStructure.status,
+              }
+        ) ?? [],
     }
   }
 
@@ -148,6 +194,42 @@ export class PaymentAPI {
   }
 }
 
+export type PaymentStatus = 'pending' | 'overdue' | 'default' | 'completed' | 'failed'
+
+export type PaymentOption = {
+  method: string
+  structure: 'direct' | 'installment3x'
+}
+
+export type DirectPayment = {
+  amount: number
+  currency: Currency
+  status: PaymentStatus
+}
+
+export type InstallmentFrequency = 'monthly'
+
+export type PaymentDueDate = {
+  amount: number
+  currency: Currency
+  dueDate: Date
+  status: PaymentStatus
+}
+
+export type InstallmentPayment = {
+  principalAmount: number
+  currency: Currency
+  frequency: InstallmentFrequency
+  term: number
+  dueDates: PaymentDueDate[]
+}
+
+export type PaymentStructure = DirectPayment | InstallmentPayment
+
+export function isInstallment(payment: DirectPayment | InstallmentPayment): payment is InstallmentPayment {
+  return (<InstallmentPayment>payment).dueDates !== undefined
+}
+
 export type Order = {
   id: string
   email: string
@@ -166,6 +248,7 @@ export type Order = {
     amount: number
     total: { amount: number; currency: 'USD' | 'EUR' | 'THB' }
   }[]
+  paymentStructures: PaymentStructure[]
 }
 
 export type NewOrder = {

@@ -27,7 +27,7 @@ export const processUpdateOrderCheckInEvent = (
     name: 'CheckIn',
     time: dateGenerator.today(),
     data: { id: data.id, checkedIn: data.checkedIn },
-    process: () => [updateOrderCheckIn(data)],
+    process: async () => [updateOrderCheckIn(data)],
   }
   const eventStore = new EventStore(dynamodb)
   return eventStore.process([event])

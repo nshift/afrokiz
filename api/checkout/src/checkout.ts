@@ -9,6 +9,7 @@ import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { GeneratingQRCode } from './adapters/qr-code/qr-code.gateway'
 import { ImportOrderQueueRequest } from './adapters/queue.gateway'
 import { Repository } from './adapters/repository/repository'
+import { UUIDGenerator } from './adapters/uuid.generator'
 import {
   calculateNewOptionTotal,
   calculateOrderTotal,
@@ -17,8 +18,15 @@ import {
 } from './checkout.rules'
 import { Currency } from './types/currency'
 import { Customer } from './types/customer'
-import { NewOrder, Order, makeFingerprint, makeOrderId } from './types/order'
-import { PaymentStatus } from './types/payment'
+import { makeOrderId, NewOrder, Order } from './types/order'
+import {
+  isInstallment,
+  makePaymentStructure,
+  PaymentMethod,
+  PaymentStatus,
+  PaymentStructure,
+  PaymentStructureType,
+} from './types/payment'
 import { PaymentIntent } from './types/payment-intent'
 import { Promotion } from './types/promotion'
 
@@ -30,24 +38,40 @@ export class Checkout {
     private readonly qrCodeGenerator: GeneratingQRCode,
     private readonly documentAdapter: GetOrders & UploadQrCode,
     private readonly queueAdapter: ImportOrderQueueRequest,
-    private readonly dateGenerator: DateGenerator
-  ) {}
+    private readonly dateGenerator: DateGenerator,
+    private readonly uuidGenerator: UUIDGenerator
+  ) {
+    this.queueAdapter
+  }
 
   async proceed({
     newOrder,
     customer,
     promoCode,
+    paymentOption,
   }: {
     newOrder: NewOrder
     customer: Customer
     promoCode: string | null
+    paymentOption: { method: PaymentMethod; structure: PaymentStructureType }
   }) {
-    const checkout = await this.createCheckout({ newOrder, customer, promoCode })
+    let existingCheckout = newOrder.id ? await this.getOrder(newOrder.id) : undefined
+    let order = existingCheckout?.order ?? this.makeOrder(newOrder)
+    let amountToBePaid = this.calculateAmountToBePaid({ newOrder, order })
+    let paymentStructure = makePaymentStructure({
+      amountToBePaid,
+      type: paymentOption.structure,
+      today: this.dateGenerator.today(),
+    })
+    let paymentStructures = (existingCheckout?.paymentStructures ?? []).concat(paymentStructure)
+    let payment = await this.createPayment({ order, paymentStructure, customer })
+    order = this.updateItems(order, newOrder)
+    const checkout = await this.makeCheckout({ order, paymentStructures, payment, customer, promoCode })
     await this.repository.saveCheckout(checkout)
     return checkout
   }
 
-  async handlePayment({ orderId, payment }: { orderId: string; payment: { status: PaymentStatus } }) {
+  async handlePayment({ orderId, payment }: { orderId: string; payment: { stripeId: string; status: PaymentStatus } }) {
     const { order, customer } = (await this.repository.getOrderById(orderId)) || {}
     if (!order || !customer) {
       throw new Error(`Order (${orderId}) is not found.`)
@@ -59,20 +83,30 @@ export class Checkout {
     }
   }
 
-  async resendConfirmationEmail(orderId: string) {
-    const { order, customer } = (await this.repository.getOrderById(orderId)) || {}
-    if (!order || !customer) {
-      throw new Error(`Order (${orderId}) is not found.`)
-    }
-    const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
-    await this.sendConfirmationEmail({ order, customer, qrCode: qrCodeFile })
+  async processPendingPayments(): Promise<PaymentIntent[]> {
+    let payments = await this.repository.getPendingPayments(this.dateGenerator.today())
+    let paymentIntents = await Promise.all(
+      payments.map(async (payment) => {
+        let paymentIntent = await this.paymentAdapter.chargeCustomerInstallment({
+          order: { id: payment.orderId },
+          total: { amount: payment.amount, currency: payment.currency },
+          customer: { id: payment.stripe.customerId },
+        })
+        await this.repository.savePayment({
+          ...payment,
+          stripe: { ...payment.stripe, id: paymentIntent.id, secret: paymentIntent.secret },
+        })
+        return paymentIntent
+      })
+    )
+    return paymentIntents
   }
 
   async getOrder(id: string): Promise<{
     order: Order
     customer: Customer
     promoCode: string | null
-    payment: { status: PaymentStatus; intent: PaymentIntent | null }
+    paymentStructures: PaymentStructure[]
     checkedIn: boolean
   } | null> {
     return this.repository.getOrderById(id)
@@ -93,58 +127,97 @@ export class Checkout {
     return promotion ?? null
   }
 
-  async requestImportOrders(csvPath: string): Promise<Order[]> {
-    this.queueAdapter
-    const orders = await this.documentAdapter.getOrdersFromImports(csvPath)
-    const newOrders = await this.getNewOrders(orders)
-    if (newOrders.length == 0) {
-      return []
-    }
-    await this.saveImportOrders(newOrders)
-    await this.saveCheckouts(newOrders)
-    const ordersWithQrCode = await Promise.all(
-      newOrders.map(async ({ order, customer, promoCode }) => {
-        await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
-        const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
-        const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
-        return { order, customer, promoCode, qrCodeUrl: link }
-      })
-    )
-    await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode))
-    return newOrders.map(({ order }) => order)
+  private calculateAmountToBePaid({ newOrder, order }: { newOrder: NewOrder; order: Order }): {
+    amount: number
+    currency: Currency
+  } {
+    return newOrder.id != order.id ? order.total : calculateNewOptionTotal(order.items, newOrder.items)
   }
 
-  async requestImportEdition3Orders(csvPath: string): Promise<Order[]> {
-    this.queueAdapter
-    const orders = await this.documentAdapter.getOrdersFromImports(csvPath)
-    const newOrders = await this.getNewOrders(orders)
-    if (newOrders.length == 0) {
-      return []
-    }
-    await this.saveImportOrders(newOrders)
-    await this.saveCheckouts(newOrders)
-    const ordersWithQrCode = await Promise.all(
-      newOrders.map(async ({ order, customer, promoCode }) => {
-        await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
-        const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
-        const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
-        return { order, customer, promoCode, qrCodeUrl: link }
-      })
-    )
-    await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode))
-    return newOrders.map(({ order }) => order)
+  private updateItems(order: Order, newOrder: NewOrder): Order {
+    return { ...order, items: newOrder.items, total: calculateOrderTotal(newOrder.items) }
   }
 
-  async importOrder(orderId: string) {
-    const result = await this.repository.getOrderById(orderId)
-    if (!result) {
-      throw new Error(`Can not find order ${orderId}`)
+  private async createPayment({
+    order,
+    paymentStructure,
+    customer: sourceCustomer,
+  }: {
+    order: Order
+    paymentStructure: PaymentStructure
+    customer: Customer
+  }): Promise<{ status: PaymentStatus; intent: PaymentIntent; customer: { id: string } }> {
+    let customer = await this.paymentAdapter.createCustomer({
+      name: sourceCustomer.fullname,
+      email: sourceCustomer.email,
+    })
+    if (isInstallment(paymentStructure)) {
+      let firstDueDate = paymentStructure.dueDates[0]
+      let total = { amount: firstDueDate.amount, currency: firstDueDate.currency }
+      const paymentIntent = await this.paymentAdapter.createPaymentIntentForInstallment({ order, total, customer })
+      return { status: firstDueDate.status, intent: paymentIntent, customer }
+    } else {
+      let total = { amount: paymentStructure.amount, currency: paymentStructure.currency }
+      const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total, customer })
+      return { status: paymentStructure.status, intent: paymentIntent, customer }
     }
-    const { order, customer } = result
-    await this.repository.savePaymentStatus({ order, payment: { status: 'success' } })
+  }
+
+  private async makeCheckout({
+    order,
+    payment,
+    paymentStructures,
+    customer,
+    promoCode,
+  }: {
+    order: Order
+    payment: { status: PaymentStatus; intent: PaymentIntent; customer: { id: string } }
+    paymentStructures: PaymentStructure[]
+    customer: Customer
+    promoCode: string | null
+  }) {
+    return {
+      order,
+      total: order.total,
+      paymentStructures,
+      customer,
+      promoCode,
+      payment,
+      checkedIn: false,
+    }
+  }
+
+  private isPaymentSuccess = (payment: { status: PaymentStatus }) => payment.status == 'completed'
+
+  private makeOrder = (newOrder: NewOrder): Order => ({
+    ...newOrder,
+    total: calculateOrderTotal(newOrder.items),
+    id: makeOrderId(),
+    status: 'pending',
+  })
+
+  private async sendConfirmationEmail({
+    order,
+    customer,
+    qrCode,
+  }: {
+    order: Order
+    customer: Customer
+    qrCode: Buffer
+  }) {
+    const link = await this.documentAdapter.uploadQrCode(order.id, qrCode)
+    return this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }], this.uuidGenerator))
+  }
+
+  // TODO: Move to another service.
+
+  async resendConfirmationEmail(orderId: string) {
+    const { order, customer } = (await this.repository.getOrderById(orderId)) || {}
+    if (!order || !customer) {
+      throw new Error(`Order (${orderId}) is not found.`)
+    }
     const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
-    const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
-    await this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }]))
+    await this.sendConfirmationEmail({ order, customer, qrCode: qrCodeFile })
   }
 
   async sendRegistrationCampaign() {
@@ -212,113 +285,121 @@ export class Checkout {
     await this.repository.updateOrderCheckIn(orderId, true)
   }
 
-  private async createCheckout({
-    newOrder,
-    customer,
-    promoCode,
-  }: {
-    newOrder: NewOrder
-    customer: Customer
-    promoCode: string | null
-  }) {
-    const total = calculateOrderTotal(newOrder.items)
-    const order =
-      (newOrder.id ? (await this.getOrder(newOrder.id))?.order : undefined) ?? this.createOrder(newOrder, total)
-    let isNewOrder = newOrder.id != order.id
-    let paymentAmount = calculateNewOptionTotal(order.items, newOrder.items)
-    order.items = newOrder.items
-    order.total = total
-    const paymentIntent = await this.paymentAdapter.createPaymentIntent({
-      order,
-      total: isNewOrder ? total : paymentAmount,
-    })
-    return {
-      order,
-      total,
-      customer,
-      promoCode,
-      payment: { status: 'pending' as PaymentStatus, intent: paymentIntent },
-      checkedIn: false,
-    }
+  async importOrder(orderId: string) {
+    throw new Error('It must be refactored and use a specific event instead of the checkout event')
+    // const result = await this.repository.getOrderById(orderId)
+    // if (!result) {
+    //   throw new Error(`Can not find order ${orderId}`)
+    // }
+    // const { order, customer } = result
+    // await this.repository.savePaymentStatus({ order, payment: { status: 'completed' } })
+    // const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+    // const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
+    // await this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }], this.uuidGenerator))
   }
 
-  private isPaymentSuccess = (payment: { status: PaymentStatus }) => payment.status == 'success'
-
-  private createOrder = (
-    newOrder: Omit<Order, 'id' | 'total'>,
-    total: { amount: number; currency: Currency }
-  ): Order => ({ ...newOrder, total, id: makeOrderId() })
-
-  private async sendConfirmationEmail({
-    order,
-    customer,
-    qrCode,
-  }: {
-    order: Order
-    customer: Customer
-    qrCode: Buffer
-  }) {
-    const link = await this.documentAdapter.uploadQrCode(order.id, qrCode)
-    return this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }]))
+  async requestImportOrders(csvPath: string): Promise<Order[]> {
+    throw new Error('It must be refactored and use a specific event instead of the checkout event')
+    // this.queueAdapter
+    // const orders = await this.documentAdapter.getOrdersFromImports(csvPath)
+    // const newOrders = await this.getNewOrders(orders)
+    // if (newOrders.length == 0) {
+    //   return []
+    // }
+    // await this.saveImportOrders(newOrders)
+    // await this.saveCheckouts(newOrders)
+    // const ordersWithQrCode = await Promise.all(
+    //   newOrders.map(async ({ order, customer, promoCode }) => {
+    //     await this.repository.savePaymentStatus({ order, payment: { status: 'completed' } })
+    //     const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+    //     const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
+    //     return { order, customer, promoCode, qrCodeUrl: link }
+    //   })
+    // )
+    // await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode, this.uuidGenerator))
+    // return newOrders.map(({ order }) => order)
   }
 
-  private makeFingerprints(
-    orders: {
-      customer: Customer
-      order: Order
-      promoCode: string | null
-    }[]
-  ): string[] {
-    return orders.map(({ order, customer, promoCode }) => makeFingerprint({ order, customer, promoCode }))
+  async requestImportEdition3Orders(csvPath: string): Promise<Order[]> {
+    throw new Error('It must be refactored and use a specific event instead of the checkout event')
+    // this.queueAdapter
+    // const orders = await this.documentAdapter.getOrdersFromImports(csvPath)
+    // const newOrders = await this.getNewOrders(orders)
+    // if (newOrders.length == 0) {
+    //   return []
+    // }
+    // await this.saveImportOrders(newOrders)
+    // await this.saveCheckouts(newOrders)
+    // const ordersWithQrCode = await Promise.all(
+    //   newOrders.map(async ({ order, customer, promoCode }) => {
+    //     await this.repository.savePaymentStatus({ order, payment: { status: 'completed' } })
+    //     const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+    //     const link = await this.documentAdapter.uploadQrCode(order.id, qrCodeFile)
+    //     return { order, customer, promoCode, qrCodeUrl: link }
+    //   })
+    // )
+    // await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode, this.uuidGenerator))
+    // return newOrders.map(({ order }) => order)
   }
 
-  private async getNewOrders(
-    orders: {
-      customer: Customer
-      order: Order
-      promoCode: string | null
-    }[]
-  ) {
-    const fingerprints = this.makeFingerprints(orders)
-    const importedOrders = (await this.repository.getImportOrdersByFingerprints(fingerprints)).map(
-      (order) => order.fingerprint
-    )
-    return orders.filter((order) => !importedOrders.includes(makeFingerprint(order)))
-  }
+  // private saveImportOrders(
+  //   newOrders: {
+  //     customer: Customer
+  //     order: Order
+  //     promoCode: string | null
+  //   }[]
+  // ): Promise<void> {
+  //   return this.repository.saveImportOrders(
+  //     newOrders.map(({ order, customer, promoCode }) => ({
+  //       fingerprint: makeFingerprint({ order, customer, promoCode }),
+  //       orderId: order.id,
+  //     }))
+  //   )
+  // }
 
-  private saveImportOrders(
-    newOrders: {
-      customer: Customer
-      order: Order
-      promoCode: string | null
-    }[]
-  ): Promise<void> {
-    return this.repository.saveImportOrders(
-      newOrders.map(({ order, customer, promoCode }) => ({
-        fingerprint: makeFingerprint({ order, customer, promoCode }),
-        orderId: order.id,
-      }))
-    )
-  }
+  // private saveCheckouts(
+  //   newOrders: {
+  //     customer: Customer
+  //     order: Order
+  //     promoCode: string | null
+  //   }[]
+  // ): Promise<void> {
+  //   throw new Error('SAVE CHECKOUTS ERROR')
+  //   // return this.repository.saveCheckouts(
+  //   //   newOrders.map((order) => ({
+  //   //     order: order.order,
+  //   //     total: order.order.total,
+  //   //     customer: order.customer,
+  //   //     promoCode: order.promoCode,
+  //   //     payment: { status: 'pending', intent: null },
+  //   //     checkedIn: false,
+  //   //   }))
+  //   // )
+  // }
 
-  private saveCheckouts(
-    newOrders: {
-      customer: Customer
-      order: Order
-      promoCode: string | null
-    }[]
-  ): Promise<void> {
-    return this.repository.saveCheckouts(
-      newOrders.map((order) => ({
-        order: order.order,
-        total: order.order.total,
-        customer: order.customer,
-        promoCode: order.promoCode,
-        payment: { status: 'pending', intent: null },
-        checkedIn: false,
-      }))
-    )
-  }
+  // private async getNewOrders(
+  //   orders: {
+  //     customer: Customer
+  //     order: Order
+  //     promoCode: string | null
+  //   }[]
+  // ) {
+  //   const fingerprints = this.makeFingerprints(orders)
+  //   const importedOrders = (await this.repository.getImportOrdersByFingerprints(fingerprints)).map(
+  //     (order) => order.fingerprint
+  //   )
+  //   return orders.filter((order) => !importedOrders.includes(makeFingerprint(order)))
+  // }
+
+  // private makeFingerprints(
+  //   orders: {
+  //     customer: Customer
+  //     order: Order
+  //     promoCode: string | null
+  //   }[]
+  // ): string[] {
+  //   return orders.map(({ order, customer, promoCode }) => makeFingerprint({ order, customer, promoCode }))
+  // }
 
   // private async applyPromotion(order: Order, promoCode?: string): Promise<Order> {
   //   if (promoCode) {

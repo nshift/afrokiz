@@ -28,15 +28,15 @@ import {
   buildResendConfirmationEmailRequest,
   buildUpdateOrderPaymentRequest,
 } from './request'
-import { buildOrderResponse, buildPromotionResponse } from './response'
+import { buildOrderResponse, buildPaymentIntentsResponse, buildPromotionResponse } from './response'
 
 export const proceedToCheckout = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body ?? '{}')
   const request = buildProceedToCheckoutRequest(body)
   try {
-    const { order, customer, promoCode, payment, checkedIn } = await checkout.proceed(request)
+    const { order, customer, promoCode, payment, paymentStructures, checkedIn } = await checkout.proceed(request)
     return successResponse({
-      ...buildOrderResponse({ order, customer, promoCode, payment, checkedIn }),
+      ...buildOrderResponse({ order, paymentStructures, customer, promoCode, checkedIn }),
       clientSecret: payment.intent.secret,
     })
   } catch (error) {
@@ -53,15 +53,34 @@ export const updateOrderPaymentStatus = async (
   try {
     switch (request.type) {
       case 'payment_intent.succeeded':
-        await checkout.handlePayment({ orderId: request.orderId, payment: { status: 'success' } })
+        await checkout.handlePayment({
+          orderId: request.orderId,
+          payment: { stripeId: request.stripeId, status: 'completed' },
+        })
         break
       case 'payment_intent.payment_failed':
-        await checkout.handlePayment({ orderId: request.orderId, payment: { status: 'failed' } })
+        await checkout.handlePayment({
+          orderId: request.orderId,
+          payment: { stripeId: request.stripeId, status: 'failed' },
+        })
         break
       default:
         break
     }
     return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const processPendingPayments = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const paymentIntents = await checkout.processPendingPayments()
+    return successResponse(buildPaymentIntentsResponse(paymentIntents))
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)
@@ -75,7 +94,10 @@ export const markPaymentAsSucceed = async (
   try {
     const request = buildMarkPaymentAsSucceedRequest(event)
     console.log('[markPaymentAsSucceed] Request.', { request })
-    await checkout.handlePayment({ orderId: request.orderId, payment: { status: 'success' } })
+    await checkout.handlePayment({
+      orderId: request.orderId,
+      payment: { stripeId: request.stripeId, status: 'completed' },
+    })
     return successfullyCreatedResponse()
   } catch (error) {
     console.error(error)
@@ -244,8 +266,9 @@ const makeCheckout = () => {
   const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
     marshallOptions: { removeUndefinedValues: true },
   })
+  let uuidGenerator = { generate: uuid }
   const dateGenerator = { today: () => new Date() }
-  const repository = new DynamoDbRepository(dynamodb, { generate: uuid }, dateGenerator)
+  const repository = new DynamoDbRepository(dynamodb, uuidGenerator, dateGenerator)
   const paymentAdapter = new StripePaymentAdapter(stripe)
   const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
   const qrCodeGenerator = new QrCodeGenerator()
@@ -259,7 +282,8 @@ const makeCheckout = () => {
     qrCodeGenerator,
     documentAdapter,
     queueAdapter,
-    dateGenerator
+    dateGenerator,
+    uuidGenerator
   )
   return checkout
 }
@@ -268,8 +292,9 @@ const makeEdition2Checkout = () => {
   const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
     marshallOptions: { removeUndefinedValues: true },
   })
+  let uuidGenerator = { generate: uuid }
   const dateGenerator = { today: () => new Date() }
-  const repository = new DynamoDbRepository(dynamodb, { generate: uuid }, dateGenerator)
+  const repository = new DynamoDbRepository(dynamodb, uuidGenerator, dateGenerator)
   const paymentAdapter = new StripePaymentAdapter(stripe)
   const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
   const qrCodeGenerator = new QrCodeGenerator()
@@ -287,7 +312,8 @@ const makeEdition2Checkout = () => {
     qrCodeGenerator,
     documentAdapter,
     queueAdapter,
-    dateGenerator
+    dateGenerator,
+    uuidGenerator
   )
   return checkout
 }

@@ -69,7 +69,7 @@ export const processSuccessfulPaymentEvent = (
     name: 'SuccessfulPayment',
     time: dateGenerator.today(),
     data: { orders: data.orders, paymentIntentId: data.paymentIntentId },
-    process: () => [saveOrdersRequest(data.orders)],
+    process: async () => [saveOrdersRequest(data.orders)],
   }
   const eventStore = new EventStore(dynamodb)
   return eventStore.process([event])

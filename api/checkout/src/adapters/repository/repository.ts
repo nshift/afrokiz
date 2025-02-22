@@ -1,7 +1,7 @@
 import { Currency } from '../../types/currency'
 import { Customer } from '../../types/customer'
 import { ImportOrder, Order } from '../../types/order'
-import { PaymentStatus } from '../../types/payment'
+import { Payment, PaymentStatus, PaymentStructure } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
 import { Promotion } from '../../types/promotion'
 import { Sales } from '../../types/sales'
@@ -12,7 +12,8 @@ export interface SavingCheckout {
     total: { amount: number; currency: Currency }
     customer: Customer
     promoCode: string | null
-    payment: { status: PaymentStatus; intent: PaymentIntent | null }
+    payment: { status: PaymentStatus; intent: PaymentIntent | null; customer: { id: string } }
+    paymentStructures: PaymentStructure[]
     checkedIn: boolean
   }): Promise<void>
   saveCheckouts(
@@ -21,7 +22,8 @@ export interface SavingCheckout {
       total: { amount: number; currency: Currency }
       customer: Customer
       promoCode: string | null
-      payment: { status: PaymentStatus; intent: PaymentIntent | null }
+      payment: { status: PaymentStatus; intent: PaymentIntent | null; customer: { id: string } }
+      paymentStructures: PaymentStructure[]
       checkedIn: boolean
     }[]
   ): Promise<void>
@@ -32,7 +34,7 @@ export interface GettingOrders {
     order: Order
     customer: Customer
     promoCode: string | null
-    payment: { status: PaymentStatus; intent: PaymentIntent | null }
+    paymentStructures: PaymentStructure[]
     checkedIn: boolean
   } | null>
   // getOrderByPaymentIntentId(paymentIntentId: string): Promise<Order | null>
@@ -45,7 +47,12 @@ export interface GettingPromotions {
 export interface SavingPayment {
   // savePaymentSuccessfulOrder(order: Order): Promise<void>
   // savePaymentFailedOrder(order: Order): Promise<void>
-  savePaymentStatus(_: { order: { id: string }; payment: { status: PaymentStatus } }): Promise<void>
+  savePaymentStatus(_: { order: { id: string }; payment: { stripeId: string; status: PaymentStatus } }): Promise<void>
+  savePayment(payment: Payment): Promise<void>
+}
+
+export interface GettingPayment {
+  getPendingPayments(before: Date): Promise<Payment[]>
 }
 
 export interface SavingImportOrder {
@@ -76,6 +83,7 @@ export interface Repository
   extends GettingOrders,
     GettingPromotions,
     SavingPayment,
+    GettingPayment,
     SavingCheckout,
     SavingImportOrder,
     GettingImportOrder,

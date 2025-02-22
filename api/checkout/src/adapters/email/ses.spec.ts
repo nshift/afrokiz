@@ -4,7 +4,7 @@ import { confirmationEmail } from './email.confirmation'
 import { registrationEmail } from './email.registration'
 import { SESEmailService } from './ses'
 
-describe('Email service', () => {
+describe.skip('Email service', () => {
   let email: SESEmailService
 
   beforeEach(async () => {
@@ -29,14 +29,16 @@ describe('Email service', () => {
       )
     ).resolves.not.toThrow()
   })
-  it.only('should send a registration email', async () => {
+  it('should send a confirmation email', async () => {
     await expect(
       email.sendBulkEmails(
-        confirmationEmail({
-          order,
-          customer: romainCustomer,
-          qrCodeUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/31/MM_QRcode.png',
-        })
+        confirmationEmail([
+          {
+            order,
+            customer: romainCustomer,
+            qrCodeUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/31/MM_QRcode.png',
+          },
+        ])
       )
     ).resolves.not.toThrow()
   })

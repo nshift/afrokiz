@@ -2,6 +2,7 @@ export class Environment {
   static EventTableName = () => required('EVENT_TABLE_NAME')
   static OrderTableName = () => required('ORDER_TABLE_NAME')
   static SalesTableName = () => required('SALES_TABLE_NAME')
+  static PaymentTableName = () => required('PAYMENT_TABLE_NAME')
   static ImportOrderTableName = () => required('IMPORT_ORDER_TABLE_NAME')
   static DocumentBucketName = () => required('DOCUMENT_BUCKET_NAME')
   static ImportOrderQueue = () => required('IMPORT_ORDER_QUEUE')

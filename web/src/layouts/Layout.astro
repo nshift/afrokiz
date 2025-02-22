@@ -207,7 +207,7 @@ const { title } = Astro.props;
   border: 1px solid rgb(230, 230, 230);
   padding: 0.75rem;
   width: 100%;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 1rem;
 }
 
@@ -228,6 +228,69 @@ const { title } = Astro.props;
   vertical-align: middle;
   top: -2px;
   position: relative;
+}
+
+.steplist {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 1rem;
+  overflow: hidden;
+  text-align: center;
+}
+
+.steplist::before {
+  position: absolute;
+  top: 28px;
+  right: 65px;
+  left: 65px;
+  content: "";
+  background-color: #d8d8d8;
+  height: 1px;
+  z-index: -1;
+}
+
+.steplist .installment {
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.steplist .circle-container {
+  align-items: center;
+  justify-content: center;
+  display: inline-flex;
+  border-radius: 50%;
+  height: 26px;
+  width: 26px;
+}
+
+.steplist .circle {
+  display: inline-block;
+  border-radius: 50%;
+  background-color: gray;
+  height: 18px;
+  width: 18px;
+}
+
+.circle-blue {
+  background: rgba(0, 29, 191, 0.3);
+}
+
+.circle-blue .circle {
+  background-color: #0e62df;
+}
+
+.circle-green {
+  background: rgba(0, 191, 121, 0.3);
+}
+
+.circle-green .circle {
+  background-color: #00bf79;
 }
 
 @keyframes rotation {
@@ -278,6 +341,14 @@ const { title } = Astro.props;
     --h2-font-size: 1.2rem;
     --h3-font-size: 1.1rem;
     --h4-font-size: 0.9rem;
+  }
+  .steplist {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .steplist::before {
+    right: 60px;
+    left: 60px;
   }
 }
 </style>

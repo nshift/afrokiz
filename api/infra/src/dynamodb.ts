@@ -35,3 +35,14 @@ export const createGuestTable = (stack: cdk.Stack) =>
 
 export const createSametTable = (stack: cdk.Stack) =>
   createDynamoDbTable('SametTable', { partitionKey: { name: 'email', type: STRING }, stack })
+
+export const createPaymentTable = (stack: cdk.Stack) =>
+  createDynamoDbTable('PaymentTable', {
+    partitionKey: { name: 'id', type: STRING },
+    secondaryIndexes: [
+      { indexName: 'PaymentStatus', partitionKey: { name: 'status', type: STRING } },
+      { indexName: 'PaymentIntentId', partitionKey: { name: 'stripePaymentIntentId', type: STRING } },
+      { indexName: 'CustomerId', partitionKey: { name: 'stripeCustomerId', type: STRING } },
+    ],
+    stack,
+  })

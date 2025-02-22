@@ -1,25 +1,23 @@
 import { Customer } from '../../types/customer'
 import { Order } from '../../types/order'
-import { PaymentStatus } from '../../types/payment'
+import { isInstallment, PaymentStructure } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
 import { DiscountPromotion, GiveAwayPromotion, Promotion } from '../../types/promotion'
 
 export const buildOrderResponse = ({
   order,
+  paymentStructures,
   customer,
   promoCode,
-  payment,
   checkedIn,
 }: {
   order: Order
+  paymentStructures: PaymentStructure[]
   customer: Customer
   promoCode: string | null
-  payment: { status: PaymentStatus; intent: PaymentIntent | null }
   checkedIn: boolean
 }) => ({
   id: order.id,
-  paymentIntentId: payment.intent ? payment.intent.id : null,
-  paymentStatus: payment.status,
   email: customer.email,
   fullname: customer.fullname,
   dancer_type: customer.type,
@@ -34,6 +32,26 @@ export const buildOrderResponse = ({
     amount: item.amount,
     total: { amount: item.total.amount, currency: item.total.currency },
   })),
+  paymentStructures: paymentStructures.map((paymentStructure) =>
+    isInstallment(paymentStructure)
+      ? {
+          principalAmount: paymentStructure.principalAmount,
+          currency: paymentStructure.currency,
+          frequency: paymentStructure.frequency,
+          term: paymentStructure.term,
+          dueDates: paymentStructure.dueDates.map((dueDate) => ({
+            amount: dueDate.amount,
+            currency: dueDate.currency,
+            dueDate: dueDate.dueDate,
+            status: dueDate.status,
+          })),
+        }
+      : {
+          amount: paymentStructure.amount,
+          currency: paymentStructure.currency,
+          status: paymentStructure.status,
+        }
+  ),
 })
 
 export const buildPromotionResponse = (promotion: Promotion) => ({
@@ -49,3 +67,9 @@ export const buildPromotionResponse = (promotion: Promotion) => ({
       }))
     : undefined,
 })
+
+export const buildPaymentIntentsResponse = (paymentIntents: PaymentIntent[]) =>
+  paymentIntents.map((paymentIntent) => ({
+    id: paymentIntent.id,
+    secret: paymentIntent.secret,
+  }))

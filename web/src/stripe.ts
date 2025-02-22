@@ -5,7 +5,7 @@ import {
   type StripeError,
 } from '@stripe/stripe-js'
 import { Environment } from './environment'
-import { PaymentAPI, type NewOrder } from './payment-api/payment.api'
+import { PaymentAPI, type NewOrder, type PaymentOption } from './payment-api/payment.api'
 
 export { type StripeElements, type StripeError } from '@stripe/stripe-js'
 
@@ -22,11 +22,13 @@ export async function loadStripe(): Promise<Stripe> {
 export class Stripe {
   constructor(public readonly stripe: StripJS, private readonly paymentApi: PaymentAPI) {}
 
-  elements = (options: { amount: number; currency: string }): StripeElements =>
+  elements = (options: { amount: number; currency: string; isInstallment: boolean }): StripeElements =>
     this.stripe.elements({
-      ...options,
+      amount: options.amount,
+      currency: options.currency,
       mode: 'payment',
       capture_method: 'automatic',
+      setup_future_usage: options.isInstallment ? 'off_session' : undefined,
     })
 
   mountElements(elements: StripeElements, domElement: string | HTMLElement) {
@@ -35,17 +37,12 @@ export class Stripe {
     paymentElement.mount(domElement)
   }
 
-  async confirmPayment(elements: StripeElements, newOrder: NewOrder): Promise<never | { error: StripeError }> {
-    const { error: submitError } = await elements.submit()
-    if (submitError) {
-      return { error: submitError }
-    }
-    if (!newOrder.fullname || !newOrder.email) {
-      return {
-        error: { type: 'validation_error', message: 'Full name and email are required.' },
-      }
-    }
-    const { order, clientSecret } = await this.paymentApi.createOrder(newOrder)
+  async confirmPayment(
+    elements: StripeElements,
+    newOrder: NewOrder,
+    paymentOption: PaymentOption
+  ): Promise<never | { error: StripeError }> {
+    const { order, clientSecret } = await this.paymentApi.createOrder(newOrder, paymentOption)
     return await this.stripe.confirmPayment({
       elements,
       clientSecret,

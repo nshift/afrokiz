@@ -1,15 +1,20 @@
 import { beforeEach, describe, expect, it } from '@jest/globals'
-import { StorageAdapter } from './adapters/document/storage.adapter'
+import { GetOrders, UploadQrCode } from './adapters/document/storage.gateway'
 import { confirmationEmail } from './adapters/email/email.confirmation'
-import { SendingEmail } from './adapters/email/email.gateway'
+import { SendingBulkEmails, SendingEmail } from './adapters/email/email.gateway'
 import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { ImportOrderQueueRequest } from './adapters/queue.gateway'
+import { UUIDGenerator } from './adapters/uuid.generator'
 import { Checkout } from './checkout'
 import {
+  directPaymentStructure,
   order as fakeOrder,
   orderWithOptions as fakeOrderWithOptions,
   paymentIntent as fakePaymentIntent,
   qrCode as fakeQrCode,
+  qrCodeUrl as fakeQrCodeUrl,
+  stripeCustomer as fakeStripeCustomer,
+  installmentPaymentStructure,
   massagePromotion,
   romainCustomer,
 } from './doubles/fixtures'
@@ -19,15 +24,21 @@ import { Currency } from './types/currency'
 import { PaymentIntent } from './types/payment-intent'
 
 let checkout: Checkout
-let emailGateway: SendingEmail
+let emailGateway: SendingEmail & SendingBulkEmails
 let queueAdapter: ImportOrderQueueRequest
 let paymentAdapter: CreatingPaymentIntent
 let repository: InMemoryRepository
-let storageAdapter: StorageAdapter
+let storageAdapter: GetOrders & UploadQrCode
+let uuidGenerator: UUIDGenerator
 
 beforeEach(() => {
+  uuidGenerator = { generate: () => '1' }
   emailGateway = mock()
-  storageAdapter = mock()
+  storageAdapter = mock({
+    uploadQrCode: jest.fn(async () => fakeQrCodeUrl),
+    getOrdersFromImports: jest.fn(async () => []),
+    getQrCodeUrl: jest.fn(async () => fakeQrCodeUrl),
+  })
   queueAdapter = mock()
   paymentAdapter = mock({
     createPaymentIntent: jest.fn(
@@ -39,6 +50,12 @@ beforeEach(() => {
         secret: fakePaymentIntent.secret,
       })
     ),
+    createPaymentIntentForInstallment: jest.fn(async () => ({
+      id: fakePaymentIntent.id,
+      secret: fakePaymentIntent.secret,
+    })),
+    createCustomer: jest.fn(async () => fakeStripeCustomer),
+    chargeCustomerInstallment: jest.fn(),
   })
   repository = new InMemoryRepository()
   checkout = new Checkout(
@@ -48,22 +65,36 @@ beforeEach(() => {
     { generateOrderQrCode: async (order: { id: string }) => fakeQrCode },
     storageAdapter,
     queueAdapter,
-    { today: () => new Date('2024-01-01') }
+    { today: () => new Date('2024-01-01') },
+    uuidGenerator
   )
 })
 
 describe('Create an order when checking out', () => {
   it('should save an order', async () => {
-    const { order } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer, promoCode: null })
+    const { order } = await checkout.proceed({
+      newOrder: fakeOrder,
+      customer: romainCustomer,
+      paymentOption: { method: 'card', structure: 'direct' },
+      promoCode: null,
+    })
+
     expect({
-      order: { ...fakeOrder, id: expect.any(String) },
-      payment: { status: 'pending', intent: fakePaymentIntent },
+      order: { ...fakeOrder, id: expect.any(String), status: 'pending' },
+      payment: { status: 'pending', intent: fakePaymentIntent, customer: fakeStripeCustomer },
+      paymentStructures: [directPaymentStructure(30000)],
       customer: romainCustomer,
       promoCode: null,
+      checkedIn: false,
     }).toEqual(await repository.getOrderById(order.id))
   })
   it('should create a payment intent', async () => {
-    const { payment } = await checkout.proceed({ newOrder: fakeOrder, customer: romainCustomer, promoCode: null })
+    const { payment } = await checkout.proceed({
+      newOrder: fakeOrder,
+      customer: romainCustomer,
+      paymentOption: { method: 'card', structure: 'direct' },
+      promoCode: null,
+    })
     expect(fakePaymentIntent.secret).toEqual(payment.intent.secret)
   })
   describe('with existing order', () => {
@@ -71,25 +102,54 @@ describe('Create an order when checking out', () => {
       const { order: oldOrder } = await checkout.proceed({
         newOrder: fakeOrder,
         customer: romainCustomer,
+        paymentOption: { method: 'card', structure: 'direct' },
         promoCode: null,
       })
-      const { order: newOrder, payment } = await checkout.proceed({
+
+      const { order: newOrder } = await checkout.proceed({
         newOrder: { ...fakeOrderWithOptions, id: oldOrder.id },
         customer: romainCustomer,
+        paymentOption: { method: 'card', structure: 'direct' },
         promoCode: null,
       })
+
       expect(paymentAdapter.createPaymentIntent).toHaveBeenCalledWith(
         expect.objectContaining({
           total: { amount: 20000, currency: 'USD' },
         })
       )
-      expect(newOrder).toMatchObject(oldOrder)
       expect({
-        order: { ...newOrder, id: oldOrder.id },
-        payment: { status: 'pending', intent: fakePaymentIntent },
+        order: { ...newOrder, id: oldOrder.id, status: 'pending' },
+        payment: { status: 'pending', intent: fakePaymentIntent, customer: fakeStripeCustomer },
+        paymentStructures: [directPaymentStructure(30000), directPaymentStructure(20000)],
         customer: romainCustomer,
         promoCode: null,
+        checkedIn: false,
       }).toEqual(await repository.getOrderById(oldOrder.id))
+    })
+  })
+  describe('when the payment option is installment', () => {
+    it('should create a payment intent', async () => {
+      const { order } = await checkout.proceed({
+        newOrder: fakeOrder,
+        customer: romainCustomer,
+        paymentOption: { method: 'card', structure: 'installment3x' },
+        promoCode: null,
+      })
+
+      expect(paymentAdapter.createPaymentIntentForInstallment).toHaveBeenCalledWith({
+        order: expect.objectContaining({ id: order.id }),
+        total: { amount: 10000, currency: 'USD' },
+        customer: fakeStripeCustomer,
+      })
+      expect({
+        order: { ...fakeOrder, id: order.id, status: 'pending' },
+        payment: { status: 'pending', intent: fakePaymentIntent, customer: fakeStripeCustomer },
+        paymentStructures: [installmentPaymentStructure(30000, [10000, 10000, 10000])],
+        customer: romainCustomer,
+        promoCode: null,
+        checkedIn: false,
+      }).toEqual(await repository.getOrderById(order.id))
     })
   })
 })
@@ -106,30 +166,50 @@ describe('Handling successful payment when checking out', () => {
     const { order: newOrder } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,
+      paymentOption: { method: 'card', structure: 'direct' },
       promoCode: null,
     })
-    await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'success' } })
+
+    await checkout.handlePayment({
+      orderId: newOrder.id,
+      payment: { stripeId: fakePaymentIntent.id, status: 'completed' },
+    })
+
     const updatedOrder = await repository.getOrderById(newOrder.id)
     expect(updatedOrder).toEqual({
-      order: { ...fakeOrder, id: newOrder.id },
-      payment: { status: 'success', intent: fakePaymentIntent },
+      order: { ...fakeOrder, id: newOrder.id, status: 'pending' },
+      payment: { status: 'completed', intent: fakePaymentIntent, customer: fakeStripeCustomer },
+      paymentStructures: [directPaymentStructure(30000)],
       customer: romainCustomer,
       promoCode: null,
+      checkedIn: false,
     })
   })
-  it.skip('should send a confirmation email', async () => {
+  it('should send a confirmation email', async () => {
     const { order: newOrder } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,
+      paymentOption: { method: 'card', structure: 'direct' },
       promoCode: null,
     })
-    await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'success' } })
-    const email = await confirmationEmail({
-      order: { ...fakeOrder, id: newOrder.id },
-      customer: romainCustomer,
-      qrCode: fakeQrCode,
+
+    await checkout.handlePayment({
+      orderId: newOrder.id,
+      payment: { stripeId: fakePaymentIntent.id, status: 'completed' },
     })
-    expect(emailGateway.sendEmail).toHaveBeenCalledWith(email)
+
+    expect(emailGateway.sendBulkEmails).toHaveBeenCalledWith(
+      confirmationEmail(
+        [
+          {
+            order: { ...fakeOrder, id: newOrder.id },
+            customer: romainCustomer,
+            qrCodeUrl: fakeQrCodeUrl,
+          },
+        ],
+        uuidGenerator
+      )
+    )
   })
 })
 
@@ -138,15 +218,23 @@ describe('Handling failing payment when checking out', () => {
     const { order: newOrder } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,
+      paymentOption: { method: 'card', structure: 'direct' },
       promoCode: null,
     })
-    await checkout.handlePayment({ orderId: newOrder.id, payment: { status: 'failed' } })
+
+    await checkout.handlePayment({
+      orderId: newOrder.id,
+      payment: { stripeId: fakePaymentIntent.id, status: 'failed' },
+    })
+
     const updatedOrder = await repository.getOrderById(newOrder.id)
     expect(updatedOrder).toEqual({
-      order: { ...fakeOrder, id: newOrder.id },
-      payment: { status: 'failed', intent: fakePaymentIntent },
+      order: { ...fakeOrder, id: newOrder.id, status: 'pending' },
+      payment: { status: 'failed', intent: fakePaymentIntent, customer: fakeStripeCustomer },
+      paymentStructures: [directPaymentStructure(30000)],
       customer: romainCustomer,
       promoCode: null,
+      checkedIn: false,
     })
   })
 })

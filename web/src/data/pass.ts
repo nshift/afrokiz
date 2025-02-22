@@ -503,6 +503,20 @@ export function calculateTotal(
   }, {} as any)
 }
 
+export function calculateFirstInstallment(
+  pass: Pass,
+  selectedOptionIds: string[],
+  discount: number = 1
+): { USD: number; EUR: number; THB: number } {
+  let term = 3
+  let total = calculateTotal(pass, selectedOptionIds, discount)
+  return {
+    USD: total.USD - Math.floor(total.USD / term) * (term - 1),
+    EUR: total.EUR - Math.floor(total.EUR / term) * (term - 1),
+    THB: total.THB - Math.floor(total.THB / term) * (term - 1),
+  }
+}
+
 export function sumPrices(prices: { USD: number; EUR: number; THB: number }[]) {
   return prices.reduce(
     (total, currencies) => {

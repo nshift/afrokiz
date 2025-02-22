@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
-import { v4 as uuid } from 'uuid'
 import { Customer } from '../../types/customer'
 import { Order } from '../../types/order'
+import { UUIDGenerator } from '../uuid.generator'
 import { EmailTemplate } from './email.template'
 
 export const confirmationEmail = (
@@ -10,9 +10,10 @@ export const confirmationEmail = (
     order: Order
     customer: Customer
     qrCodeUrl: string
-  }[]
+  }[],
+  uuidGenerator: UUIDGenerator
 ): EmailTemplate => ({
-  name: 'ConfirmationEmail-' + uuid(),
+  name: 'ConfirmationEmail-' + uuidGenerator.generate(),
   destinations: data.map(({ order, customer, qrCodeUrl }) => ({
     toAddresses: [customer.email],
     data: {
