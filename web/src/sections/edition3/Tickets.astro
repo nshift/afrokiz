@@ -1,6 +1,7 @@
 ---
 import Card from "../../components/Card.astro";
 import Currency from "../../components/Currency.vue"
+import FirstInstallment from "../../components/FirstInstallment.vue";
 import { type Pass, calculateTotal, defaultPasses } from "../../data/edition3/pass";
 
 const fullpassValentine = defaultPasses.fullPassValentine
@@ -20,9 +21,11 @@ function calculatePrice(pass: Pass) {
 <div id="tickets" class="container">
     <Card classes={["ticket-card", "ticket", "fullpassValentine"]}>
       <div class="heart">💝</div>
+      <div class="installment-annotation valentine">Pay Over 3 Months</div>
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(fullpassValentine)} client:only /></h2>
+          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(fullpassValentine)} today={new Date()} client:only /></p>
           { fullpassValentine.price.EUR != fullpassValentine.doorPrice.EUR && <p><s><Currency price={fullpassValentine.doorPrice} client:only /></s></p> }
           <h3>{fullpassValentine.name}</h3>
           <p>+ 1H Massage per person</p>
@@ -36,9 +39,11 @@ function calculatePrice(pass: Pass) {
     </Card>
     <Card classes={["ticket-card", "ticket", "vipSilverValentine"]}>
       <div class="heart">💝</div>
+      <div class="installment-annotation valentine">Pay Over 3 Months</div>
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(vipSilverValentine)} client:only /></h2>
+          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipSilverValentine)} today={new Date()} client:only /></p>
           { vipSilverValentine.price.EUR != vipSilverValentine.doorPrice.EUR && <p><s><Currency price={vipSilverValentine.doorPrice} client:only /></s></p> }
           <h3>{vipSilverValentine.name}</h3>
           <p>Limited to 14 couples</p>
@@ -51,9 +56,11 @@ function calculatePrice(pass: Pass) {
     </Card>
     <Card classes={["ticket-card", "ticket", "vipGoldValentine"]}>
       <div class="heart">💝</div>
+      <div class="installment-annotation valentine">Pay Over 3 Months</div>
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(vipGoldValentine)} client:only /></h2>
+          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipGoldValentine)} today={new Date()} client:only /></p>
           { vipGoldValentine.price.EUR != vipGoldValentine.doorPrice.EUR && <p><s><Currency price={vipGoldValentine.doorPrice} client:only /></s></p> }
           <h3>{vipGoldValentine.name}</h3>
           <p>Limited to 14 couples</p>
@@ -88,9 +95,11 @@ function calculatePrice(pass: Pass) {
       </div>
     </Card>
     <Card classes={["ticket-card", "ticket", "vipSilverPass"]}>
+      <div class="installment-annotation">Pay Over 3 Months</div>
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(vipSilverPass)} client:only /></h2>
+          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipSilverPass)} today={new Date()} client:only /></p>
           { vipSilverPass.price.EUR != vipSilverPass.doorPrice.EUR && <p><s><Currency price={vipSilverPass.doorPrice} client:only /></s></p> }
           <h3>{vipSilverPass.name}</h3>
         </div>
@@ -101,9 +110,11 @@ function calculatePrice(pass: Pass) {
       </div>
     </Card>
     <Card classes={["ticket-card", "ticket", "sametCard", "sametBangkokPass"]}>
+      <div class="installment-annotation">Pay Over 3 Months</div>
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(sametBangkokPass)} client:only /></h2>
+          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(sametBangkokPass)} today={new Date()} client:only /></p>
           { sametBangkokPass.price.EUR != sametBangkokPass.doorPrice.EUR && <p><s><Currency price={sametBangkokPass.doorPrice} client:only /></s></p> }
           <h3>{sametBangkokPass.name}</h3>
         </div>
@@ -114,9 +125,11 @@ function calculatePrice(pass: Pass) {
       </div>
     </Card>
     <Card classes={["ticket-card", "ticket", "sametCard", "sametPass"]}>
+      <div class="installment-annotation">Pay Over 3 Months</div>
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(sametPass)} client:only /></h2>
+          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(sametPass)} today={new Date()} client:only /></p>
           { sametPass.price.EUR != sametPass.doorPrice.EUR && <p><s><Currency price={sametPass.doorPrice} client:only /></s></p> }
           <h3>{sametPass.name}</h3>
         </div>
@@ -127,9 +140,11 @@ function calculatePrice(pass: Pass) {
       </div>
     </Card>
     <Card classes={["ticket-card", "ticket", "vipGoldPass"]}>
+      <div class="installment-annotation">Pay Over 3 Months</div>
       <div class="container-column">
         <div>
           <h2><Currency price={calculatePrice(vipGoldPass)} client:only /></h2>
+          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipGoldPass)} today={new Date()} client:only /></p>
           { vipGoldPass.price.EUR != vipGoldPass.doorPrice.EUR && <p><s><Currency price={vipGoldPass.doorPrice} client:only /></s></p> }
           <h3>{vipGoldPass.name}</h3>
         </div>
@@ -229,9 +244,9 @@ function calculatePrice(pass: Pass) {
     justify-content: center;
     align-items: end;
   }
-  /* .ticket-card .text {
-    min-width: 300px !important;
-  } */
+  .ticket-card .text {
+    padding: var(--s-padding);
+  }
   .ticket-card h3 {
     margin-top: 0.75rem;
   }
@@ -243,7 +258,7 @@ function calculatePrice(pass: Pass) {
       min-height: 215px;
     }
     .ticket-card .text {
-      padding: 1rem;
+      padding: 1rem var(--s-padding);
     }
     #tickets {
       grid-template-areas:
@@ -253,6 +268,32 @@ function calculatePrice(pass: Pass) {
         "fullpass fullpass fullpass fullpass vipSilver vipSilver vipSilver vipSilver vipGold vipGold vipGold vipGold"
         "samet samet samet samet samet samet samet samet samet samet samet samet"
         "bangkokSamet bangkokSamet bangkokSamet bangkokSamet sametGetaway sametGetaway sametGetaway sametGetaway none none none none" !important;
+    }
+  }
+</style>
+
+<style>
+  .fInstallment {
+    font-size: var(--h4-font-size);
+  }
+  .installment-annotation {
+    position: absolute;
+    font-size: calc(var(--text-font-size) * 0.9);
+    background-color: var(--secondary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    top: -1.2rem;
+    right: -20px;
+    color: var(--text-primary-color);
+    /* font-weight: bold; */
+  }
+  .installment-annotation.valentine {
+    background-color: #ccc0ed;
+    color: var(--primary-color);
+  }
+  @media only screen and (max-width: 920px) {
+    .installment-annotation {
+      display: none;
     }
   }
 </style>
