@@ -29,7 +29,7 @@ function calculatePrice(pass: Pass) {
           { fullpassValentine.price.EUR != fullpassValentine.doorPrice.EUR && <p><s><Currency price={fullpassValentine.doorPrice} client:only /></s></p> }
           <h3>{fullpassValentine.name}</h3>
           <p>+ 1H Massage per person</p>
-          <p>Limited to 14 couples</p>
+          <p>Last 4 passes left.</p>
         </div>
         <div class="button-container">
           { !fullpassValentine.isSoldOut && <a href={"/pass/" + fullpassValentine.id} class="button action">Buy Now</a> }
@@ -46,7 +46,7 @@ function calculatePrice(pass: Pass) {
           <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipSilverValentine)} today={new Date()} client:only /></p>
           { vipSilverValentine.price.EUR != vipSilverValentine.doorPrice.EUR && <p><s><Currency price={vipSilverValentine.doorPrice} client:only /></s></p> }
           <h3>{vipSilverValentine.name}</h3>
-          <p>Limited to 14 couples</p>
+          <p>Last 4 passes left.</p>
         </div>
         <div class="button-container">
           { !vipSilverValentine.isSoldOut && <a href={"/pass/" + vipSilverValentine.id} class="button action">Buy Now</a> }
@@ -63,7 +63,7 @@ function calculatePrice(pass: Pass) {
           <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipGoldValentine)} today={new Date()} client:only /></p>
           { vipGoldValentine.price.EUR != vipGoldValentine.doorPrice.EUR && <p><s><Currency price={vipGoldValentine.doorPrice} client:only /></s></p> }
           <h3>{vipGoldValentine.name}</h3>
-          <p>Limited to 14 couples</p>
+          <p>Last 4 passes left.</p>
         </div>
         <div class="button-container">
           { !vipGoldValentine.isSoldOut && <a href={"/pass/" + vipGoldValentine.id} class="button action">Buy Now</a> }
