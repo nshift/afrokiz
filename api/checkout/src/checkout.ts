@@ -85,7 +85,7 @@ export class Checkout {
 
   async processPendingPayments(): Promise<PaymentIntent[]> {
     let payments = await this.repository.getPendingPayments(this.dateGenerator.today())
-    let paymentIntents = await Promise.all(
+    let results = await Promise.allSettled(
       payments.map(async (payment) => {
         let paymentIntent = await this.paymentAdapter.chargeCustomerInstallment({
           order: { id: payment.orderId },
@@ -99,6 +99,9 @@ export class Checkout {
         return paymentIntent
       })
     )
+    let paymentIntents = results.filter((result) => result.status == 'fulfilled').map((result: any) => result.value)
+    let errors = results.filter((result) => result.status != 'fulfilled').map((result: any) => result.reason)
+    console.error(errors)
     return paymentIntents
   }
 

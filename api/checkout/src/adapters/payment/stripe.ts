@@ -65,6 +65,9 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
     customer: { id: string }
   }): Promise<PaymentIntent> {
     const { data: paymentMethods } = await this.stripe.paymentMethods.list({ customer: customer.id, type: 'card' })
+    if (paymentMethods.length == 0) {
+      throw new Error(`No payment methods for customer ${customer.id} and order ${order.id}`)
+    }
     let errors: string[] = []
     for (let paymentMethod of paymentMethods) {
       try {
@@ -73,6 +76,7 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
         errors.push(error?.message ?? 'Unknown error when creating confirmed payment intent')
       }
     }
+    console.error(errors)
     throw new Error(errors.join('\n'))
   }
 
