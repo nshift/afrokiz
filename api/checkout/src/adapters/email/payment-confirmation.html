@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <style>
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin: 0;
+      }
+      div,
+      td {
+        padding: 0;
+      }
+      div {
+        margin: 0 !important;
+      }
+    </style>
+  </head>
+  <body style="background-color: #f0f0f0; color: #12091d; font-family: Avenir, Helvetica, Arial, sans-serif">
+    <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>
+        <td align="center">
+          <div
+            style="background-color: white; padding: 2rem; margin: 2rem 0 !important; width: 600px; text-align: left"
+          >
+            <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation">
+              <tr>
+                <td align="left">
+                  <img class="logo" src="https://afrokiz-assets.s3.ap-southeast-1.amazonaws.com/logo.png" width="100" />
+                </td>
+                <td align="right">
+                  <div style="width: 200px; background-color: {{passHexColor}}; padding: 1rem; border-radius: 30px">
+                    <div class="text" style="text-align: center; vertical-align: middle">
+                      <p style="margin: 0.25rem; text-transform: capitalize; color: white">{{passName}}</p>
+                      <p style="margin: 0.25rem; color: white">Order #{{orderId}}</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <p style="margin-top: 2rem">Hi {{fullname}},</p>
+            <p>
+              Thank you for your payment! This email confirms that we have received your installment payment of
+              <b>{{ amountPaid }}</b> on <b>{{ paidDate }}</b> for your order <b>{{ orderId }}</b>.{{#if
+              nextInstallmentAmount}} Your next installment of <b>{{ nextInstallmentAmount }}</b> will be charged in
+              <b>{{ nextInstallmentDate }}</b>.{{else}} All of your installments have been completed and you can now
+              access to Afrokiz Edition 3 festival by using your QR code.{{/if}}
+            </p>
+            <table style="width: 100%; margin: 1.5rem 0" cellpadding="0" cellspacing="0" role="presentation">
+              <thead style="text-align: left">
+                <tr>
+                  <th style="padding: 0.8rem; border-bottom: 1px solid black"></th>
+                  <th style="padding: 0.8rem; border-bottom: 1px solid black">Amount</th>
+                  <th style="padding: 0.8rem; border-bottom: 1px solid black">Date</th>
+                  <th style="padding: 0.8rem; border-bottom: 1px solid black">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each payments}}
+                <tr>
+                  <td style="padding: 0.8rem; border-bottom: 1px solid black">{{ statusIcon }}</td>
+                  <td style="padding: 0.8rem; border-bottom: 1px solid black">{{currency}} {{amount}}</td>
+                  <td style="padding: 0.8rem; border-bottom: 1px solid black">{{date}}</td>
+                  <td style="padding: 0.8rem; border-bottom: 1px solid black">{{status}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+            <p>
+              If you have any questions or need further assistance, feel free to contact us on Whatsapp +66991166561.
+            </p>
+            <p>
+              <br />
+              AfroKiz Team,
+              <br />Whatsapp +66991166561
+            </p>
+            <hr style="height: 0; border: 0; border-top: 2px solid #bfbfbf" />
+            <div style="color: #737373; text-align: center; margin-top: 2rem !important">
+              <p style="margin: 0.5rem">
+                <a href="https://www.facebook.com/share/1LgTVFcWbJi844kr/" target="_blank" style="color: #737373"
+                  >Facebook</a
+                >
+              </p>
+              <p style="margin: 0.5rem">
+                <a href="https://www.instagram.com/afrokizbkk/" target="_blank" style="color: #737373">Instagram</a>
+              </p>
+              <p style="margin: 0.5rem">
+                <a href="https://afrokizbkk.com" target="_blank" style="color: #737373">afrokizbkk.com</a>
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

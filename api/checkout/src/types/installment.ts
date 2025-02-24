@@ -9,6 +9,7 @@ export type PaymentDueDate = {
   currency: Currency
   dueDate: Date
   status: PaymentStatus
+  paymentId?: string
 }
 
 export type InstallmentPayment = {

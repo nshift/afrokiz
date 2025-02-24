@@ -3,6 +3,7 @@ import { GetOrders, UploadQrCode } from './adapters/document/storage.gateway'
 import { confirmationEmail } from './adapters/email/email.confirmation'
 import { cruiseEmail } from './adapters/email/email.cruise'
 import { SendingBulkEmails, SendingEmail } from './adapters/email/email.gateway'
+import { paymentConfirmationEmail } from './adapters/email/email.payment.confirmation'
 import { registrationEmail } from './adapters/email/email.registration'
 import { registrationReminderEmail } from './adapters/email/email.registration-reminder'
 import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
@@ -18,6 +19,7 @@ import {
 } from './checkout.rules'
 import { Currency } from './types/currency'
 import { Customer } from './types/customer'
+import { InstallmentPayment } from './types/installment'
 import { makeOrderId, NewOrder, Order } from './types/order'
 import {
   isInstallment,
@@ -76,8 +78,30 @@ export class Checkout {
     if (!order || !customer) {
       throw new Error(`Order (${orderId}) is not found.`)
     }
+    let processedPayment = await this.repository.getPaymentByStripeId(payment.stripeId)
+    if (!processedPayment) {
+      throw new Error(`Payment with stripe id ${payment.stripeId} doesn't exist.`)
+    }
     await this.repository.savePaymentStatus({ order, payment })
     if (this.isPaymentSuccess(payment)) {
+      const { paymentStructures } = (await this.repository.getOrderById(orderId))!
+      let paymentStructure = paymentStructures.find((paymentStructure) =>
+        isInstallment(paymentStructure)
+          ? paymentStructure.dueDates.some((dueDate) => dueDate.paymentId == processedPayment!.id)
+          : paymentStructure.paymentId == processedPayment!.id
+      )
+      if (!paymentStructure) {
+        throw new Error(`No payment structures for order ${order.id} is matching with payment ${processedPayment.id}.`)
+      }
+      if (paymentStructures.length > 1 && !isInstallment(paymentStructure)) {
+        return
+      }
+      if (
+        isInstallment(paymentStructure) &&
+        paymentStructure.dueDates.filter((paymentStructure) => paymentStructure.status === 'completed').length > 1
+      ) {
+        return this.sendPaymentConfirmationEmail({ order, customer, installment: paymentStructure })
+      }
       const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
       await this.sendConfirmationEmail({ order, customer, qrCode: qrCodeFile })
     }
@@ -210,6 +234,20 @@ export class Checkout {
   }) {
     const link = await this.documentAdapter.uploadQrCode(order.id, qrCode)
     return this.emailApi.sendBulkEmails(confirmationEmail([{ order, customer, qrCodeUrl: link }], this.uuidGenerator))
+  }
+
+  private async sendPaymentConfirmationEmail({
+    order,
+    customer,
+    installment,
+  }: {
+    order: Order
+    customer: Customer
+    installment: InstallmentPayment
+  }) {
+    return this.emailApi.sendBulkEmails(
+      paymentConfirmationEmail([{ order, customer, installment }], this.uuidGenerator)
+    )
   }
 
   // TODO: Move to another service.

@@ -9,6 +9,7 @@ export type DirectPayment = {
   amount: number
   currency: Currency
   status: PaymentStatus
+  paymentId?: string
 }
 
 export type PaymentStructure = DirectPayment | InstallmentPayment

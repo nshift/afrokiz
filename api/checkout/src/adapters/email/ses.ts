@@ -19,19 +19,18 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
       },
     })
     await Promise.all(
-      chunk(template.destinations, SESEmailService.BulkTemplateEmailLimit).map(
-        async (destinations) =>
-          await this.client.sendBulkTemplatedEmail({
-            Destinations: destinations.map((destination) => ({
-              Destination: { ToAddresses: destination.toAddresses },
-              ReplacementTemplateData: JSON.stringify(destination.data),
-            })),
-            Source: this.source.email,
-            Template: template.name,
-            DefaultTemplateData: '{}',
-            ConfigurationSetName: 'afrokiz-configuration-set',
-          })
-      )
+      chunk(template.destinations, SESEmailService.BulkTemplateEmailLimit).map(async (destinations) => {
+        return await this.client.sendBulkTemplatedEmail({
+          Destinations: destinations.map((destination) => ({
+            Destination: { ToAddresses: destination.toAddresses },
+            ReplacementTemplateData: JSON.stringify(destination.data),
+          })),
+          Source: this.source.email,
+          Template: template.name,
+          DefaultTemplateData: '{}',
+          ConfigurationSetName: 'afrokiz-configuration-set',
+        })
+      })
     )
     await this.client.deleteTemplate({ TemplateName: template.name })
   }

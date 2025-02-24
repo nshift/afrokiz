@@ -1,14 +1,17 @@
 import { Repository } from '../adapters/repository/repository'
+import { UUIDGenerator } from '../adapters/uuid.generator'
 import { Currency } from '../types/currency'
 import { Customer } from '../types/customer'
 import { ImportOrder, Order } from '../types/order'
-import { Payment, PaymentStatus, PaymentStructure } from '../types/payment'
+import { isInstallment, Payment, PaymentStatus, PaymentStructure } from '../types/payment'
 import { PaymentIntent } from '../types/payment-intent'
 import { Promotion } from '../types/promotion'
 import { Sales } from '../types/sales'
 import { discountPromotion, massagePromotion } from './fixtures'
 
 export class InMemoryRepository implements Repository {
+  constructor(private uuidGenerator: UUIDGenerator) {}
+
   private payments: { [key: string]: Payment } = {}
   private orders: {
     [key: string]: {
@@ -41,12 +44,53 @@ export class InMemoryRepository implements Repository {
     paymentStructures: PaymentStructure[]
     checkedIn: boolean
   }): Promise<void> {
+    let payments: Payment[] = checkout.paymentStructures.flatMap((paymentStructure) =>
+      isInstallment(paymentStructure)
+        ? paymentStructure.dueDates.map((dueDate, index) => ({
+            id: this.uuidGenerator.generate(),
+            orderId: checkout.order.id,
+            amount: dueDate.amount,
+            currency: dueDate.currency,
+            dueDate: dueDate.dueDate,
+            status: dueDate.status,
+            stripe: {
+              id: checkout.payment.intent?.id ?? null,
+              secret: checkout.payment.intent?.secret ?? null,
+              customerId: checkout.payment.customer.id,
+            },
+          }))
+        : [
+            {
+              id: this.uuidGenerator.generate(),
+              orderId: checkout.order.id,
+              amount: paymentStructure.amount,
+              currency: paymentStructure.currency,
+              status: paymentStructure.status,
+              stripe: {
+                id: checkout.payment.intent?.id ?? null,
+                secret: checkout.payment.intent?.secret ?? null,
+                customerId: checkout.payment.customer.id,
+              },
+            },
+          ]
+    )
+    payments.forEach((payment) => (this.payments[payment.id] = payment))
     this.orders[checkout.order.id] = {
       order: checkout.order,
       customer: checkout.customer,
       promoCode: checkout.promoCode,
       payment: checkout.payment,
-      paymentStructures: checkout.paymentStructures,
+      paymentStructures: checkout.paymentStructures.map((paymentStructure) =>
+        isInstallment(paymentStructure)
+          ? {
+              ...paymentStructure,
+              dueDates: paymentStructure.dueDates.map((dueDate, index) => ({
+                ...dueDate,
+                paymentId: payments[index].id,
+              })),
+            }
+          : { ...paymentStructure, paymentId: payments[0].id }
+      ),
       checkedIn: checkout.checkedIn,
     }
   }
@@ -70,6 +114,10 @@ export class InMemoryRepository implements Repository {
     return Object.values(this.payments).filter(
       (payment) => payment.status == 'pending' && payment.dueDate && payment.dueDate.getTime() < before.getTime()
     )
+  }
+
+  async getPaymentByStripeId(stripeId: string): Promise<Payment | null> {
+    return Object.values(this.payments).find((payment) => payment.stripe.id == stripeId) ?? null
   }
 
   async getAllPromotions(): Promise<{ [key: string]: Promotion }> {
