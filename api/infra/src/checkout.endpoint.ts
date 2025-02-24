@@ -1,4 +1,4 @@
-import { createEndpoint, createSharedLayer } from '@nshift/cdk'
+import { createEndpoint, createSharedLayer, makeId } from '@nshift/cdk'
 import * as cdk from 'aws-cdk-lib'
 import { Environment } from './environment'
 import { CheckoutModule } from './path'
@@ -99,6 +99,11 @@ const makeProcessPendingPaymentsEndpoint = (props: {
     ...props,
   })
   props.paymentTable.grant(endpoint.lambda, 'dynamodb:Query', 'dynamodb:PutItem')
+  const eventRule = new cdk.aws_events.Rule(props.stack, makeId('ProcessPendingPaymentsSchedule'), {
+    schedule: cdk.aws_events.Schedule.cron({ minute: '0', hour: '9' }),
+    // schedule: cdk.aws_events.Schedule.rate(cdk.Duration.minutes(5)),
+  })
+  eventRule.addTarget(new cdk.aws_events_targets.LambdaFunction(endpoint.lambda))
   return endpoint
 }
 
