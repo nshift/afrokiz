@@ -731,8 +731,8 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'party-package',
     name: 'Party Package',
     isSoldOut: false,
-    price: { USD: 45000, EUR: 43500, THB: 1550000 },
-    doorPrice: { USD: 80000, EUR: 75600, THB: 2700000 },
+    price: { USD: 39900, EUR: 38000, THB: 1360000 },
+    doorPrice: { USD: 50000, EUR: 48000, THB: 1700000 },
     includes: [
       'All workshops at Koh Samet',
       'Day time social',
