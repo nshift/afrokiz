@@ -24,7 +24,7 @@ const sametBangkokPass = defaultPasses.sametBangkokPass
       <Card classes={["card small package"]}>
         <Card classes={["card"]}>
           <h4>Party Package</h4>
-          <h3><Currency price={partyPackage.price} /></h3>
+          <h3><Currency price={partyPackage.price} client:only /></h3>
           <p><a href={"/pass/" + partyPackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
@@ -46,7 +46,7 @@ const sametBangkokPass = defaultPasses.sametBangkokPass
       <Card classes={["card small package"]}>
         <Card classes={["card"]}>
           <h4>All Inclusive Package</h4>
-          <h3><Currency price={allInclusivePackage.price} /></h3>
+          <h3><Currency price={allInclusivePackage.price} client:only /></h3>
           <p><a href={"/pass/" + allInclusivePackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
@@ -68,7 +68,7 @@ const sametBangkokPass = defaultPasses.sametBangkokPass
       <Card classes={["card small package"]}>
         <Card classes={["card"]}>
           <h4>Full Pass Package</h4>
-          <h3><Currency price={sametBangkokPass.price} /></h3>
+          <h3><Currency price={sametBangkokPass.price} client:only /></h3>
           <p><a href={"/pass/" + sametBangkokPass.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
