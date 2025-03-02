@@ -6,11 +6,9 @@ import Footer from "../sections/Footer.astro";
 import { defaultPasses } from "../data/edition3/pass";
 import Currency from "../components/Currency.vue";
 
-const fullpass = defaultPasses.fullPass
-const vipSilverPass = defaultPasses.vipSilverPass
+const allInclusivePackage = defaultPasses.allInclusivePackage
 const partyPackage = defaultPasses.partyPackage
 const sametBangkokPass = defaultPasses.sametBangkokPass
-const sametPass = defaultPasses.sametPass
 ---
 
 <Layout title="Traveling Packages | Afrokiz Bkk Festival Edition 3">
@@ -27,7 +25,7 @@ const sametPass = defaultPasses.sametPass
         <Card classes={["card"]}>
           <h4>Party Package</h4>
           <h3><Currency price={partyPackage.price} /></h3>
-          <p><a href="/traveling" class="button action">Buy now</a></p>
+          <p><a href={"/pass/" + partyPackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-xmark"></i> 3 Nights Stay at Bangkok hotel</li>
@@ -48,8 +46,8 @@ const sametPass = defaultPasses.sametPass
       <Card classes={["card small package"]}>
         <Card classes={["card"]}>
           <h4>All Inclusive Package</h4>
-          <h3><Currency price={sametPass.price} /></h3>
-          <p><a href="/traveling" class="button action">Buy now</a></p>
+          <h3><Currency price={allInclusivePackage.price} /></h3>
+          <p><a href={"/pass/" + allInclusivePackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Bangkok hotel</li>
@@ -70,7 +68,7 @@ const sametPass = defaultPasses.sametPass
       <Card classes={["card small package"]}>
         <Card classes={["card"]}>
           <h4>Full Pass Package</h4>
-          <h3><Currency price={sametPass.price} /></h3>
+          <h3><Currency price={sametBangkokPass.price} /></h3>
           <p><a href={"/pass/" + sametBangkokPass.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
