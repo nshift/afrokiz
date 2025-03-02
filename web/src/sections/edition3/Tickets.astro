@@ -19,58 +19,6 @@ function calculatePrice(pass: Pass) {
 ---
 
 <div id="tickets" class="container">
-    <Card classes={["ticket-card", "ticket", "fullpassValentine"]}>
-      <div class="heart">💝</div>
-      <div class="installment-annotation valentine">Pay Over 3 Months</div>
-      <div class="container-column">
-        <div>
-          <h2><Currency price={calculatePrice(fullpassValentine)} client:only /></h2>
-          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(fullpassValentine)} today={new Date()} client:only /></p>
-          { fullpassValentine.price.EUR != fullpassValentine.doorPrice.EUR && <p><s><Currency price={fullpassValentine.doorPrice} client:only /></s></p> }
-          <h3>{fullpassValentine.name}</h3>
-          <p>+ 1H Massage per person</p>
-          <p>Last 4 passes left.</p>
-        </div>
-        <div class="button-container">
-          { !fullpassValentine.isSoldOut && <a href={"/pass/" + fullpassValentine.id} class="button action">Buy Now</a> }
-          { fullpassValentine.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
-        </div>
-      </div>
-    </Card>
-    <Card classes={["ticket-card", "ticket", "vipSilverValentine"]}>
-      <div class="heart">💝</div>
-      <div class="installment-annotation valentine">Pay Over 3 Months</div>
-      <div class="container-column">
-        <div>
-          <h2><Currency price={calculatePrice(vipSilverValentine)} client:only /></h2>
-          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipSilverValentine)} today={new Date()} client:only /></p>
-          { vipSilverValentine.price.EUR != vipSilverValentine.doorPrice.EUR && <p><s><Currency price={vipSilverValentine.doorPrice} client:only /></s></p> }
-          <h3>{vipSilverValentine.name}</h3>
-          <p>Last 4 passes left.</p>
-        </div>
-        <div class="button-container">
-          { !vipSilverValentine.isSoldOut && <a href={"/pass/" + vipSilverValentine.id} class="button action">Buy Now</a> }
-          { vipSilverValentine.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
-        </div>
-      </div>
-    </Card>
-    <Card classes={["ticket-card", "ticket", "vipGoldValentine"]}>
-      <div class="heart">💝</div>
-      <div class="installment-annotation valentine">Pay Over 3 Months</div>
-      <div class="container-column">
-        <div>
-          <h2><Currency price={calculatePrice(vipGoldValentine)} client:only /></h2>
-          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipGoldValentine)} today={new Date()} client:only /></p>
-          { vipGoldValentine.price.EUR != vipGoldValentine.doorPrice.EUR && <p><s><Currency price={vipGoldValentine.doorPrice} client:only /></s></p> }
-          <h3>{vipGoldValentine.name}</h3>
-          <p>Last 4 passes left.</p>
-        </div>
-        <div class="button-container">
-          { !vipGoldValentine.isSoldOut && <a href={"/pass/" + vipGoldValentine.id} class="button action">Buy Now</a> }
-          { vipGoldValentine.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
-        </div>
-      </div>
-    </Card>
     <Card classes={["date-card", "bangkok"]} backgroundPath="/images/mahanakhon.png">
       <h2>5-8 Sep 2025</h2>
       <h4>Bangkok, Thailand</h4>
@@ -162,7 +110,6 @@ function calculatePrice(pass: Pass) {
   }
   #tickets {
     grid-template-areas:
-      "fullpassValentine fullpassValentine fullpassValentine fullpassValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine"
       "bangkok bangkok bangkok bangkok bangkok bangkok samet samet samet samet samet samet"
       "fullpass fullpass fullpass vipSilver vipSilver vipSilver bangkokSamet bangkokSamet bangkokSamet sametGetaway sametGetaway sametGetaway"
       "vipGold vipGold vipGold none none none none none none none none none";
@@ -262,7 +209,6 @@ function calculatePrice(pass: Pass) {
     }
     #tickets {
       grid-template-areas:
-        "fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine fullpassValentine"
         "vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine"
         "bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok"
         "fullpass fullpass fullpass fullpass vipSilver vipSilver vipSilver vipSilver vipGold vipGold vipGold vipGold"

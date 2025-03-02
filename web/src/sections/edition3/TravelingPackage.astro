@@ -1,0 +1,42 @@
+---
+import Card from "../../components/Card.astro";
+---
+
+<div class="container">
+  <Card classes={["travelingPackageCard"]} backgroundPath="/images/beach.png">
+      <div></div>
+      <div class="travelingPackageText">
+        <h2>Dance 1 week in Thailand</h2>
+        <p>You are traveling to Thailand and want to dance Kizomba. We have the perfect packages for you to make your Thailand trip amazing. We will start in Bangkok and then go to Koh Samet island. In Bangkok we are expecting 400 dancers, it will be huge. After the craziness, we will chill and enjoy the island life.</p>
+        <a href="/traveling" class="button action arrow">See All Traveling Packages</a>
+      </div>
+  </Card>
+</div>
+
+<style>
+  .travelingPackageText {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--grid-lg-gap);
+    text-align: center;
+  }
+</style>
+
+<style is:global>
+  .travelingPackageCard {
+    background-color: var(--secondary-color) !important;
+    grid-column: span 12;
+    min-height: 374px;
+  }
+  .travelingPackageCard .text {
+    padding: var(--lg-padding);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+  }
+  .travelingPackageCard .text > * {
+    width: 100%;
+  }
+</style>

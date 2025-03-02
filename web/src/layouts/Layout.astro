@@ -58,6 +58,7 @@ const { title } = Astro.props;
     --grid-lg-gap: 2rem;
     --grid-m-gap: 1.5rem;
     --grid-s-gap: 1rem;
+    --grid-xs-gap: 0.75rem;
     --text-font-size: 1rem;
     --h1-font-size: 2.5rem;
     --h2-font-size: 1.75rem;
@@ -112,6 +113,13 @@ const { title } = Astro.props;
     -webkit-transform: none;
     transform: none;
     box-shadow: none;
+  }
+  .arrow:after {
+    font-size: 0.9rem;
+    font-family: arial;
+    font-weight: 100;
+    content: "\279C";
+    padding-left: 5px;
   }
   .grid {
     display: grid;
