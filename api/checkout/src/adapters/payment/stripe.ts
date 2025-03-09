@@ -54,6 +54,7 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
       automatic_payment_methods: { enabled: true },
       setup_future_usage: 'off_session',
       metadata: { orderId: order.id },
+      payment_method: paymentMethodId,
     })
     if (!paymentIntent.client_secret) {
       throw new Error(`Payment intent (${paymentIntent.id}) does not contain any client secret.`)
