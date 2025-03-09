@@ -2,7 +2,11 @@ import type { Currency } from '../data/pass'
 import { Environment } from '../environment'
 import type { DiscountPromotion, GiveAwayPromotion, Promotion } from './promotion'
 export class PaymentAPI {
-  async createOrder(newOrder: NewOrder, paymentOption: PaymentOption): Promise<{ order: Order; clientSecret: string }> {
+  async createOrder(
+    newOrder: NewOrder,
+    paymentOption: PaymentOption,
+    paymentMethodId: string
+  ): Promise<{ order: Order; clientSecret: string }> {
     const json = await this.request({
       method: 'POST',
       path: '/checkout',
@@ -14,7 +18,11 @@ export class PaymentAPI {
         pass_id: newOrder.passId,
         date: newOrder.date.toISOString(),
         promo_code: newOrder.promoCode,
-        payment_options: { method: paymentOption.method, structure: paymentOption.structure },
+        payment_options: {
+          method: paymentOption.method,
+          structure: paymentOption.structure,
+          payment_method_id: paymentMethodId,
+        },
         items: newOrder.items.map((item) => ({
           id: item.id,
           title: item.title,

@@ -6,12 +6,14 @@ export interface CreatingPaymentIntent {
     order: { id: string }
     total: { amount: number; currency: Currency }
     customer: { id: string }
+    paymentMethodId: string
   }): Promise<PaymentIntent>
 
   createPaymentIntentForInstallment(input: {
     order: { id: string }
     total: { amount: number; currency: Currency }
     customer: { id: string }
+    paymentMethodId: string
   }): Promise<PaymentIntent>
 
   createCustomer(source: { name: string; email: string }): Promise<{ id: string }>

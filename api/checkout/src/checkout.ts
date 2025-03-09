@@ -55,7 +55,7 @@ export class Checkout {
     newOrder: NewOrder
     customer: Customer
     promoCode: string | null
-    paymentOption: { method: PaymentMethod; structure: PaymentStructureType }
+    paymentOption: { method: PaymentMethod; structure: PaymentStructureType; paymentMethodId: string }
   }) {
     let existingCheckout = newOrder.id ? await this.getOrder(newOrder.id) : undefined
     let order = existingCheckout?.order ?? this.makeOrder(newOrder)
@@ -66,7 +66,12 @@ export class Checkout {
       today: this.dateGenerator.today(),
     })
     let paymentStructures = (existingCheckout?.paymentStructures ?? []).concat(paymentStructure)
-    let payment = await this.createPayment({ order, paymentStructure, customer })
+    let payment = await this.createPayment({
+      order,
+      paymentStructure,
+      customer,
+      paymentMethodId: paymentOption.paymentMethodId,
+    })
     order = this.updateItems(order, newOrder)
     const checkout = await this.makeCheckout({ order, paymentStructures, payment, customer, promoCode })
     await this.repository.saveCheckout(checkout)
@@ -169,10 +174,12 @@ export class Checkout {
     order,
     paymentStructure,
     customer: sourceCustomer,
+    paymentMethodId,
   }: {
     order: Order
     paymentStructure: PaymentStructure
     customer: Customer
+    paymentMethodId: string
   }): Promise<{ status: PaymentStatus; intent: PaymentIntent; customer: { id: string } }> {
     let customer = await this.paymentAdapter.createCustomer({
       name: sourceCustomer.fullname,
@@ -181,11 +188,16 @@ export class Checkout {
     if (isInstallment(paymentStructure)) {
       let firstDueDate = paymentStructure.dueDates[0]
       let total = { amount: firstDueDate.amount, currency: firstDueDate.currency }
-      const paymentIntent = await this.paymentAdapter.createPaymentIntentForInstallment({ order, total, customer })
+      const paymentIntent = await this.paymentAdapter.createPaymentIntentForInstallment({
+        order,
+        total,
+        customer,
+        paymentMethodId,
+      })
       return { status: firstDueDate.status, intent: paymentIntent, customer }
     } else {
       let total = { amount: paymentStructure.amount, currency: paymentStructure.currency }
-      const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total, customer })
+      const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total, customer, paymentMethodId })
       return { status: paymentStructure.status, intent: paymentIntent, customer }
     }
   }

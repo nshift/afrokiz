@@ -10,11 +10,14 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
     order,
     total,
     customer,
+    paymentMethodId,
   }: {
     order: { id: string }
     total: { amount: number; currency: Currency }
     customer: { id: string }
+    paymentMethodId: string
   }): Promise<PaymentIntent> {
+    await this.stripe.paymentMethods.attach(paymentMethodId, { customer: customer.id })
     const paymentIntent = await this.stripe.paymentIntents.create({
       customer: customer.id,
       amount: total.amount,
@@ -36,11 +39,14 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
     order,
     total,
     customer,
+    paymentMethodId,
   }: {
     order: { id: string }
     total: { amount: number; currency: Currency }
     customer: { id: string }
+    paymentMethodId: string
   }): Promise<PaymentIntent> {
+    // await this.stripe.paymentMethods.attach(paymentMethodId, { customer: customer.id })
     const paymentIntent = await this.stripe.paymentIntents.create({
       customer: customer.id,
       amount: total.amount,
@@ -105,5 +111,10 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
       throw new Error(`Payment intent (${paymentIntent.id}) does not contain any client secret.`)
     }
     return { id: paymentIntent.id, secret: paymentIntent.client_secret }
+  }
+
+  async getCustomerPaymentMethod(customerId: string) {
+    const paymentMethods = await this.stripe.paymentMethods.list({ customer: customerId })
+    return paymentMethods.data
   }
 }

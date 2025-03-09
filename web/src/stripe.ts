@@ -29,6 +29,7 @@ export class Stripe {
       mode: 'payment',
       capture_method: 'automatic',
       setup_future_usage: options.isInstallment ? 'off_session' : undefined,
+      paymentMethodCreation: 'manual',
     })
 
   mountElements(elements: StripeElements, domElement: string | HTMLElement) {
@@ -42,11 +43,18 @@ export class Stripe {
     newOrder: NewOrder,
     paymentOption: PaymentOption
   ): Promise<never | { error: StripeError }> {
-    const { order, clientSecret } = await this.paymentApi.createOrder(newOrder, paymentOption)
+    let { paymentMethod, error } = await this.stripe.createPaymentMethod({ elements })
+    if (!paymentMethod) {
+      return { error: error! }
+    }
+    const { order, clientSecret } = await this.paymentApi.createOrder(newOrder, paymentOption, paymentMethod.id)
     return await this.stripe.confirmPayment({
       elements,
       clientSecret,
-      confirmParams: { return_url: Environment.Host() + '/checkout?order_id=' + order.id },
+      confirmParams: {
+        return_url: Environment.Host() + '/checkout?order_id=' + order.id,
+        payment_method: paymentMethod.id,
+      },
     })
   }
 }

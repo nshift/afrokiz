@@ -23,7 +23,7 @@ describe.skip('Stripe', () => {
     let paymentIntent = await stripeAdapter.createPaymentIntentForInstallment({ order, total, customer })
     console.log('>>>> ', paymentIntent)
   })
-  it.only('should charge customer for installment', async () => {
+  it('should charge customer for installment', async () => {
     const stripe = new Stripe(Environment.StripeSecretKey())
     let stripeAdapter = new StripePaymentAdapter(stripe)
     let order = { id: 'b902df' }
@@ -31,5 +31,12 @@ describe.skip('Stripe', () => {
     let total: { amount: number; currency: Currency } = { amount: 50000, currency: 'USD' }
     let paymentIntent = await stripeAdapter.chargeCustomerInstallment({ order, total, customer })
     console.log('>>>> ', paymentIntent)
+  })
+  it.only('should get the payment method associated to a customer', async () => {
+    const stripe = new Stripe(Environment.StripeSecretKey())
+    let stripeAdapter = new StripePaymentAdapter(stripe)
+
+    let paymentMethods = await stripeAdapter.getCustomerPaymentMethod('cus_RpE9iDj2zlLw7I')
+    console.log('>>>> ', paymentMethods)
   })
 })

@@ -10,7 +10,7 @@ export const buildProceedToCheckoutRequest = (
 ): {
   newOrder: NewOrder
   customer: Customer
-  paymentOption: { method: PaymentMethod; structure: PaymentStructureType }
+  paymentOption: { method: PaymentMethod; structure: PaymentStructureType; paymentMethodId: string }
   promoCode: string | null
 } => ({
   newOrder: {
@@ -33,6 +33,7 @@ export const buildProceedToCheckoutRequest = (
   paymentOption: {
     method: request.payment_options.method,
     structure: request.payment_options.structure,
+    paymentMethodId: request.payment_options.payment_method_id,
   },
   promoCode: request.promo_code,
 })
