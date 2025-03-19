@@ -63,6 +63,16 @@ export const makeEdition3PromoterDiscount = (code: string) =>
     isAppliable: (passId: string) => !['party-bundle'].includes(passId),
   })
 
+export const makeKizIslandPromoterDiscount = (code: string) =>
+  makeDiscountPromotion({
+    id: `kiz-island`,
+    isActive: true,
+    code: code.toUpperCase(),
+    expirationDate: new Date('2025-03-24'),
+    discount: 0.9,
+    isAppliable: (passId: string) => !['party-bundle'].includes(passId),
+  })
+
 export const makeTarrakizSGDiscount = makeDiscountPromotion({
   id: 'tarrakizSG',
   isActive: true,

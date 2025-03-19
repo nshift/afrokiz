@@ -20,7 +20,7 @@ import {
   processProceedToCheckoutEvent,
 } from './events/proceed-to-checkout.event.v2'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event.v2'
-import { makeEdition3PromoterDiscount } from './promotions'
+import { makeEdition3PromoterDiscount, makeKizIslandPromoterDiscount } from './promotions'
 import { Repository } from './repository'
 import {
   OrderSchema,
@@ -141,6 +141,7 @@ export class DynamoDbRepository implements Repository {
       KAMARAD: makeEdition3PromoterDiscount('KAMARAD'),
       KIMQCLW: makeEdition3PromoterDiscount('KIMQCLW'),
       KIW: makeEdition3PromoterDiscount('KIW'),
+      KIZISLAND: makeKizIslandPromoterDiscount('KIZISLAND'),
       LIYA: makeEdition3PromoterDiscount('LIYA'),
       MEL: makeEdition3PromoterDiscount('MEL'),
       MELISSA: makeEdition3PromoterDiscount('MELISSA'),
