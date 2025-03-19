@@ -22,6 +22,23 @@ export type Pass = {
   options: { [key: string]: Option }
 }
 
+export const afroBootcampOption: { [key: string]: Option } = {
+  'afro-bootcamp': {
+    id: 'afro-bootcamp',
+    icon: 'fa-user-group',
+    title: 'Afro Essense Bootcamp by AfroGiants',
+    includesInShortDescription: ['1H30 Bootcamp'],
+    includes: ['1H30 Afro Essense Bootcamp by AfroGiants'],
+    selected: false,
+    soldOut: false,
+    price: {
+      USD: 6500,
+      EUR: 6000,
+      THB: 200000,
+    },
+  },
+}
+
 export const masterClassOptions: { [key: string]: Option } = {
   'audi-laura-masterclass': {
     id: 'audi-laura-masterclass',
@@ -361,7 +378,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
-      ...masterClassOptions,
+      ...afroBootcampOption,
       'cruise-option': {
         id: 'cruise-option',
         icon: 'fa-ship',
@@ -376,6 +393,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           THB: 191000,
         },
       },
+      ...masterClassOptions,
       'vip-silver-upgrade': {
         id: 'vip-silver-upgrade',
         icon: 'fa-crown',
@@ -427,6 +445,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      ...afroBootcampOption,
       'cruise-option': {
         id: 'cruise-option',
         icon: 'fa-ship',
@@ -441,6 +460,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           THB: 191000,
         },
       },
+      ...masterClassOptions,
       'vip-silver-upgrade': {
         id: 'vip-silver-upgrade',
         icon: 'fa-crown',
@@ -492,6 +512,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      ...afroBootcampOption,
       'cruise-option': {
         id: 'cruise-option',
         icon: 'fa-ship',
@@ -506,6 +527,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           THB: 191000,
         },
       },
+      ...masterClassOptions,
       'vip-silver-upgrade': {
         id: 'vip-silver-upgrade',
         icon: 'fa-crown',
@@ -566,6 +588,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      ...afroBootcampOption,
       ...masterClassOptions,
       'vip-gold-upgrade': {
         id: 'vip-gold-upgrade',
@@ -605,7 +628,9 @@ export const defaultPasses: { [key: string]: Pass } = {
     ],
     giveAways: [],
     isPromoted: true,
-    options: {},
+    options: {
+      ...afroBootcampOption,
+    },
   },
   sametBangkokPass: {
     id: 'samet-bangkok',
@@ -652,6 +677,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           THB: 191000,
         },
       },
+      ...afroBootcampOption,
       ...masterClassOptions,
       'vip-silver-upgrade': {
         id: 'vip-silver-upgrade',
@@ -759,6 +785,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           THB: 191000,
         },
       },
+      ...afroBootcampOption,
       ...masterClassOptions,
       'vip-silver-upgrade': {
         id: 'vip-silver-upgrade',
@@ -825,6 +852,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      ...afroBootcampOption,
       ...masterClassOptions,
       'vip-gold-upgrade': {
         id: 'vip-gold-upgrade',
