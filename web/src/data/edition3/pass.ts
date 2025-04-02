@@ -372,7 +372,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'fullpass',
     name: 'Full Pass',
     isSoldOut: false,
-    price: { USD: 15000, EUR: 14500, THB: 510000 },
+    price: { USD: 16000, EUR: 15000, THB: 545000 },
     doorPrice: { USD: 20000, EUR: 19000, THB: 680000 },
     includes: ['All workshops', 'Day time social', 'Evening parties during September 5-7', 'Non-refundable'],
     giveAways: [],
@@ -573,7 +573,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'vip-silver',
     name: 'VIP Silver',
     isSoldOut: false,
-    price: { USD: 32000, EUR: 31000, THB: 1100000 },
+    price: { USD: 33000, EUR: 31000, THB: 1130000 },
     doorPrice: { USD: 40000, EUR: 37800, THB: 1360000 },
     includes: [
       'All workshops',
@@ -610,7 +610,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'vip-gold',
     name: 'VIP Gold',
     isSoldOut: false,
-    price: { USD: 45000, EUR: 43500, THB: 1550000 },
+    price: { USD: 46000, EUR: 43500, THB: 1580000 },
     doorPrice: { USD: 50000, EUR: 47500, THB: 1700000 },
     includes: [
       'All workshops',
@@ -636,7 +636,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'samet-bangkok',
     name: 'Bangkok x Samet Pass',
     isSoldOut: false,
-    price: { USD: 45000, EUR: 43500, THB: 1550000 },
+    price: { USD: 46000, EUR: 43500, THB: 1580000 },
     doorPrice: { USD: 80000, EUR: 75600, THB: 2700000 },
     includes: [
       'All workshops at Bangkok and Koh Samet',
@@ -724,7 +724,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'samet',
     name: 'Samet Getaway Pass',
     isSoldOut: false,
-    price: { USD: 35000, EUR: 34000, THB: 1200000 },
+    price: { USD: 36000, EUR: 34000, THB: 1240000 },
     doorPrice: { USD: 60000, EUR: 56800, THB: 2000000 },
     includes: [
       'All workshops at Koh Samet only',
