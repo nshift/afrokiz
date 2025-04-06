@@ -29,7 +29,10 @@ function calculatePrice(pass: Pass) {
         <Card classes={["card"]}>
           <h4>Party Package</h4>
           <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only /></h3>
-          <p><Currency price={partyPackage.price} client:only /></p>
+          <p>
+            <Currency price={partyPackage.price} client:only />
+            { partyPackage.price.EUR != partyPackage.doorPrice.EUR && <s><Currency price={partyPackage.doorPrice} client:only /></s> }
+          </p>
           <p><a href={"/pass/" + partyPackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
@@ -52,7 +55,10 @@ function calculatePrice(pass: Pass) {
         <Card classes={["card"]}>
           <h4>Full Pass Package</h4>
           <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(sametBangkokPass)} today={new Date()} client:only /></h3>
-          <p><Currency price={sametBangkokPass.price} client:only /></p>
+          <p>
+            <Currency price={sametBangkokPass.price} client:only />
+            { sametBangkokPass.price.EUR != sametBangkokPass.doorPrice.EUR && <s><Currency price={sametBangkokPass.doorPrice} client:only /></s> }
+          </p>
           <p><a href={"/pass/" + sametBangkokPass.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
@@ -75,7 +81,10 @@ function calculatePrice(pass: Pass) {
         <Card classes={["card"]}>
           <h4>All Inclusive Package</h4>
           <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(allInclusivePackage)} today={new Date()} client:only /></h3>
-          <p><Currency price={allInclusivePackage.price} client:only /></p>
+          <p>
+            <Currency price={allInclusivePackage.price} client:only />
+            { allInclusivePackage.price.EUR != allInclusivePackage.doorPrice.EUR && <s><Currency price={allInclusivePackage.doorPrice} client:only /></s> }
+          </p>
           <p><a href={"/pass/" + allInclusivePackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
