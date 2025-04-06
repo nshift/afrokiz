@@ -2,34 +2,46 @@
 import Card from "../components/Card.astro";
 import { artists } from "../data/edition3/artist";
 
-let allArtists = [artists.audilaura, artists.tpeak, artists.albir, artists.asia, artists.ozyshine, artists.quinn, artists.oncleKani, artists.david, artists.tonya, artists.stef, artists.ploy, artists.selva, artists.lucerne]
-type Artist = { name: string; musicStyle: string; image: string; }
-const pairs = allArtists.reduce<[Artist, Artist][]>((acc, currentValue, currentIndex) => {
-  // Check if the current index is even (starting a new pair)
-  if (currentIndex % 2 === 0) {
-    acc.push([currentValue, allArtists[currentIndex + 1]]);
-  }
-  return acc;
-}, []);
+let instructors = [artists.audilaura, artists.albir, artists.asia, artists.tpeak, artists.ozyshine, artists.quinn, artists.oncleKani, artists.david, artists.tonya, artists.stef];
+let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, artists.tonya, artists.ploy];
+// type Artist = { name: string; musicStyle: string; image: string; }
+// const pairs = allArtists.reduce<[Artist, Artist][]>((acc, currentValue, currentIndex) => {
+//   // Check if the current index is even (starting a new pair)
+//   if (currentIndex % 2 === 0) {
+//     acc.push([currentValue, allArtists[currentIndex + 1]]);
+//   }
+//   return acc;
+// }, []);
+
 ---
 
 <div class="container">
   <div class="section-header">
-    <h1>Lineup</h1>
+    <h1>Instructors</h1>
     <!-- <div class="button-container"><a href={"/pass/"} class="button action arrow">Tickets</a></div> -->
   </div>
   <ul>
     {
-      pairs.map((artist) => (
-        <li class="artist-pair">
-          <Card backgroundPath={artist[0].image} classes={["artist-card"]}>
-            {artist[0].name}
+      instructors.map((artist) => (
+        <li>
+          <Card backgroundPath={artist.image} classes={["artist-card"]}>
+            {artist.name}
           </Card>
-          { (artist[1] != null) &&
-            <Card backgroundPath={artist[1].image} classes={["artist-card"]}>
-              {artist[1].name}
-            </Card>
-          }
+        </li>
+      ))
+    }
+  </ul>
+  <div class="section-header">
+    <h1>Djs</h1>
+    <!-- <div class="button-container"><a href={"/pass/"} class="button action arrow">Tickets</a></div> -->
+  </div>
+  <ul>
+    {
+      djs.map((artist) => (
+        <li>
+          <Card backgroundPath={artist.image} classes={["artist-card"]}>
+            {artist.name}
+          </Card>
         </li>
       ))
     }
