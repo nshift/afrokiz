@@ -1,0 +1,56 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../sections/edition3/Header.astro";
+import Artists from "../sections/edition3/Artists.astro";
+import Tickets from "../sections/edition3/Tickets.astro";
+import Festivals from "../sections/edition3/Festivals.astro";
+import Footer from "../sections/Footer.astro";
+import TaxiDancers from "../sections/edition3/TaxiDancers.astro";
+import TravelingPackage from "../sections/edition3/TravelingPackage.astro";
+---
+
+<Layout title="Afrokiz Bkk Festival Edition 3">
+  <Header />
+  <main>
+    <Festivals />
+    <Artists />
+    <TravelingPackage />
+    <Tickets />
+    <TaxiDancers />
+  </main>
+  <Footer />
+</Layout>
+
+
+<style is:global>
+  .dual-card {
+    width: calc((100% / 2) - 0.8rem);
+    min-height: 275px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+  }
+  .dual-card .text {
+    padding: 1.5rem;
+  }
+  @media only screen and (max-width: 920px) {
+    .dual-card {
+      width: calc((100% / 2) - 0.5rem);
+      min-height: 175px;
+    }
+  }
+  .container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: var(--grid-lg-gap);
+    padding: 0 var(--grid-side-padding);
+  }
+  .list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    grid-column: span 12;
+  }
+</style>

@@ -3,13 +3,13 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../sections/Header.astro";
 import Footer from "../../sections/Footer.astro";
 import TicketForm from "../../components/TicketForm.vue";
-import { passes } from "../../data/promotion";
+import { defaultPasses } from "../../data/edition3/pass";
 ---
 
-<Layout title={`${passes.friNight.name} | Afrokiz Bkk Festival Edition 2`}>
+<Layout title={`${defaultPasses.friNight.name} | Afrokiz Bkk Festival Edition 3`}>
   <Header />
   <main>
-    <TicketForm client:load pass={passes.friNight} />
+    <TicketForm client:load pass={defaultPasses.friNight} />
   </main>
   <Footer />
 </Layout>

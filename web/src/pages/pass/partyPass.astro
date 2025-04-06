@@ -6,10 +6,10 @@ import TicketForm from "../../components/TicketForm.vue";
 import { defaultPasses } from "../../data/edition3/pass";
 ---
 
-<Layout title={`${defaultPasses.fri.name} | Afrokiz Bkk Festival Edition 3`}>
+<Layout title={`${defaultPasses.partyPass.name} | Afrokiz Bkk Festival Edition 3`}>
   <Header />
   <main>
-    <TicketForm client:load pass={defaultPasses.fri} />
+    <TicketForm client:load pass={defaultPasses.partyPass} />
   </main>
   <Footer />
 </Layout>

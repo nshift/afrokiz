@@ -59,6 +59,11 @@ export const artists: { [key: string]: { name: string; musicStyle: string; image
     musicStyle: '',
     image: '/images/artists/tonya.jpg',
   },
+  tonyaDj: {
+    name: 'TonyA 🇻🇳',
+    musicStyle: '',
+    image: '/images/artists/tonya_dj.jpg',
+  },
   lucerne: {
     name: 'DJ Spacebar 🇻🇳',
     musicStyle: '',
