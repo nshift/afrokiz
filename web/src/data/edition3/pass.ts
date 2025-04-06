@@ -757,7 +757,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'party-package',
     name: 'Party Package',
     isSoldOut: false,
-    price: { USD: 39900, EUR: 38000, THB: 1360000 },
+    price: { USD: 34900, EUR: 32000, THB: 1200000 },
     doorPrice: { USD: 50000, EUR: 48000, THB: 1700000 },
     includes: [
       'All workshops at Koh Samet',
@@ -771,6 +771,20 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      'hotel-room-option': {
+        id: 'hotel-room-option',
+        icon: 'fa-hotel',
+        title: 'Shared Hotel Room',
+        includesInShortDescription: ['3 Nights in a shared room at Hotel Sangthianbeach Resort'],
+        includes: ['3 Nights in a shared room at Hotel Sangthianbeach Resort'],
+        selected: true,
+        soldOut: false,
+        price: {
+          USD: 5000,
+          EUR: 4500,
+          THB: 170000,
+        },
+      },
       'cruise-option': {
         id: 'cruise-option',
         icon: 'fa-ship',
