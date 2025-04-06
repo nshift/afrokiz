@@ -1,0 +1,120 @@
+---
+import Card from "../components/Card.astro";
+---
+
+<div class="container">
+  <div class="section-header">
+    <div>
+      <h1>Dance 1 week in Thailand</h1>
+      <p>You are traveling to Thailand and want to dance Kizomba. We have the perfect packages for you to make your Thailand trip amazing.</p>
+    </div>
+    
+  </div>
+  <Card classes={["background-card"]}>
+    <Card classes={["top-card"]} backgroundPath="/images/beach.png">
+      <h2>5-12 Sep 2025</h2>
+      <h4>Bangkokg & Koh Samet, Thailand</h4>
+      <div class="button-container"><a href="/traveling" class="button action arrow">Tickets</a></div>
+    </Card>
+    <ul class="featured">
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/boat4.jpg" />
+        <p>Cruise party with African tapas</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/beach2.png" />
+        <p>Beach parties</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/artists/albir.jpg" />
+        <p>Albir MKiz Edition</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/food.png" />
+        <p>Breakfast, lunch and dinner included</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/samet-hotel.png" />
+        <p>Private hotel</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/daytime-social.png" />
+        <p>Day time social</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/afro-anim.jpg" />
+        <p>Workshops and parties</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/workshop.png" />
+        <p>Masterclasses</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/massage.jpg" />
+        <p>Massage</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/fire-show.jpeg" />
+        <p>Fire shows</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/pickup.jpg" />
+        <p>Transportation included</p>
+      </li>
+    </ul>
+  </Card>
+</div>
+
+<style is:global>
+  .travel {
+    padding: 0.75rem;
+    padding-bottom: 2rem;
+    grid-column: span 12;
+  }
+  .travel > .text {
+    width: 100%;
+  }
+  .travel .big {
+    width: 100%;
+    height: 300px;
+    justify-content: center !important;
+    align-items: end !important;
+  }
+  .travel .big > .text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 2rem;
+    text-align: center;
+  }
+</style>
+
+<style>
+  .container {
+    color: white;
+  }
+  .section-header {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: end;
+    grid-column: span 12;
+  }
+  .section-header p {
+    font-size: 0.7rem;
+  }
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--grid-lg-gap);
+    padding-top: 0.5rem;
+  }
+  .button-container > .button {
+    padding: 0.5rem 1.25rem;
+  }
+  .arrow:after {
+    font-size: 0.7rem !important;
+  }
+</style>

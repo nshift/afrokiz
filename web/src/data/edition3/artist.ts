@@ -1,8 +1,13 @@
 export const artists: { [key: string]: { name: string; musicStyle: string; image: string } } = {
   audilaura: {
-    name: 'Audi 🇺🇸 & Laura 🇪🇸',
+    name: 'Audi 🇺🇸 Laura 🇪🇸',
     musicStyle: '',
     image: '/images/artists/audi_laura.png',
+  },
+  albir: {
+    name: 'Albir 🇪🇸',
+    musicStyle: '',
+    image: '/images/artists/albir.jpg',
   },
   tpeak: {
     name: "T'Peak 🇫🇷",

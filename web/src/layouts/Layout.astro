@@ -55,6 +55,7 @@ const { title } = Astro.props;
     --xs-padding: 0.8rem;
     --card-m-height: 250px;
     --card-s-height: 160px;
+    --grid-xlg-gap: 3.5rem;
     --grid-lg-gap: 2rem;
     --grid-m-gap: 1.5rem;
     --grid-s-gap: 1rem;
@@ -64,6 +65,7 @@ const { title } = Astro.props;
     --h2-font-size: 1.75rem;
     --h3-font-size: 1.5rem;
     --h4-font-size: 1.25rem;
+    --video-size: calc(100vh / 3);
   }
   html {
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -80,7 +82,7 @@ const { title } = Astro.props;
   main {
     display: flex;
     flex-direction: column;
-    gap: var(--grid-lg-gap);
+    gap: var(--grid-xlg-gap);
   }
   .button.action {
     text-decoration: none;
@@ -327,6 +329,7 @@ const { title } = Astro.props;
 @media only screen and (min-width: 920px) and (max-width: 1180px) {
   :root {
     --grid-side-padding: 1rem;
+    --grid-xlg-gap: 3rem;
     --grid-lg-gap: 1.75rem;
     --lg-padding: 2rem;
     --m-padding: 1rem;
@@ -335,6 +338,7 @@ const { title } = Astro.props;
 @media only screen and (max-width: 920px) {
   :root {
     --grid-side-padding: 1rem;
+    --grid-xlg-gap: 2.5rem;
     --grid-lg-gap: 1.25rem;
     --grid-m-gap: 0.75rem;
     --grid-s-gap: 0.5rem;

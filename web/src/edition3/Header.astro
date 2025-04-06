@@ -1,0 +1,80 @@
+---
+import Currency from "./Currency.vue";
+---
+
+<header class="grid">
+  <div class="container">
+    <div class="left-side">
+    <a href="/"><img class="logo" src="/images/logo.png" /></a>
+  </div>
+    <div class="right-side">
+      <div><a href="/my-order" class="button action header">My Order</a></div>
+      <!-- <Language client:only /> -->
+      <!-- <div class="currency"> -->
+        <Currency client:only />
+      <!-- </div> -->
+      <div><a href="/#tickets" class="button action">Tickets</a></div>
+    </div>
+  </div>
+</header>
+
+<style>
+  header {
+    z-index: 10;
+  }
+  .container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 !important;
+    padding-top: var(--m-padding) !important;
+    grid-column: span 12;
+    overflow: hidden;
+  }
+  .feat {
+    color: white; 
+    font-size: 1.4rem;
+  }
+  .logo {
+    cursor: pointer;
+    height: 130px;
+  }
+  .left-side {
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-m-gap);
+    align-items: center;
+    justify-content: center;
+  }
+  .right-side {
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-lg-gap);
+    align-items: center;
+    justify-content: center;
+  }
+  .currency {
+    font-weight: bold;
+    color: var(--text-primary-color);
+    display: flex;
+    flex-direction: column;
+    gap: .375rem;
+  }
+  @media only screen and (max-width: 920px) {
+    .right-side {
+      gap: var(--grid-s-gap);
+    }
+    .logo {
+      cursor: pointer;
+      height: 60px;
+    }
+    .feat {
+      color: white; 
+      font-size: 0.8rem;
+    }
+    .button.header {
+      padding: 0 !important;
+    }
+  }
+</style>

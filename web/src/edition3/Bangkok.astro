@@ -1,0 +1,42 @@
+---
+import Card from "../components/Card.astro";
+---
+
+<div class="container">
+  <div class="section-header">
+    <div>
+      <h1>Bangkok</h1>
+      <p>You are traveling to Thailand and want to dance Kizomba. We have the perfect packages for you to make your Thailand trip amazing.</p>
+    </div>
+    
+  </div>
+  <Card classes={["background-card"]}>
+    <Card classes={["top-card"]} backgroundPath="/images/mahanakhon.png">
+      <h2>5-8 Sep 2025</h2>
+      <h4>Bangkok, Thailand</h4>
+      <div class="button-container"><a href={"/pass/"} class="button action arrow">Tickets</a></div>
+    </Card>
+    <ul class="featured">
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/boat4.jpg" />
+        <p>Cruise party with African tapas</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/daytime-social.png" />
+        <p>Day time social</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/afro-anim.jpg" />
+        <p>Workshops and parties</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/workshop.png" />
+        <p>Masterclasses</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/massage.jpg" />
+        <p>Massage</p>
+      </li>
+    </ul>
+  </Card>
+</div>

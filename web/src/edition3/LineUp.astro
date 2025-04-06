@@ -1,0 +1,109 @@
+---
+import Card from "../components/Card.astro";
+import { artists } from "../data/edition3/artist";
+
+let allArtists = [artists.audilaura, artists.tpeak, artists.albir, artists.asia, artists.ozyshine, artists.quinn, artists.oncleKani, artists.david, artists.tonya, artists.stef, artists.ploy, artists.selva, artists.lucerne]
+type Artist = { name: string; musicStyle: string; image: string; }
+const pairs = allArtists.reduce<[Artist, Artist][]>((acc, currentValue, currentIndex) => {
+  // Check if the current index is even (starting a new pair)
+  if (currentIndex % 2 === 0) {
+    acc.push([currentValue, allArtists[currentIndex + 1]]);
+  }
+  return acc;
+}, []);
+---
+
+<div class="container">
+  <div class="section-header">
+    <h1>Lineup</h1>
+    <!-- <div class="button-container"><a href={"/pass/"} class="button action arrow">Tickets</a></div> -->
+  </div>
+  <ul>
+    {
+      pairs.map((artist) => (
+        <li class="artist-pair">
+          <Card backgroundPath={artist[0].image} classes={["artist-card"]}>
+            {artist[0].name}
+          </Card>
+          { (artist[1] != null) &&
+            <Card backgroundPath={artist[1].image} classes={["artist-card"]}>
+              {artist[1].name}
+            </Card>
+          }
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style is:global>
+  .artist-card {
+    width: 140px;
+    height: 150px;
+    border-radius: 16px !important;
+    align-items: end !important;
+  }
+  .artist-card .background {
+    border-radius: 16px !important;
+  }
+  .artist-card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+  .artist-card > .text {
+    padding: 1rem;
+  }
+</style>
+<style>
+  .container {
+    margin-top: -70px;
+  }
+  .artist-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    overflow: scroll;
+    padding: 0;
+    margin: 0;
+  }
+  ul > li {
+    padding: 0.25rem;
+  }
+  .container {
+    color: white;
+    display: flex;
+    flex-direction: column;
+  }
+  .section-header {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: end;
+  }
+  .section-header p {
+    font-size: 0.7rem;
+  }
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--grid-lg-gap);
+    padding-top: 0.5rem;
+  }
+  .button-container > .button {
+    padding: 0.5rem 1.25rem;
+  }
+  .button.arrow {
+    background-color: transparent !important;
+    border-radius: 24px;
+    border: 2px solid var(--secondary-color);
+  }
+  .arrow:after {
+    font-size: 0.7rem !important;
+  }
+</style>

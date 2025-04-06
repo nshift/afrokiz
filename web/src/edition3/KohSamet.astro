@@ -1,0 +1,46 @@
+---
+import Card from "../components/Card.astro";
+---
+
+<div class="container">
+  <div class="section-header">
+    <div>
+      <h1>Koh Samet - Albir Edition</h1>
+      <p>You are traveling to Thailand and want to dance Kizomba. We have the perfect packages for you to make your Thailand trip amazing.</p>
+    </div>
+    
+  </div>
+  <Card classes={["background-card"]}>
+    <Card classes={["top-card"]} backgroundPath="/images/koh-samet.jpg">
+      <h2>9-12 Sep 2025</h2>
+      <h4>Koh Samet, Thailand</h4>
+      <div class="button-container"><a href={"/pass/"} class="button action arrow">Tickets</a></div>
+    </Card>
+    <ul class="featured">
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/artists/albir.jpg" />
+        <p>Albir MKiz Edition</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/beach2.png" />
+        <p>Beach parties</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/samet-hotel.png" />
+        <p>Private hotel</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/food.png" />
+        <p>Breakfast, lunch and dinner included</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/fire-show.jpeg" />
+        <p>Fire shows</p>
+      </li>
+      <li>
+        <Card classes={["small-card"]} backgroundPath="/images/pickup.jpg" />
+        <p>Transportation included</p>
+      </li>
+    </ul>
+  </Card>
+</div>
