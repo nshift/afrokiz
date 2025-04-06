@@ -325,6 +325,12 @@ const { title } = Astro.props;
 /* --mobile-max-width: 576px;
     --screen-medium-width: 776px;
     --screen-large-width: 992px; */
+@media only screen and (min-width: 920px) {
+  :root {
+    --video-size: calc((100vh / 3) * 2);
+  }
+}
+    
 
 @media only screen and (min-width: 920px) and (max-width: 1180px) {
   :root {

@@ -1,108 +1,345 @@
 ---
+import Card from "../components/Card.astro";
 import Layout from "../layouts/Layout.astro";
 import Header from "../sections/edition3/Header.astro";
 import Footer from "../sections/Footer.astro";
-import Card from "../components/Card.astro";
+import { calculateTotal, defaultPasses, type Pass } from "../data/edition3/pass";
+import Currency from "../components/Currency.vue";
+import { artists } from "../data/edition3/artist";
+import FirstInstallment from "../components/FirstInstallment.vue";
+
+const sametPass = defaultPasses.sametPass
+const partyPackage = defaultPasses.partyPackage
+const allInclusivePackage = defaultPasses.allInclusivePackage
+let instructors = [artists.albir, artists.ozyshine, artists.quinn, artists.oncleKani, artists.david, artists.selva, artists.ploy];
+function calculatePrice(pass: Pass) {
+  return calculateTotal(pass, Object.values(pass.options).filter((option) => option.selected).map((option) => option.id))
+}
 ---
 
-<Layout title="Samet Getaway Pre Registration | Afrokiz Bkk Festival Edition 3">
+<Layout title="Koh Samet Getaway | Afrokiz Bkk Festival Edition 3">
   <Header />
   <main>
-    <div class="grid">
-      <Card classes={["find-order"]} backgroundPath="/images/koh-samet.jpg">
-        <div class="content">
-          <div class="description">
-            <h1>Samet Getaway<br />Pre-Registration</h1>
-            <p>Let's escape to the stunning Koh Samet Island for four unforgettable days of Kizomba workshops and parties! Samet Getaway will take place from September 9th to 12th, 2025, and spots are limited to just 80 lucky participants.</p>
-            <p>As a super early bird, you’ll receive all the details, including a special early bird price, directly in your inbox. This is our way of saying thank you for your continued support.</p>
-            <p>We hope you enjoyed Afrokiz Bangkok Edition 2, and we can’t wait to create more memories with you next year!</p>
-          </div>
-          <div>
-            <form class="information-element" action="/samet-registration" method="get">
-              <div>
-                <label>Email</label>
-                <div class="field-container">
-                  <input type="email" class="field" placeholder="email@example.com" name="email" required />
-                </div>
-              </div>
-              <div>
-                <label>Name</label>
-                <div class="field-container">
-                  <input class="field" placeholder="John Doe" name="fullname" required />
-                </div>
-              </div>
-              <button class="button action">Register</button>
-            </form>
-          </div>
-        </div>
+    <div class="container">
+      <Card classes={["card header"]} backgroundPath="/images/artists/albir.jpg">
+        <h3>MKiz Edition</h3>
+        <p>This Kizomba event, designed by Albir, focuses on rhythm, movement, breathwork, and energy flow. It includes blindfolded and meditative dance sessions, exploring female and male energies.</p>
       </Card>
+      <Card classes={["card header"]} backgroundPath="/images/koh-samet.jpg">
+        <h3>Koh Samet Island</h3>
+        <h4>9-12 SEP 2025</h4>
+        <p>Relaxing environment with amazing views. Dance on the beach from morning to night.</p>
+      </Card>
+      <ul class="artists">
+        <li><Card classes={["card small"]} backgroundPath="/images/beach2.png">
+          <h4>Dancing On The Beach</h4>
+          <p>Enjoy dancing on the beach from morning till night.</p>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/fire-show.jpeg">
+          <h4>Fire Show</h4>
+          <p>Experience fire shows in front of the beach.</p>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/food.png">
+          <h4>Breakfast, Lunch and Dinner</h4>
+          <p>Get a taste of authentic thai food.</p>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/pickup.jpg">
+          <h4>Transportation</h4>
+          <p>From Bangkok to Koh Samet and return.</p>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/room3.png">
+          <h4>Parties</h4>
+          <p>Dance all night until 4AM with the top international DJs.</p>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/workshop.png">
+          <h4>Workshops</h4>
+          <p>Learn from the world's top internation artists.</p>
+        </Card></li>
+      </ul>
+      <Card classes={["card big"]} backgroundPath="/images/samet-hotel.png">
+        <h4>Koh Samet Hotel</h4>
+        <p>3 nights stay with breakfast, lunch and dinner. Wake up in front of the sea.</p>
+      </Card>
+    </div>
+    <div class="container artists">
+      <div class="section-header">
+        <h2>Artists</h2>
+      </div>
+      <ul class="artists">
+        {
+          instructors.map((artist) => (
+            <li>
+              <Card backgroundPath={artist.image} classes={["artist-card"]}>
+                {artist.name}
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="container">
+      <Card classes={["card small package"]}>
+        <Card classes={["card"]}>
+          <h4>Samet Getaway</h4>
+          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(sametPass)} today={new Date()} client:only /></h3>
+          <p><Currency price={sametPass.price} client:only /></p>
+          <p><a href={"/pass/" + sametPass.id} class="button action">Buy now</a></p>
+        </Card>
+        <ul class="options">
+          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Day Time Social</li>
+          <li><i class="fa-solid fa-circle-check"></i> Breakfast, Lunch and Dinner in Koh Samet</li>
+          <li><i class="fa-solid fa-circle-check"></i> Transportation Bangkok to Samet and return</li>
+          <li><i class="fa-solid fa-circle-check"></i> Fire Show</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Bangkok Parties</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Bangkok Day Time Social</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Bangkok Workshops</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Cruise Party in Bangkok</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> 3 Nights Stay at Bangkok hotel</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Airport Pick Up</li>
+        </ul>
+      </Card>
+      <Card classes={["card small package"]}>
+        <Card classes={["card"]}>
+          <h4>Bangkok Samet Party Package</h4>
+          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only /></h3>
+          <p><Currency price={partyPackage.price} client:only /></p>
+          <p><a href={"/pass/" + partyPackage.id} class="button action">Buy now</a></p>
+        </Card>
+        <ul class="options">
+          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Day Time Social</li>
+          <li><i class="fa-solid fa-circle-check"></i> Breakfast, Lunch and Dinner in Koh Samet</li>
+          <li><i class="fa-solid fa-circle-check"></i> Transportation Bangkok to Samet and return</li>
+          <li><i class="fa-solid fa-circle-check"></i> Fire Show</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bangkok Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bangkok Day Time Social</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Bangkok Workshops</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Cruise Party in Bangkok</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> 3 Nights Stay at Bangkok hotel</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Airport Pick Up</li>
+        </ul>
+      </Card>
+      <Card classes={["card small package"]}>
+        <Card classes={["card"]}>
+          <h4>All Inclusive Package</h4>
+          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(allInclusivePackage)} today={new Date()} client:only /></h3>
+          <p><Currency price={allInclusivePackage.price} client:only /></p>
+          <p><a href={"/pass/" + allInclusivePackage.id} class="button action">Buy now</a></p>
+        </Card>
+        <ul class="options">
+          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Day Time Social</li>
+          <li><i class="fa-solid fa-circle-check"></i> Breakfast, Lunch and Dinner in Koh Samet</li>
+          <li><i class="fa-solid fa-circle-check"></i> Transportation Bangkok to Samet and return</li>
+          <li><i class="fa-solid fa-circle-check"></i> Fire Show</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bangkok Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bangkok Day Time Social</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bangkok Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Cruise Party in Bangkok</li>
+          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Bangkok hotel</li>
+          <li><i class="fa-solid fa-circle-check"></i> Airport Pick Up</li>
+        </ul>
+      </Card>
+    </div>
+    <div class="container" style={{ paddingBottom: '3rem'}}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', gridColumn: 'span 12', textAlign: 'center', color: 'white' }}>
+        <h3>Are you interested to dance in Bangkok and Koh Samet?</h3>
+        <p><a href={"/traveling"} class="button action">See our packages</a></p>
+      </div>
     </div>
   </main>
   <Footer />
 </Layout>
 
 <style is:global>
-  .find-order {
-    grid-column: span 12;
-    align-items: center !important;
-    justify-content: center !important;
+  .container.artists .artists {
+    /* gap: 0.5rem; */
+  }
+  .card > .text {
     padding: var(--lg-padding);
-    min-height: 540px;
   }
-  .find-order .text {
+  .card.header.big {
+    grid-column: span 12;
+    min-height: 400px;
+  }
+  .card.header > .text {
+    width: 50%;
+  }
+  .card.header {
+    grid-column: span 6;
+    min-height: 350px;
+  }
+  .card.big {
+    grid-column: span 12;
+    min-height: 350px;
+  }
+  .card.big > .text {
+    max-width: 50%;
+  }
+  .card.small {
+    grid-column: span 3;
+  }
+  .card.small.package {
+    grid-column: span 4;
+  }
+  .card.small {
+    min-height: 250px;
+  }
+  .artists .card.small {
+    width: 230px;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+  }
+  .card.package {
+    align-items: start;
+  }
+  .card.package > .text {
+    padding: var(--xs-padding);
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-s-gap);
   }
-  .find-order .grid {
+  .card.package .card {
+    background-color: var(--secondary-color);
+    width: 100%;
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-s-gap);
+  }
+  .card.package .card > .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-xs-gap);
+    align-items: center;
+    text-align: center;
+  }
+  .card.package .options {
+    list-style: none;
+    margin: 0;
     padding: 0;
+  }
+  .card.package .button {
+    background-color: var(--primary-color);
+    display: inline-block;
+    font-size: 0.8rem !important;
+  }
+  .card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+  }
+  @media only screen and (max-width: 920px) {
+    .card.header, .card.small {
+      min-height: 180px;
+    }
+    .card.big, .card.header {
+      grid-column: span 12;
+      min-height: 200px;
+    }
+    .card.small {
+      grid-column: span 6;
+    }
+    .card.small.package {
+      grid-column: span 12;
+    }
+    .card.package .card {
+      height: 180px;
+    }
+    .card.header > .text {
+      width: 100%;
+    }
+    .card.package .button {
+      font-size: 0.7rem !important;
+    }
+    .card.header.big {
+      min-height: 300px;
+    }
+    .card.header.big > .text {
+      width: 100%;
+    }
+    .artists .card.small {
+      width: 200px;
+      height: 170px;
+    }
+  }
+</style>
+
+<style is:global>
+  .artist-card {
+    width: 160px;
+    height: 170px;
+    border-radius: 16px !important;
+    align-items: end !important;
+  }
+  .artist-card .background {
+    border-radius: 16px !important;
+  }
+  .artist-card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+  .artist-card > .text {
+    padding: 1rem;
+  }
+  @media only screen and (min-width: 920px) {
+    .artist-card {
+      width: 230px;
+      height: 250px;
+    }
   }
 </style>
 
 <style>
-  .content {
-    display: flex;
-    flex-direction: row;
-    gap: var(--grid-lg-gap);
-    align-items: center;
-    justify-content: center;
-    font-size: 110%;
+  .container {
+    padding: 0 var(--grid-side-padding);
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: var(--grid-s-gap);
   }
-  .content > * {
-    padding: var(--lg-padding);
-  }
-  .description {
-    width: 50%;
+  .container.artists {
     display: flex;
     flex-direction: column;
-    gap: var(--grid-m-gap);
+    color: white;
   }
-  .field-container {
-    display: flex;
-    flex-direction: row;
-    gap: var(--grid-m-gap);
-    margin-top: 0.5rem;
+  .options {
+    padding: 1rem !important;
   }
-  .information-element {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .information-element button {
-    margin-top: 1rem;
-  }
-  form > * {
+  .options li {
     margin-bottom: 0.5rem;
   }
+  .options li i {
+    margin-right: 0.5rem;
+  }
+  .fa-circle-check {
+    color: rgb(0, 208, 0);
+  }
+  .fa-circle-xmark {
+    color: gray;
+  }
+  ul.artists {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    overflow: scroll;
+    padding: 0;
+    margin: 0;
+    grid-column: span 12;
+    overflow-y: hidden;
+  }
+  ul.artists > li {
+    padding: 0.25rem;
+  }
   @media only screen and (max-width: 920px) {
-    .content {
+    .packageContainer {
       flex-direction: column;
-      font-size: 120%;
-    }
-    .description {
-      width: 80%;
-    }
-    .button {
-      padding-top: 1.25rem;
-      padding-bottom: 1.25rem;
+      justify-content: center;
     }
   }
 </style>

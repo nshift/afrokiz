@@ -17,7 +17,7 @@ let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, arti
 
 <div class="container">
   <div class="section-header">
-    <h1>Instructors</h1>
+    <h2>Instructors</h2>
     <!-- <div class="button-container"><a href={"/pass/"} class="button action arrow">Tickets</a></div> -->
   </div>
   <ul>
@@ -32,7 +32,7 @@ let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, arti
     }
   </ul>
   <div class="section-header">
-    <h1>Djs</h1>
+    <h2>Djs</h2>
     <!-- <div class="button-container"><a href={"/pass/"} class="button action arrow">Tickets</a></div> -->
   </div>
   <ul>
@@ -63,6 +63,12 @@ let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, arti
   }
   .artist-card > .text {
     padding: 1rem;
+  }
+  @media only screen and (min-width: 920px) {
+    .artist-card {
+      width: 200px;
+      height: 210px;
+    }
   }
 </style>
 <style>

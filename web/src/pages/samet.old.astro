@@ -1,0 +1,108 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../sections/edition3/Header.astro";
+import Footer from "../sections/Footer.astro";
+import Card from "../components/Card.astro";
+---
+
+<Layout title="Samet Getaway Pre Registration | Afrokiz Bkk Festival Edition 3">
+  <Header />
+  <main>
+    <div class="grid">
+      <Card classes={["find-order"]} backgroundPath="/images/koh-samet.jpg">
+        <div class="content">
+          <div class="description">
+            <h1>Samet Getaway<br />Pre-Registration</h1>
+            <p>Let's escape to the stunning Koh Samet Island for four unforgettable days of Kizomba workshops and parties! Samet Getaway will take place from September 9th to 12th, 2025, and spots are limited to just 80 lucky participants.</p>
+            <p>As a super early bird, you’ll receive all the details, including a special early bird price, directly in your inbox. This is our way of saying thank you for your continued support.</p>
+            <p>We hope you enjoyed Afrokiz Bangkok Edition 2, and we can’t wait to create more memories with you next year!</p>
+          </div>
+          <div>
+            <form class="information-element" action="/samet-registration" method="get">
+              <div>
+                <label>Email</label>
+                <div class="field-container">
+                  <input type="email" class="field" placeholder="email@example.com" name="email" required />
+                </div>
+              </div>
+              <div>
+                <label>Name</label>
+                <div class="field-container">
+                  <input class="field" placeholder="John Doe" name="fullname" required />
+                </div>
+              </div>
+              <button class="button action">Register</button>
+            </form>
+          </div>
+        </div>
+      </Card>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .find-order {
+    grid-column: span 12;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: var(--lg-padding);
+    min-height: 540px;
+  }
+  .find-order .text {
+    width: 100%;
+  }
+  .find-order .grid {
+    padding: 0;
+  }
+</style>
+
+<style>
+  .content {
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-lg-gap);
+    align-items: center;
+    justify-content: center;
+    font-size: 110%;
+  }
+  .content > * {
+    padding: var(--lg-padding);
+  }
+  .description {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-m-gap);
+  }
+  .field-container {
+    display: flex;
+    flex-direction: row;
+    gap: var(--grid-m-gap);
+    margin-top: 0.5rem;
+  }
+  .information-element {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .information-element button {
+    margin-top: 1rem;
+  }
+  form > * {
+    margin-bottom: 0.5rem;
+  }
+  @media only screen and (max-width: 920px) {
+    .content {
+      flex-direction: column;
+      font-size: 120%;
+    }
+    .description {
+      width: 80%;
+    }
+    .button {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+  }
+</style>

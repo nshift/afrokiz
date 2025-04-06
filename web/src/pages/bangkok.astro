@@ -1,0 +1,368 @@
+---
+import Card from "../components/Card.astro";
+import Layout from "../layouts/Layout.astro";
+import Header from "../sections/edition3/Header.astro";
+import Footer from "../sections/Footer.astro";
+import { calculateTotal, defaultPasses, type Pass } from "../data/edition3/pass";
+import Currency from "../components/Currency.vue";
+import { artists, taxiDancers } from "../data/edition3/artist";
+import FirstInstallment from "../components/FirstInstallment.vue";
+
+const fullpass = defaultPasses.fullPass
+const vipSilverPass = defaultPasses.vipSilverPass
+const vipGoldPass = defaultPasses.vipGoldPass
+let instructors = [artists.audilaura, artists.albir, artists.asia, artists.tpeak, artists.ozyshine, artists.quinn, artists.oncleKani, artists.david, artists.tonya, artists.stef];
+let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, artists.tonya, artists.ploy];
+function calculatePrice(pass: Pass) {
+  return calculateTotal(pass, Object.values(pass.options).filter((option) => option.selected).map((option) => option.id))
+}
+---
+
+<Layout title="Bangkok | Afrokiz Bkk Festival Edition 3">
+  <Header />
+  <main>
+    <div class="container">
+      <Card classes={["card header"]} backgroundPath="/images/mahanakhon.png">
+        <h3>Bangkok</h3>
+        <h4>5-9 SEP 2025</h4>
+        <p>The capital of Thailand with beautiful temples, big shopping malls and amazing food.</p>
+      </Card>
+      <Card classes={["card header"]} backgroundPath="/images/hotel-room.jpg">
+        <h4>Residence Hotel Silom Hotel</h4>
+        <p>Located at 5min walking distance from the venue.</p>
+      </Card>
+      <ul class="artists">
+        <li><Card classes={["card small"]} backgroundPath="/images/boat4.jpg">
+          <h4>Cruise</h4>
+          <p>Enjoy a 3 hours cruise party in Bangkok with African food.</p>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/daytime-social.png">
+          <h4>Day Time Social</h4>
+          <p>4 hours every day with international DJs.</p>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/room3.png">
+          <h4>Parties</h4>
+          <p>Dance all night until 4AM with the top international DJs.</p>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/artists/afrogiants.jpeg">
+          <h4>Afro Essense Bootcamp</h4>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/artists/audi_laura.png">
+          <h4>Audi & Laura Masterclass</h4>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/artists/tpeak.jpg">
+          <h4>T'Peak Masterclass</h4>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/artists/asia.jpg">
+          <h4>Asia Masterclass</h4>
+        </Card></li>
+        <li><Card classes={["card small"]} backgroundPath="/images/workshop.png">
+          <h4>Workshops</h4>
+          <p>Learn from the world's top internation artists.</p>
+        </Card></li>
+      </ul>
+    </div>
+    <div class="container">
+      <Card classes={["card small package"]}>
+        <Card classes={["card"]}>
+          <h4>Full Pass</h4>
+          <h3><Currency price={fullpass.price} client:only /></h3>
+          <p><a href={"/pass/" + fullpass.id} class="button action">Buy now</a></p>
+        </Card>
+        <ul class="options">
+          <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Day Time Social</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> 3 Nights Stay with breakfast at Residence Hotel Silom</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Cruise Party in Bangkok</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> 3 welcome drinks</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> 1H Foot Massage at Lek Massage</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Airport Pick Up</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Audi & Laura Masterclass</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> T'Peak Masterclass</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Asia Masterclass</li>
+        </ul>
+      </Card>
+      <Card classes={["card small package"]}>
+        <Card classes={["card"]}>
+          <h4>VIP Silver</h4>
+          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(vipSilverPass)} today={new Date()} client:only /></h3>
+          <p><Currency price={vipSilverPass.price} client:only /></p>
+          <p><a href={"/pass/" + vipSilverPass.id} class="button action">Buy now</a></p>
+        </Card>
+        <ul class="options">
+          <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Day Time Social</li>
+          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay with breakfast at Residence Hotel Silom</li>
+          <li><i class="fa-solid fa-circle-check"></i> Cruise Party in Bangkok</li>
+          <li><i class="fa-solid fa-circle-check"></i> 3 welcome drinks</li>
+          <li><i class="fa-solid fa-circle-check"></i> 1H Foot Massage at Lek Massage</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Airport Pick Up</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Audi & Laura Masterclass</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> T'Peak Masterclass</li>
+          <li><i class="fa-solid fa-circle-xmark"></i> Asia Masterclass</li>
+        </ul>
+      </Card>
+      <Card classes={["card small package"]}>
+        <Card classes={["card"]}>
+          <h4>VIP Gold</h4>
+          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(vipGoldPass)} today={new Date()} client:only /></h3>
+          <p><Currency price={vipGoldPass.price} client:only /></p>
+          <p><a href={"/pass/" + vipGoldPass.id} class="button action">Buy now</a></p>
+        </Card>
+        <ul class="options">
+          <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Day Time Social</li>
+          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay with breakfast at Residence Hotel Silom</li>
+          <li><i class="fa-solid fa-circle-check"></i> Cruise Party in Bangkok</li>
+          <li><i class="fa-solid fa-circle-check"></i> 3 welcome drinks</li>
+          <li><i class="fa-solid fa-circle-check"></i> 1H Foot Massage at Lek Massage</li>
+          <li><i class="fa-solid fa-circle-check"></i> Airport Pick Up</li>
+          <li><i class="fa-solid fa-circle-check"></i> Audi & Laura Masterclass</li>
+          <li><i class="fa-solid fa-circle-check"></i> T'Peak Masterclass</li>
+          <li><i class="fa-solid fa-circle-check"></i> Asia Masterclass</li>
+        </ul>
+      </Card>
+    </div>
+    <div class="container">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', gridColumn: 'span 12', textAlign: 'center', color: 'white' }}>
+        <h3>Are you interested to dance in Bangkok and Koh Samet?</h3>
+        <p><a href={"/traveling"} class="button action">See our packages</a></p>
+      </div>
+    </div>
+    <div class="container artists">
+      <div class="section-header">
+        <h2>Instructors</h2>
+      </div>
+      <ul class="artists">
+        {
+          instructors.map((artist) => (
+            <li>
+              <Card backgroundPath={artist.image} classes={["artist-card"]}>
+                {artist.name}
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="container artists">
+      <div class="section-header">
+        <h2>Djs</h2>
+      </div>
+      <ul class="artists">
+        {
+          djs.map((artist) => (
+            <li>
+              <Card backgroundPath={artist.image} classes={["artist-card"]}>
+                {artist.name}
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="container artists">
+      <div class="section-header">
+        <h2>Taxi Dancers</h2>
+      </div>
+      <ul class="artists">
+        {
+          taxiDancers.map((artist) => (
+            <li>
+              <Card backgroundPath={artist.image} classes={["artist-card"]}>
+                {artist.name}
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .container.artists .artists {
+    /* gap: 0.5rem; */
+  }
+  .card > .text {
+    padding: var(--lg-padding);
+  }
+  .card.header.big {
+    grid-column: span 12;
+    min-height: 400px;
+  }
+  .card.header > .text {
+    width: 50%;
+  }
+  .card.header {
+    grid-column: span 6;
+    min-height: 350px;
+  }
+  .card.big {
+    grid-column: span 12;
+    min-height: 350px;
+  }
+  .card.big > .text {
+    max-width: 50%;
+  }
+  .card.small {
+    grid-column: span 3;
+  }
+  .card.small.package {
+    grid-column: span 4;
+  }
+  .card.small {
+    min-height: 250px;
+  }
+  .artists .card.small {
+    width: 230px;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+  }
+  .card.package {
+    align-items: start;
+  }
+  .card.package > .text {
+    padding: var(--xs-padding);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-s-gap);
+  }
+  .card.package .card {
+    background-color: var(--secondary-color);
+    width: 100%;
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-s-gap);
+  }
+  .card.package .card > .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-xs-gap);
+    align-items: center;
+    text-align: center;
+  }
+  .card.package .options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .card.package .button {
+    background-color: var(--primary-color);
+    display: inline-block;
+    font-size: 0.8rem !important;
+  }
+  .card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+  }
+  .artist-card {
+    width: 160px;
+    height: 170px;
+    border-radius: 16px !important;
+    align-items: end !important;
+  }
+  .artist-card .background {
+    border-radius: 16px !important;
+  }
+  .artist-card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+  .artist-card > .text {
+    padding: 1rem;
+  }
+  @media only screen and (min-width: 920px) {
+    .artist-card {
+      width: 230px;
+      height: 250px;
+    }
+  }
+  @media only screen and (max-width: 920px) {
+    .card.header, .card.small {
+      min-height: 180px;
+    }
+    .card.big, .card.header {
+      grid-column: span 12;
+      min-height: 200px;
+    }
+    .card.small {
+      grid-column: span 6;
+    }
+    .card.small.package {
+      grid-column: span 12;
+    }
+    .card.package .card {
+      height: 180px;
+    }
+    .card.header > .text {
+      width: 100%;
+    }
+    .card.package .button {
+      font-size: 0.7rem !important;
+    }
+    .card.header.big {
+      min-height: 300px;
+    }
+    .card.header.big > .text {
+      width: 100%;
+    }
+    .artists .card.small {
+      width: 200px;
+      height: 170px;
+    }
+  }
+</style>
+
+<style>
+  .container {
+    padding: 0 var(--grid-side-padding);
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: var(--grid-s-gap);
+  }
+  .container.artists {
+    display: flex;
+    flex-direction: column;
+    color: white;
+  }
+  .options {
+    padding: 1rem !important;
+  }
+  .options li {
+    margin-bottom: 0.5rem;
+  }
+  .options li i {
+    margin-right: 0.5rem;
+  }
+  .fa-circle-check {
+    color: rgb(0, 208, 0);
+  }
+  .fa-circle-xmark {
+    color: gray;
+  }
+  ul.artists {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    overflow: scroll;
+    padding: 0;
+    margin: 0;
+    grid-column: span 12;
+    overflow-y: hidden;
+  }
+  ul.artists > li {
+    padding: 0.25rem;
+  }
+  @media only screen and (max-width: 920px) {
+    .packageContainer {
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+</style>

@@ -3,12 +3,16 @@ import Card from "../components/Card.astro";
 import Layout from "../layouts/Layout.astro";
 import Header from "../sections/edition3/Header.astro";
 import Footer from "../sections/Footer.astro";
-import { defaultPasses } from "../data/edition3/pass";
+import { calculateTotal, defaultPasses, type Pass } from "../data/edition3/pass";
 import Currency from "../components/Currency.vue";
+import FirstInstallment from "../components/FirstInstallment.vue";
 
 const allInclusivePackage = defaultPasses.allInclusivePackage
 const partyPackage = defaultPasses.partyPackage
 const sametBangkokPass = defaultPasses.sametBangkokPass
+function calculatePrice(pass: Pass) {
+  return calculateTotal(pass, Object.values(pass.options).filter((option) => option.selected).map((option) => option.id))
+}
 ---
 
 <Layout title="Traveling Packages | Afrokiz Bkk Festival Edition 3">
@@ -24,7 +28,8 @@ const sametBangkokPass = defaultPasses.sametBangkokPass
       <Card classes={["card small package"]}>
         <Card classes={["card"]}>
           <h4>Party Package</h4>
-          <h3><Currency price={partyPackage.price} client:only /></h3>
+          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only /></h3>
+          <p><Currency price={partyPackage.price} client:only /></p>
           <p><a href={"/pass/" + partyPackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
@@ -45,30 +50,9 @@ const sametBangkokPass = defaultPasses.sametBangkokPass
       </Card>
       <Card classes={["card small package"]}>
         <Card classes={["card"]}>
-          <h4>All Inclusive Package</h4>
-          <h3><Currency price={allInclusivePackage.price} client:only /></h3>
-          <p><a href={"/pass/" + allInclusivePackage.id} class="button action">Buy now</a></p>
-        </Card>
-        <ul class="options">
-          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Bangkok hotel</li>
-          <li><i class="fa-solid fa-circle-check"></i> Bangkok Parties</li>
-          <li><i class="fa-solid fa-circle-check"></i> Bangkok Workshops</li>
-          <li><i class="fa-solid fa-circle-check"></i> Bangkok Day Time Social</li>
-          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
-          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Parties</li>
-          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Workshops</li>
-          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Day Time Social</li>
-          <li><i class="fa-solid fa-circle-check"></i> Cruise Party in Bangkok</li>
-          <li><i class="fa-solid fa-circle-check"></i> Breakfast, Lunch and Dinner in Koh Samet</li>
-          <li><i class="fa-solid fa-circle-check"></i> Transportation Bangkok to Samet and return</li>
-          <li><i class="fa-solid fa-circle-check"></i> Fire Show</li>
-          <li><i class="fa-solid fa-circle-check"></i> Airport Pick Up</li>
-        </ul>
-      </Card>
-      <Card classes={["card small package"]}>
-        <Card classes={["card"]}>
           <h4>Full Pass Package</h4>
-          <h3><Currency price={sametBangkokPass.price} client:only /></h3>
+          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(sametBangkokPass)} today={new Date()} client:only /></h3>
+          <p><Currency price={sametBangkokPass.price} client:only /></p>
           <p><a href={"/pass/" + sametBangkokPass.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
@@ -85,6 +69,29 @@ const sametBangkokPass = defaultPasses.sametBangkokPass
           <li><i class="fa-solid fa-circle-check"></i> Transportation Bangkok to Samet and return</li>
           <li><i class="fa-solid fa-circle-check"></i> Fire Show</li>
           <li><i class="fa-solid fa-circle-xmark"></i> Airport Pick Up</li>
+        </ul>
+      </Card>
+      <Card classes={["card small package"]}>
+        <Card classes={["card"]}>
+          <h4>All Inclusive Package</h4>
+          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(allInclusivePackage)} today={new Date()} client:only /></h3>
+          <p><Currency price={allInclusivePackage.price} client:only /></p>
+          <p><a href={"/pass/" + allInclusivePackage.id} class="button action">Buy now</a></p>
+        </Card>
+        <ul class="options">
+          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Bangkok hotel</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bangkok Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bangkok Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bangkok Day Time Social</li>
+          <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Parties</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Workshops</li>
+          <li><i class="fa-solid fa-circle-check"></i> Koh Samet Day Time Social</li>
+          <li><i class="fa-solid fa-circle-check"></i> Cruise Party in Bangkok</li>
+          <li><i class="fa-solid fa-circle-check"></i> Breakfast, Lunch and Dinner in Koh Samet</li>
+          <li><i class="fa-solid fa-circle-check"></i> Transportation Bangkok to Samet and return</li>
+          <li><i class="fa-solid fa-circle-check"></i> Fire Show</li>
+          <li><i class="fa-solid fa-circle-check"></i> Airport Pick Up</li>
         </ul>
       </Card>
     </div>

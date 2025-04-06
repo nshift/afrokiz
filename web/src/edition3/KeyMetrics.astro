@@ -59,4 +59,9 @@ import Card from "../components/Card.astro";
   .key-metric-card .key-metric-card .background .overlay {
     background-color: rgba(0, 0, 0, 0) !important;
   }
+  @media only screen and (min-width: 920px) {
+    .key-metric-card {
+      grid-column: span calc(12 / 4);
+    }
+  }
 </style>

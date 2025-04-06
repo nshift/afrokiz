@@ -1,6 +1,6 @@
 <div class="video">
   <div class="overlay" />
-  <video loop autoplay playsinline muted>
+  <video loop autoplay playsinline muted poster="/images/video-background.jpg">
     <h1>AfroKiz Bangkok Festival Edition 3</h1>
     <source src="https://afrokiz-assets.s3.ap-southeast-1.amazonaws.com/afrokiz.edition3.mp4" type="video/mp4">
   </video>
@@ -25,5 +25,10 @@
     height: var(--video-size);
     top: 0;
     z-index: 1;
+  }
+  @media only screen and (min-width: 920px) {
+    .video {
+      height: calc(var(--video-size) - 220px);
+    }
   }
 </style>
