@@ -3,6 +3,7 @@ import { Sales } from '../entities/sales'
 
 export const awdeshSales: Sales = {
   id: 'awdesh-sales',
+  date: new Date('2025-01-01'),
   email: 'awdesh@gmail.com',
   pass: 'vip-silver',
   isLeader: true,
@@ -20,6 +21,7 @@ export const awdeshSales: Sales = {
 
 export const achiSales: Sales = {
   id: 'achi-sales',
+  date: new Date('2025-01-02'),
   email: 'achi@gmail.com',
   pass: 'vip-gold',
   isLeader: true,

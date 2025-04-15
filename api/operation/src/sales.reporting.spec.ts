@@ -15,6 +15,9 @@ beforeEach(() => {
 describe('Make a sales report of total sales', () => {
   it('should list all the sales', async () => {
     const allSalesReport = await salesReporting.makeAllSalesReport()
-    expect(allSalesReport).toMatchObject({ sales: [awdeshSales, achiSales], totalInTHB: 500000 })
+    expect(allSalesReport).toMatchObject({
+      sales: [{ ...awdeshSales, total: { amount: 250000, currency: 'THB' } }, achiSales],
+      totalInTHB: 500000,
+    })
   })
 })

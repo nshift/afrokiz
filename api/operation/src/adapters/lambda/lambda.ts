@@ -35,24 +35,36 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
               Name: sale.fullname,
               Pass: sale.pass,
               'Dancer type': sale.customerType,
-              'Said Oksana MC':
-                sale.includes.includes('2H Masterclass by Said & Oksana') ||
-                sale.includes.includes('2H Said & Oksana Masterclass') ||
-                sale.includes.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')
+              Payment: sale.paymentStatus as string,
+              'Koh Samet':
+                sale.includes.includes('All workshops at Bangkok and Koh Samet') ||
+                sale.includes.includes('All workshops at Koh Samet') ||
+                sale.includes.includes('Includes all workshops at Bangkok and Koh Samet') ||
+                sale.includes.includes('All workshops at Koh Samet only')
                   ? 1
                   : 0,
-              'Heneco MC':
-                sale.includes.includes('2H Masterclass by Heneco') ||
-                sale.includes.includes('2H Heneco Masterclass') ||
-                sale.includes.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')
+              Cruise: sale.includes.includes('Exclusive Cruise Party') ? 1 : 0,
+              'Audi & Laura MC':
+                sale.includes.includes('2H Audi & Laura Masterclass') ||
+                sale.includes.includes('2H Masterclass by Audi & Laura') ||
+                sale.pass == 'vip-gold'
                   ? 1
                   : 0,
-              Cruise:
-                sale.includes.includes('Exclusive Dinner Cruise Party') ||
-                sale.includes.includes('Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)')
+              'TPeak MC':
+                sale.includes.includes("2H T'Peak Masterclass") ||
+                sale.includes.includes("2H Masterclass by T'Peak") ||
+                sale.pass == 'vip-gold'
                   ? 1
                   : 0,
-              Ginga: sale.includes.includes('2H Ginga Styling bootcamp (video recorded)') ? 1 : 0,
+              'Asia MC':
+                sale.includes.includes('2H Asia Masterclass') ||
+                sale.includes.includes('2H Masterclass by Asia') ||
+                sale.pass == 'vip-gold'
+                  ? 1
+                  : 0,
+              'Afro Bootcamp': sale.includes.includes('1H30 Afro Essense Bootcamp by AfroGiants') ? 1 : 0,
+              'Airport Pickup': sale.includes.includes('Airport Pick Up') ? 1 : 0,
+              'Bangkok Hotel': sale.includes.includes('3 Nights Stay') ? 1 : 0,
               Massage:
                 sale.includes.filter((option) => option == '1H Foot Massage at Lek Massage').length ||
                 sale.includes.filter((option) => option == '2H Foot Massage at Lek Massage').length * 2 ||
@@ -79,10 +91,15 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
               Name: '',
               Pass: '',
               'Dancer type': '',
-              'Said Oksana MC': 0,
-              'Heneco MC': 0,
+              Payment: '',
+              'Koh Samet': 0,
               Cruise: 0,
-              Ginga: 0,
+              'Audi & Laura MC': 0,
+              'TPeak MC': 0,
+              'Asia MC': 0,
+              'Afro Bootcamp': 0,
+              'Airport Pickup': 0,
+              'Bangkok Hotel': 0,
               Massage: 0,
               'Promo Code': '',
               Amount: (salesReport.totalInTHB / 100).toLocaleString('en-us', { minimumFractionDigits: 2 }),

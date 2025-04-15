@@ -16,7 +16,21 @@ export const listOrdersResponse = (response: any) =>
       promoCode: item.promoCode,
       customerType: item.customer?.type ?? item.dancerType,
       includes: item.items.flatMap((item: any) => ((item.includes?.length ?? 0) > 0 ? item.includes : [item.title])),
-      paymentStatus: item.payment.status,
+      paymentStatus:
+        item.payment?.status ??
+        item.paymentStructures
+          ?.map(
+            (payment: any) =>
+              payment.status ??
+              payment.dueDates
+                ?.sort((a: any, b: any) =>
+                  a.dueDate && b.dueDate ? new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime() : 0
+                )
+                .map((dueDate: any) => dueDate.status)
+                .join(', ') ??
+              'unknown'
+          )
+          .join(', '),
       total: {
         amount: item.items.reduce((total: number, item: any) => (total += item.total.amount), 0),
         currency: mapCurrency(item.items[0].total.currency),
