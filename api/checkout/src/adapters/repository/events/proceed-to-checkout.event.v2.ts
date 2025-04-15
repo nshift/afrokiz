@@ -54,34 +54,37 @@ export const mapToOrder = (
   promoCode: string | null
   paymentStructures: PaymentStructureSchema[]
   checkedIn: boolean
-} => ({
-  order: checkout.order,
-  customer: checkout.customer,
-  promoCode: checkout.promoCode,
-  paymentStructures: checkout.paymentStructures.map((paymentStructure) =>
-    isInstallment(paymentStructure)
-      ? {
-          principalAmount: paymentStructure.principalAmount,
-          currency: paymentStructure.currency,
-          frequency: paymentStructure.frequency,
-          term: paymentStructure.term,
-          dueDates: paymentStructure.dueDates.map((dueDate, index) => ({
-            amount: dueDate.amount,
-            currency: dueDate.currency,
-            dueDate: dueDate.dueDate,
-            status: dueDate.status,
-            paymentId: payments[index].id,
-          })),
-        }
-      : {
-          amount: paymentStructure.amount,
-          currency: paymentStructure.currency,
-          status: paymentStructure.status,
-          paymentId: payments[0].id,
-        }
-  ),
-  checkedIn: checkout.checkedIn,
-})
+} => {
+  var paymentIndex = 0
+  return {
+    order: checkout.order,
+    customer: checkout.customer,
+    promoCode: checkout.promoCode,
+    paymentStructures: checkout.paymentStructures.map((paymentStructure) =>
+      isInstallment(paymentStructure)
+        ? {
+            principalAmount: paymentStructure.principalAmount,
+            currency: paymentStructure.currency,
+            frequency: paymentStructure.frequency,
+            term: paymentStructure.term,
+            dueDates: paymentStructure.dueDates.map((dueDate) => ({
+              amount: dueDate.amount,
+              currency: dueDate.currency,
+              dueDate: dueDate.dueDate,
+              status: dueDate.status,
+              paymentId: payments[paymentIndex++].id,
+            })),
+          }
+        : {
+            amount: paymentStructure.amount,
+            currency: paymentStructure.currency,
+            status: paymentStructure.status,
+            paymentId: payments[paymentIndex++].id,
+          }
+    ),
+    checkedIn: checkout.checkedIn,
+  }
+}
 
 export const mapToPayments = (checkout: Checkout, uuidGenerator: UUIDGenerator): PaymentSchema[] => {
   return checkout.paymentStructures.flatMap((paymentStructure) =>
