@@ -43,7 +43,10 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
                 sale.includes.includes('All workshops at Koh Samet only')
                   ? 1
                   : 0,
-              Cruise: sale.includes.includes('Exclusive Cruise Party') ? 1 : 0,
+              Cruise:
+                sale.includes.includes('Exclusive Cruise Party') || sale.includes.includes('Cruise Party in Bangkok')
+                  ? 1
+                  : 0,
               'Audi & Laura MC':
                 sale.includes.includes('2H Audi & Laura Masterclass') ||
                 sale.includes.includes('2H Masterclass by Audi & Laura') ||
@@ -63,8 +66,18 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
                   ? 1
                   : 0,
               'Afro Bootcamp': sale.includes.includes('1H30 Afro Essense Bootcamp by AfroGiants') ? 1 : 0,
-              'Airport Pickup': sale.includes.includes('Airport Pick Up') ? 1 : 0,
-              'Bangkok Hotel': sale.includes.includes('3 Nights Stay') ? 1 : 0,
+              'Airport Pickup':
+                sale.includes.includes('Airport Pick Up') || sale.includes.includes('Airport Pick up') ? 1 : 0,
+              'Bangkok Hotel': sale.includes.some((inc) =>
+                ['3 Nights Stay at I-Residence Silom', '3 Nights Stay at Bangkok hotel'].some((a) => inc.includes(a))
+              )
+                ? 1
+                : 0,
+              'Shared Room Samet': sale.includes.some((inc) =>
+                ['3 Nights in a shared room', '3 Nights Stay at Koh Samet hotel'].some((a) => inc.includes(a))
+              )
+                ? 1
+                : 0,
               Massage:
                 sale.includes.filter((option) => option == '1H Foot Massage at Lek Massage').length ||
                 sale.includes.filter((option) => option == '2H Foot Massage at Lek Massage').length * 2 ||
@@ -100,6 +113,7 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
               'Afro Bootcamp': 0,
               'Airport Pickup': 0,
               'Bangkok Hotel': 0,
+              'Shared Room Samet': 0,
               Massage: 0,
               'Promo Code': '',
               Amount: (salesReport.totalInTHB / 100).toLocaleString('en-us', { minimumFractionDigits: 2 }),

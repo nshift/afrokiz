@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from '@jest/globals'
 import fs from 'fs'
 import path from 'path'
 import { Environment } from '../../environment'
-import { mapCustomer, mapOrder, mapPromoCode } from './csv/edition2-order.map'
+import { mapCustomer, mapOrder, mapPromoCode } from './csv/edition3-order.map'
 import { StorageAdapter } from './storage.adapter'
 import { S3Storage } from './storage.s3'
 
@@ -22,27 +22,95 @@ describe('Storage adapter', () => {
     expect(orders).toEqual(
       expect.arrayContaining([
         {
-          customer: { email: 'romain.asnar@gmail.com', fullname: 'Lucy Selezneva', type: 'follower' },
+          customer: { email: 'romain.asnar@gmail.com', fullname: 'Nguyen Dieu Chi Mai', type: 'leader' },
           order: {
+            date: new Date('2024-01-01'),
             id: expect.any(String),
-            status: 'paid',
-            date: new Date('2024-01-01T00:00:00.000Z'),
             items: [
               {
-                id: 'fullpass',
-                title: 'Full Pass',
-                includes: [
-                  'All workshops',
-                  'All parties in main venue',
-                  '2H Ginga Styling bootcamp (video recorded)',
-                  '1H Foot Massage at Lek Massage per person',
-                  '3 welcome drinks per person',
-                ],
                 amount: 1,
-                total: { amount: 350000, currency: 'THB' },
+                id: 'fullpass-edition3',
+                includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
+                title: 'SUPER EARLY BIRD Full Pass',
+                total: { amount: 317857, currency: 'THB' },
               },
             ],
-            total: { amount: 350000, currency: 'THB' },
+            status: 'paid',
+            total: { amount: 317857, currency: 'THB' },
+          },
+          promoCode: 'TEST',
+        },
+        {
+          customer: { email: 'romain.asnar@gmail.com', fullname: 'Amit Chilgunde', type: 'leader' },
+          order: {
+            date: new Date('2024-01-01'),
+            id: expect.any(String),
+            items: [
+              {
+                amount: 1,
+                id: 'vip-gold',
+                title: 'VIP Gold',
+                includes: [
+                  'All workshops',
+                  'Day time social',
+                  'Evening parties during September 5-7',
+                  '2H Masterclass by Audi & Laura',
+                  "2H Masterclass by T'Peak",
+                  '2H Masterclass by Asia',
+                  '3 welcome drinks per person',
+                  '3 Nights Stay at I-Residence Silom Bangkok Hotel (breakfast included)',
+                  'Airport Pick up',
+                  'Exclusive Cruise Party',
+                  '1H Foot Massage at Lek Massage per person',
+                  'Non-refundable',
+                ],
+                total: { amount: 21040, currency: 'EUR' },
+              },
+              {
+                amount: 1,
+                id: 'afro-bootcamp',
+                title: 'Afro Essense Bootcamp by AfroGiants',
+                includes: ['1H30 Afro Essense Bootcamp by AfroGiants'],
+                total: { amount: 0, currency: 'THB' },
+              },
+            ],
+            status: 'paid',
+            total: { amount: 21040, currency: 'EUR' },
+          },
+          promoCode: '',
+        },
+        {
+          customer: { email: 'romain.asnar@gmail.com', fullname: 'Takako Okude', type: 'follower' },
+          order: {
+            date: new Date('2024-01-01'),
+            id: expect.any(String),
+            items: [
+              {
+                amount: 1,
+                id: 'vip-silver',
+                title: 'VIP Silver',
+                includes: [
+                  'All workshops',
+                  'Day time social',
+                  'Evening parties during September 5-7',
+                  '3 welcome drinks per person',
+                  '3 Nights Stay at I-Residence Silom Bangkok Hotel (breakfast included)',
+                  'Exclusive Cruise Party',
+                  '1H Foot Massage at Lek Massage per person',
+                  'Non-refundable',
+                ],
+                total: { amount: 30000, currency: 'USD' },
+              },
+              {
+                amount: 1,
+                id: 'cruise-option',
+                includes: ['Exclusive Cruise Party'],
+                title: 'Cruise Party',
+                total: { amount: 0, currency: 'THB' },
+              },
+            ],
+            status: 'paid',
+            total: { amount: 30000, currency: 'USD' },
           },
           promoCode: '',
         },

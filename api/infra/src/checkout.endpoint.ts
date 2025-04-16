@@ -309,6 +309,7 @@ const makeRequestImportEdition3OrderEndpoint = (props: {
   eventTable: cdk.aws_dynamodb.Table
   orderTable: cdk.aws_dynamodb.Table
   salesTable: cdk.aws_dynamodb.Table
+  paymentTable: cdk.aws_dynamodb.Table
   importOrdersTable: cdk.aws_dynamodb.Table
   importOrderQueue: cdk.aws_sqs.Queue
   documentBucket: cdk.aws_s3.Bucket
@@ -324,6 +325,7 @@ const makeRequestImportEdition3OrderEndpoint = (props: {
       EVENT_TABLE_NAME: props.eventTable.tableName,
       ORDER_TABLE_NAME: props.orderTable.tableName,
       SALES_TABLE_NAME: props.salesTable.tableName,
+      PAYMENT_TABLE_NAME: props.paymentTable.tableName,
       DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
       IMPORT_ORDER_TABLE_NAME: props.importOrdersTable.tableName,
       IMPORT_ORDER_QUEUE: props.importOrderQueue.queueUrl,
@@ -354,6 +356,7 @@ const makeRequestImportEdition3OrderEndpoint = (props: {
     })
   )
   props.documentBucket.grantPut(endpoint.lambda)
+  props.paymentTable.grant(endpoint.lambda, 'dynamodb:BatchWriteItem', 'dynamodb:Query')
   return endpoint
 }
 

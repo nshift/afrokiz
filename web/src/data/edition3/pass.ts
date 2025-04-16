@@ -763,7 +763,6 @@ export const defaultPasses: { [key: string]: Pass } = {
       'All workshops at Koh Samet',
       'Day time social',
       'Evening parties during September 5-12',
-      '3 Nights Stay at Koh Samet hotel',
       'Breakfast, Lunch and Dinner for 3 Days in Koh Samet',
       'Transportation Bangkok to Samet and return',
       'Fire Show in Koh Samet',

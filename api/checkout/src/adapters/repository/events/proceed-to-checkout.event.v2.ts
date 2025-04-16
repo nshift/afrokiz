@@ -24,7 +24,10 @@ export interface ProceedToCheckoutEvent extends Event<{ checkout: OrderSchema; p
 
 export const proceedToCheckoutEvent = (event: Omit<ProceedToCheckoutEvent, 'process'>): ProceedToCheckoutEvent => ({
   ...event,
-  process: async () => [saveOrdersRequest([event.data.checkout]), savePaymentsRequest(event.data.payments)],
+  process: async () =>
+    [saveOrdersRequest([event.data.checkout])].concat(
+      event.data.payments.length > 0 ? [savePaymentsRequest(event.data.payments)] : []
+    ),
 })
 
 export const processProceedToCheckoutEvent = async (
