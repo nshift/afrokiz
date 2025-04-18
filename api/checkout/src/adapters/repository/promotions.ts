@@ -60,8 +60,7 @@ export const makeEdition3PromoterDiscount = (code: string) =>
     code: code.toUpperCase(),
     expirationDate: new Date('2025-09-01'),
     discount: 0.95,
-    isAppliable: (passId: string) =>
-      !['partyPass', 'fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun'].includes(passId),
+    isAppliable: (passId: string) => !['fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun'].includes(passId),
   })
 
 export const makeKizIslandPromoterDiscount = (code: string) =>
@@ -71,8 +70,7 @@ export const makeKizIslandPromoterDiscount = (code: string) =>
     code: code.toUpperCase(),
     expirationDate: new Date('2025-03-24'),
     discount: 0.9,
-    isAppliable: (passId: string) =>
-      !['partyPass', 'fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun'].includes(passId),
+    isAppliable: (passId: string) => !['fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun'].includes(passId),
   })
 
 export const makeTarrakizSGDiscount = makeDiscountPromotion({
