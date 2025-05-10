@@ -68,12 +68,14 @@ export interface GettingSales {
   getAllRegistrationCampaignSales(): Promise<Sales[]>
   getAllRegistrationReminderCampaignSales(): Promise<Sales[]>
   getAllCruiseCampaignSales(): Promise<Sales[]>
+  getAllTicketOptionCampaignSales(): Promise<Sales[]>
 }
 
 export interface SavingSales {
   updateOrdersForRegistrationCampaign(orderIds: string[]): Promise<void>
   updateOrdersForRegistrationReminderCampaign(orderIds: string[]): Promise<void>
   updateOrdersForCruiseCampaign(orderIds: string[]): Promise<void>
+  updateOrdersForTicketOptionCampaign(orderIds: string[]): Promise<void>
 }
 
 export interface UpdatingOrder {

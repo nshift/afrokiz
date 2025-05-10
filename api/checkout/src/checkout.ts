@@ -6,6 +6,7 @@ import { SendingBulkEmails, SendingEmail } from './adapters/email/email.gateway'
 import { paymentConfirmationEmail } from './adapters/email/email.payment.confirmation'
 import { registrationEmail } from './adapters/email/email.registration'
 import { registrationReminderEmail } from './adapters/email/email.registration-reminder'
+import { ticketOptionEmail } from './adapters/email/email.ticket-option'
 import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { GeneratingQRCode } from './adapters/qr-code/qr-code.gateway'
 import { ImportOrderQueueRequest } from './adapters/queue.gateway'
@@ -390,6 +391,18 @@ export class Checkout {
     )
     await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode, this.uuidGenerator))
     return newOrders.map(({ order }) => order)
+  }
+
+  async sendTicketOptionCampaign() {
+    const sales = await this.repository.getAllTicketOptionCampaignSales()
+    if (sales.length == 0) {
+      return []
+    }
+    await this.emailApi.sendBulkEmails(
+      ticketOptionEmail(sales.concat([{ ...sales[0], email: 'romain.asnar@gmail.com' }]).map((sale) => ({ sale })))
+    )
+    await this.repository.updateOrdersForTicketOptionCampaign(sales.map((sale) => sale.id))
+    return sales
   }
 
   private saveImportOrders(

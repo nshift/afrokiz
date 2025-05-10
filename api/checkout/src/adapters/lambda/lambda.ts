@@ -248,6 +248,19 @@ export const sendRegistrationReminderCampaign = async (
   }
 }
 
+export const sendTicketOptionCampaign = async (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const data = await checkout.sendTicketOptionCampaign()
+    return successResponse({ numberOfOrderProcessed: data.length, orders: data.map((order) => order.id) })
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
 export const checkIn = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const orderId = event.pathParameters?.id
   if (!orderId) {

@@ -291,4 +291,18 @@ export class DynamoDbRepository implements Repository {
         )
     )
   }
+
+  async updateOrdersForTicketOptionCampaign(orderIds: string[]): Promise<void> {
+    await Promise.all(
+      orderIds.map(
+        async (orderId) => await this.dynamodb.send(updateSalesCampaignRequest(orderId, 'ticket_options_campaign'))
+      )
+    )
+  }
+
+  async getAllTicketOptionCampaignSales(): Promise<Sales[]> {
+    const response = await this.dynamodb.send(listOrdersWithoutCampaignRequest('ticket_options_campaign'))
+    const sales = listOrdersResponse(response.Items)
+    return sales.filter((sale) => ['fullpass-edition3', 'early-bird-fullpass-edition3'].includes(sale.pass))
+  }
 }
