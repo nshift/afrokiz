@@ -30,8 +30,8 @@ function calculatePrice(pass: Pass) {
   <main>
     <div class="container2">
       <Card classes={["card header"]} backgroundPath="/images/mahanakhon.png">
-        <h3>Bangkok</h3>
-        <h4>5-9 SEP 2025</h4>
+        <h3>Bangkok, 5-9 SEP 2025</h3>
+        <h4><a href="https://maps.app.goo.gl/deTHk2Euinkho3Pq6">GLOWFISH, Floor 2, Sathorn Thani 2 Building, Bangkok</a></h4>
         <p>The capital of Thailand with beautiful temples, big shopping malls and amazing food.</p>
       </Card>
       <Card classes={["card header"]} backgroundPath="/images/hotel-room.jpg">
@@ -308,6 +308,9 @@ function calculatePrice(pass: Pass) {
   .card.header {
     grid-column: span 6;
     min-height: 350px;
+  }
+  .card.header a {
+    color: white;
   }
   .card.big {
     grid-column: span 12;
