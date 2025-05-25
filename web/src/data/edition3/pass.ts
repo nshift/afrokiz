@@ -590,6 +590,20 @@ export const defaultPasses: { [key: string]: Pass } = {
     options: {
       ...afroBootcampOption,
       ...masterClassOptions,
+      'couple-option': {
+        id: 'couple-option',
+        icon: 'fa-user-group',
+        title: 'Couple',
+        includesInShortDescription: ['1 couple ticket'],
+        includes: ['1 couple ticket'],
+        selected: false,
+        soldOut: false,
+        price: {
+          USD: 29000,
+          EUR: 27500,
+          THB: 990000,
+        },
+      },
       'vip-gold-upgrade': {
         id: 'vip-gold-upgrade',
         icon: 'fa-crown',
@@ -630,6 +644,20 @@ export const defaultPasses: { [key: string]: Pass } = {
     isPromoted: true,
     options: {
       ...afroBootcampOption,
+      'couple-option': {
+        id: 'couple-option',
+        icon: 'fa-user-group',
+        title: 'Couple',
+        includesInShortDescription: ['1 couple ticket'],
+        includes: ['1 couple ticket'],
+        selected: false,
+        soldOut: false,
+        price: {
+          USD: 41000,
+          EUR: 39500,
+          THB: 1430000,
+        },
+      },
     },
   },
   sametBangkokPass: {

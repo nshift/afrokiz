@@ -154,7 +154,7 @@ const shouldDisabled = (id: string) => {
             <div class="price">
               <p>
                 {{ currency }}
-                {{ (option.price[currency ?? defaultCurrency] / 100).toFixed(2) }}
+                {{ ((option.price[currency ?? defaultCurrency] * (optionIds.includes('couple-option') ? 2 : 1)) / 100).toFixed(2) }}
               </p>
             </div>
           </li>
