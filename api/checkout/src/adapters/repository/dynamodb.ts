@@ -141,6 +141,7 @@ export class DynamoDbRepository implements Repository {
       FRANK: makeEdition3PromoterDiscount('FRANK'),
       HITOMI: makeEdition3PromoterDiscount('HITOMI'),
       JAPANKIZ: makeEdition3PromoterDiscount('JAPANKIZ'),
+      JOSHUA: makeEdition3PromoterDiscount('JOSHUA'),
       KAMARAD: makeEdition3PromoterDiscount('KAMARAD'),
       KIMQCLW: makeEdition3PromoterDiscount('KIMQCLW'),
       KIW: makeEdition3PromoterDiscount('KIW'),
