@@ -372,7 +372,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'fullpass',
     name: 'Full Pass',
     isSoldOut: false,
-    price: { USD: 16000, EUR: 15000, THB: 545000 },
+    price: { USD: 14500, EUR: 13000, THB: 470000 },
     doorPrice: { USD: 20000, EUR: 19000, THB: 680000 },
     includes: ['All workshops', 'Day time social', 'Evening parties during September 5-7', 'Non-refundable'],
     giveAways: [],
