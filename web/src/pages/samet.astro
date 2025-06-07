@@ -1,19 +1,32 @@
 ---
-import Card from "../components/Card.astro";
-import Layout from "../layouts/Layout.astro";
-import Header from "../sections/edition3/Header.astro";
-import Footer from "../sections/Footer.astro";
-import { calculateTotal, defaultPasses, type Pass } from "../data/edition3/pass";
-import Currency from "../components/Currency.vue";
-import { artists } from "../data/edition3/artist";
-import FirstInstallment from "../components/FirstInstallment.vue";
+import Card from '../components/Card.astro'
+import Layout from '../layouts/Layout.astro'
+import Header from '../sections/edition3/Header.astro'
+import Footer from '../sections/Footer.astro'
+import { calculateTotal, defaultPasses, type Pass } from '../data/edition3/pass'
+import Currency from '../components/Currency.vue'
+import { artists } from '../data/edition3/artist'
+import FirstInstallment from '../components/FirstInstallment.vue'
 
 const sametPass = defaultPasses.sametPass
 const partyPackage = defaultPasses.partyPackage
 const allInclusivePackage = defaultPasses.allInclusivePackage
-let instructors = [artists.albir, artists.ozyshine, artists.quinn, artists.oncleKani, artists.david, artists.selva, artists.ploy];
+let instructors = [
+  artists.albir,
+  artists.ozyshine,
+  artists.quinn,
+  artists.oncleKani,
+  artists.david,
+  artists.selva,
+  artists.ploy,
+]
 function calculatePrice(pass: Pass) {
-  return calculateTotal(pass, Object.values(pass.options).filter((option) => option.selected).map((option) => option.id))
+  return calculateTotal(
+    pass,
+    Object.values(pass.options)
+      .filter((option) => option.selected)
+      .map((option) => option.id)
+  )
 }
 ---
 
@@ -21,42 +34,57 @@ function calculatePrice(pass: Pass) {
   <Header />
   <main>
     <div class="container2">
-      <Card classes={["card header"]} backgroundPath="/images/artists/albir.jpg">
+      <Card classes={['card header']} backgroundPath="/images/artists/albir.jpg">
         <h3>MKiz Edition</h3>
-        <p>Samet getaway event highlights Albir's MKiz concept, focuses on rhythm, movement, breathwork, and energy flow. It includes blindfolded and meditative dance sessions, exploring female and male energies.</p>
+        <p>
+          Samet getaway event highlights Albir's MKiz concept, focuses on rhythm, movement, breathwork, and energy flow.
+          It includes blindfolded and meditative dance sessions, exploring female and male energies.
+        </p>
       </Card>
-      <Card classes={["card header"]} backgroundPath="/images/koh-samet.jpg">
+      <Card classes={['card header']} backgroundPath="/images/koh-samet.jpg">
         <h3>Koh Samet Island</h3>
         <h4>9-12 SEP 2025</h4>
         <p>Relaxing environment with amazing views. Dance on the beach from morning to night.</p>
       </Card>
       <ul class="artists">
-        <li><Card classes={["card small"]} backgroundPath="/images/beach2.png">
-          <h4>Dancing On The Beach</h4>
-          <p>Enjoy dancing on the beach from morning till night.</p>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/fire-show.jpeg">
-          <h4>Fire Show</h4>
-          <p>Experience fire shows on the beach.</p>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/food.png">
-          <h4>Breakfast, Lunch and Dinner</h4>
-          <p>Get a taste of authentic thai food.</p>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/pickup.jpg">
-          <h4>Transportation</h4>
-          <p>From Bangkok to Koh Samet and return.</p>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/room3.png">
-          <h4>Parties</h4>
-          <p>Dance all night until 4AM with the top international DJs.</p>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/workshop.png">
-          <h4>Workshops</h4>
-          <p>Learn from the world's top international artists.</p>
-        </Card></li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/beach2.png">
+            <h4>Dancing On The Beach</h4>
+            <p>Enjoy dancing on the beach from morning till night.</p>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/fire-show.jpeg">
+            <h4>Fire Show</h4>
+            <p>Experience fire shows on the beach.</p>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/food.png">
+            <h4>Breakfast, Lunch and Dinner</h4>
+            <p>Get a taste of authentic thai food.</p>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/pickup.jpg">
+            <h4>Transportation</h4>
+            <p>From Bangkok to Koh Samet and return.</p>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/room3.png">
+            <h4>Parties</h4>
+            <p>Dance all night until 4AM with the top international DJs.</p>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/workshop.png">
+            <h4>Workshops</h4>
+            <p>Learn from the world's top international artists.</p>
+          </Card>
+        </li>
       </ul>
-      <Card classes={["card big"]} backgroundPath="/images/samet-hotel.png">
+      <Card classes={['card big']} backgroundPath="/images/samet-hotel.png">
         <h4>Koh Samet Hotel</h4>
         <p>3 nights stay with breakfast, lunch and dinner. Wake up in front of the sea.</p>
       </Card>
@@ -69,7 +97,7 @@ function calculatePrice(pass: Pass) {
         {
           instructors.map((artist) => (
             <li>
-              <Card backgroundPath={artist.image} classes={["artist-card"]}>
+              <Card backgroundPath={artist.image} classes={['artist-card']}>
                 {artist.name}
               </Card>
             </li>
@@ -78,15 +106,23 @@ function calculatePrice(pass: Pass) {
       </ul>
     </div>
     <div class="container2">
-      <Card classes={["card small package"]}>
-        <Card classes={["card"]}>
+      <Card classes={['card small package']}>
+        <Card classes={['card']}>
           <h4>Samet Getaway</h4>
-          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(sametPass)} today={new Date()} client:only /></h3>
+          <h3>
+            <FirstInstallment term={3} amountToBePaid={calculatePrice(sametPass)} today={new Date()} client:only />
+          </h3>
           <p>
-            <Currency price={sametPass.price} client:only />
-            { sametPass.price.EUR != sametPass.doorPrice.EUR && <s><Currency price={sametPass.doorPrice} client:only /></s> }
+            <Currency price={calculatePrice(sametPass)} client:only />
+            {
+              sametPass.price.EUR != sametPass.doorPrice.EUR && (
+                <s>
+                  <Currency price={sametPass.doorPrice} client:only />
+                </s>
+              )
+            }
           </p>
-          <p><a href={"/pass/" + sametPass.id} class="button action">Buy now</a></p>
+          <p><a href={'/pass/' + sametPass.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
@@ -104,15 +140,23 @@ function calculatePrice(pass: Pass) {
           <li><i class="fa-solid fa-circle-xmark"></i> Airport Pick Up</li>
         </ul>
       </Card>
-      <Card classes={["card small package"]}>
-        <Card classes={["card"]}>
+      <Card classes={['card small package']}>
+        <Card classes={['card']}>
           <h4>Bangkok Samet Party Package</h4>
-          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only /></h3>
+          <h3>
+            <FirstInstallment term={3} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only />
+          </h3>
           <p>
-            <Currency price={partyPackage.price} client:only />
-            { partyPackage.price.EUR != partyPackage.doorPrice.EUR && <s><Currency price={partyPackage.doorPrice} client:only /></s> }
+            <Currency price={calculatePrice(partyPackage)} client:only />
+            {
+              partyPackage.price.EUR != partyPackage.doorPrice.EUR && (
+                <s>
+                  <Currency price={partyPackage.doorPrice} client:only />
+                </s>
+              )
+            }
           </p>
-          <p><a href={"/pass/" + partyPackage.id} class="button action">Buy now</a></p>
+          <p><a href={'/pass/' + partyPackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
@@ -130,15 +174,28 @@ function calculatePrice(pass: Pass) {
           <li><i class="fa-solid fa-circle-xmark"></i> Airport Pick Up</li>
         </ul>
       </Card>
-      <Card classes={["card small package"]}>
-        <Card classes={["card"]}>
+      <Card classes={['card small package']}>
+        <Card classes={['card']}>
           <h4>All Inclusive Package</h4>
-          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(allInclusivePackage)} today={new Date()} client:only /></h3>
+          <h3>
+            <FirstInstallment
+              term={3}
+              amountToBePaid={calculatePrice(allInclusivePackage)}
+              today={new Date()}
+              client:only
+            />
+          </h3>
           <p>
-            <Currency price={allInclusivePackage.price} client:only />
-            { allInclusivePackage.price.EUR != allInclusivePackage.doorPrice.EUR && <s><Currency price={allInclusivePackage.doorPrice} client:only /></s> }
+            <Currency price={calculatePrice(allInclusivePackage)} client:only />
+            {
+              allInclusivePackage.price.EUR != allInclusivePackage.doorPrice.EUR && (
+                <s>
+                  <Currency price={allInclusivePackage.doorPrice} client:only />
+                </s>
+              )
+            }
           </p>
-          <p><a href={"/pass/" + allInclusivePackage.id} class="button action">Buy now</a></p>
+          <p><a href={'/pass/' + allInclusivePackage.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
@@ -157,10 +214,19 @@ function calculatePrice(pass: Pass) {
         </ul>
       </Card>
     </div>
-    <div class="container2" style={{ paddingBottom: '3rem'}}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', gridColumn: 'span 12', textAlign: 'center', color: 'white' }}>
+    <div class="container2" style={{ paddingBottom: '3rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2rem',
+          gridColumn: 'span 12',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
         <h3>Are you interested to dance in Bangkok and Koh Samet?</h3>
-        <p><a href={"/traveling"} class="button action">See our packages</a></p>
+        <p><a href={'/traveling'} class="button action">See our packages</a></p>
       </div>
     </div>
   </main>
@@ -246,10 +312,12 @@ function calculatePrice(pass: Pass) {
     background-color: rgba(0, 0, 0, 0.4) !important;
   }
   @media only screen and (max-width: 920px) {
-    .card.header, .card.small {
+    .card.header,
+    .card.small {
       min-height: 180px;
     }
-    .card.big, .card.header {
+    .card.big,
+    .card.header {
       grid-column: span 12;
       min-height: 200px;
     }
