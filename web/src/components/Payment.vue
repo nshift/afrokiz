@@ -181,6 +181,7 @@ import type { DiscountPromotion, GiveAwayPromotion } from '../payment-api/promot
 import type { StripeElements } from '@stripe/stripe-js'
 import { loadStripe, type Stripe } from '../stripe'
 import Card from './Card.vue'
+import { defaultPasses } from '../data/edition3/pass'
 
 function createMonthlyDueDates(): (PaymentDueDate & { id: string })[] {
   return makeMonthlyDueDates({
@@ -225,7 +226,7 @@ const cardDeclinedErrorMessage = ref('')
 const installmentTermsApprovement = ref<'approved'[]>([])
 const installmentTermsApprovementError = ref(false)
 const installments = ref<(PaymentDueDate & { id: string })[]>(createMonthlyDueDates())
-const minimumAmountForInstallmentProgram = { USD: 16000, EUR: 16000, THB: 540000 }
+const minimumAmountForInstallmentProgram =  defaultPasses.fullPass.price
 const canUseInstallmentProgram = (amount: number, currency: Currency) =>
   props.pass.id == 'testpass' || amount > minimumAmountForInstallmentProgram[currency]
 const shouldRequestPersonalInformation = props.order === undefined
