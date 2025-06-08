@@ -61,7 +61,7 @@ export const makeEdition3PromoterDiscount = (code: string) =>
     expirationDate: new Date('2025-09-01'),
     discount: 0.95,
     isAppliable: (passId: string) =>
-      !['fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun', 'fullpass'].includes(passId),
+      !['fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun'].includes(passId),
   })
 
 export const makeKizIslandPromoterDiscount = (code: string) =>
