@@ -876,13 +876,13 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'all-inclusive-package',
     name: 'All Inclusive Package',
     isSoldOut: false,
-    price: { USD: 62000, EUR: 54500, THB: 2020000 },
+    price: { USD: 66000, EUR: 57000, THB: 2140000 },
     doorPrice: { USD: 75000, EUR: 72000, THB: 2570000 },
     includes: [
       'All workshops at Bangkok and Koh Samet',
       'Day time social',
       'Evening parties during September 5-12',
-      '3 Nights Stay at Bangkok hotel',
+      '4 Nights Stay at Bangkok hotel',
       'Cruise Party in Bangkok',
       '3 Nights Stay at Koh Samet hotel',
       'Breakfast, Lunch and Dinner for 3 Days in Koh Samet',
@@ -893,6 +893,20 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      'couple-option': {
+        id: 'couple-option',
+        icon: 'fa-user-group',
+        title: 'Couple',
+        includesInShortDescription: ['1 couple ticket'],
+        includes: ['1 couple ticket'],
+        selected: false,
+        soldOut: false,
+        price: {
+          USD: 53000,
+          EUR: 46000,
+          THB: 1700000,
+        },
+      },
       ...afroBootcampOption,
       ...masterClassOptions,
       'vip-gold-upgrade': {
