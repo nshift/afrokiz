@@ -110,7 +110,7 @@ function calculatePrice(pass: Pass) {
         <Card classes={['card']}>
           <h4>Samet Getaway</h4>
           <h3>
-            <FirstInstallment term={3} amountToBePaid={calculatePrice(sametPass)} today={new Date()} client:only />
+            <FirstInstallment term={2} amountToBePaid={calculatePrice(sametPass)} today={new Date()} client:only />
           </h3>
           <p>
             <Currency price={calculatePrice(sametPass)} client:only />
@@ -144,7 +144,7 @@ function calculatePrice(pass: Pass) {
         <Card classes={['card']}>
           <h4>Bangkok Samet Party Package</h4>
           <h3>
-            <FirstInstallment term={3} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only />
+            <FirstInstallment term={2} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only />
           </h3>
           <p>
             <Currency price={calculatePrice(partyPackage)} client:only />

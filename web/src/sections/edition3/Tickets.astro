@@ -1,8 +1,8 @@
 ---
-import Card from "../../components/Card.astro";
-import Currency from "../../components/Currency.vue"
-import FirstInstallment from "../../components/FirstInstallment.vue";
-import { type Pass, calculateTotal, defaultPasses } from "../../data/edition3/pass";
+import Card from '../../components/Card.astro'
+import Currency from '../../components/Currency.vue'
+import FirstInstallment from '../../components/FirstInstallment.vue'
+import { type Pass, calculateTotal, defaultPasses } from '../../data/edition3/pass'
 
 const fullpassValentine = defaultPasses.fullPassValentine
 const vipSilverValentine = defaultPasses.vipSilverValentine
@@ -14,94 +14,209 @@ const sametBangkokPass = defaultPasses.sametBangkokPass
 const sametPass = defaultPasses.sametPass
 
 function calculatePrice(pass: Pass) {
-  return calculateTotal(pass, Object.values(pass.options).filter((option) => option.selected).map((option) => option.id))
+  return calculateTotal(
+    pass,
+    Object.values(pass.options)
+      .filter((option) => option.selected)
+      .map((option) => option.id)
+  )
 }
 ---
 
 <div id="tickets" class="container">
-    <Card classes={["date-card", "bangkok"]} backgroundPath="/images/mahanakhon.png">
-      <h2>5-8 Sep 2025</h2>
-      <h4>Bangkok, Thailand</h4>
-      <p style="margin-top: 1rem;">13H Workshops<br/>6H Masterclass<br/>30H of Dancing<br/>Exclusive Party Cruise<br/>Day Time Social</p>
-    </Card>
-    <Card classes={["date-card", "samet"]} backgroundPath="/images/koh-samet.jpg">
-      <h2>9-12 Sep 2025</h2>
-      <h4>Koh Samet, Thailand</h4>
-      <p style="margin-top: 1rem;">4 Days In Koh Samet Island<br/>Workshops & Parties<br/>Outdoor Activities</p>
-    </Card>
-    <Card classes={["ticket-card", "ticket", "fullpass"]}>
-      <div class="container-column">
-        <div>
-          <h2><Currency price={calculatePrice(fullpass)} client:only /></h2>
-          { fullpass.price.EUR != fullpass.doorPrice.EUR && <p><s><Currency price={fullpass.doorPrice} client:only /></s></p> }
-          <h3>{fullpass.name}</h3>
-        </div>
-        <div class="button-container">
-          { !fullpass.isSoldOut && <a href={"/pass/" + fullpass.id} class="button action">Buy Now</a> }
-          { fullpass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
-        </div>
+  <Card classes={['date-card', 'bangkok']} backgroundPath="/images/mahanakhon.png">
+    <h2>5-8 Sep 2025</h2>
+    <h4>Bangkok, Thailand</h4>
+    <p style="margin-top: 1rem;">
+      13H Workshops<br />6H Masterclass<br />30H of Dancing<br />Exclusive Party Cruise<br />Day Time Social
+    </p>
+  </Card>
+  <Card classes={['date-card', 'samet']} backgroundPath="/images/koh-samet.jpg">
+    <h2>9-12 Sep 2025</h2>
+    <h4>Koh Samet, Thailand</h4>
+    <p style="margin-top: 1rem;">4 Days In Koh Samet Island<br />Workshops & Parties<br />Outdoor Activities</p>
+  </Card>
+  <Card classes={['ticket-card', 'ticket', 'fullpass']}>
+    <div class="container-column">
+      <div>
+        <h2><Currency price={calculatePrice(fullpass)} client:only /></h2>
+        {
+          fullpass.price.EUR != fullpass.doorPrice.EUR && (
+            <p>
+              <s>
+                <Currency price={fullpass.doorPrice} client:only />
+              </s>
+            </p>
+          )
+        }
+        <h3>{fullpass.name}</h3>
       </div>
-    </Card>
-    <Card classes={["ticket-card", "ticket", "vipSilverPass"]}>
-      <div class="installment-annotation">Pay Over 3 Months</div>
-      <div class="container-column">
-        <div>
-          <h2><Currency price={calculatePrice(vipSilverPass)} client:only /></h2>
-          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipSilverPass)} today={new Date()} client:only /></p>
-          { vipSilverPass.price.EUR != vipSilverPass.doorPrice.EUR && <p><s><Currency price={vipSilverPass.doorPrice} client:only /></s></p> }
-          <h3>{vipSilverPass.name}</h3>
-        </div>
-        <div class="button-container">
-          { !vipSilverPass.isSoldOut && <a href={"/pass/" + vipSilverPass.id} class="button action">Buy Now</a> }
-          { vipSilverPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
-        </div>
+      <div class="button-container">
+        {
+          !fullpass.isSoldOut && (
+            <a href={'/pass/' + fullpass.id} class="button action">
+              Buy Now
+            </a>
+          )
+        }
+        {
+          fullpass.isSoldOut && (
+            <button class="button action disabled" disabled>
+              Sold Out
+            </button>
+          )
+        }
       </div>
-    </Card>
-    <Card classes={["ticket-card", "ticket", "sametCard", "sametBangkokPass"]}>
-      <div class="installment-annotation">Pay Over 3 Months</div>
-      <div class="container-column">
-        <div>
-          <h2><Currency price={calculatePrice(sametBangkokPass)} client:only /></h2>
-          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(sametBangkokPass)} today={new Date()} client:only /></p>
-          { sametBangkokPass.price.EUR != sametBangkokPass.doorPrice.EUR && <p><s><Currency price={sametBangkokPass.doorPrice} client:only /></s></p> }
-          <h3>{sametBangkokPass.name}</h3>
-        </div>
-        <div class="button-container">
-          { !sametBangkokPass.isSoldOut && <a href={"/pass/" + sametBangkokPass.id} class="button action">Buy Now</a> }
-          { sametBangkokPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
-        </div>
+    </div>
+  </Card>
+  <Card classes={['ticket-card', 'ticket', 'vipSilverPass']}>
+    <div class="installment-annotation">Pay Over 2 Months</div>
+    <div class="container-column">
+      <div>
+        <h2><Currency price={calculatePrice(vipSilverPass)} client:only /></h2>
+        <p class="fInstallment">
+          <FirstInstallment term={2} amountToBePaid={calculatePrice(vipSilverPass)} today={new Date()} client:only />
+        </p>
+        {
+          vipSilverPass.price.EUR != vipSilverPass.doorPrice.EUR && (
+            <p>
+              <s>
+                <Currency price={vipSilverPass.doorPrice} client:only />
+              </s>
+            </p>
+          )
+        }
+        <h3>{vipSilverPass.name}</h3>
       </div>
-    </Card>
-    <Card classes={["ticket-card", "ticket", "sametCard", "sametPass"]}>
-      <div class="installment-annotation">Pay Over 3 Months</div>
-      <div class="container-column">
-        <div>
-          <h2><Currency price={calculatePrice(sametPass)} client:only /></h2>
-          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(sametPass)} today={new Date()} client:only /></p>
-          { sametPass.price.EUR != sametPass.doorPrice.EUR && <p><s><Currency price={sametPass.doorPrice} client:only /></s></p> }
-          <h3>{sametPass.name}</h3>
-        </div>
-        <div class="button-container">
-          { !sametPass.isSoldOut && <a href={"/pass/" + sametPass.id} class="button action">Buy Now</a> }
-          { sametPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
-        </div>
+      <div class="button-container">
+        {
+          !vipSilverPass.isSoldOut && (
+            <a href={'/pass/' + vipSilverPass.id} class="button action">
+              Buy Now
+            </a>
+          )
+        }
+        {
+          vipSilverPass.isSoldOut && (
+            <button class="button action disabled" disabled>
+              Sold Out
+            </button>
+          )
+        }
       </div>
-    </Card>
-    <Card classes={["ticket-card", "ticket", "vipGoldPass"]}>
-      <div class="installment-annotation">Pay Over 3 Months</div>
-      <div class="container-column">
-        <div>
-          <h2><Currency price={calculatePrice(vipGoldPass)} client:only /></h2>
-          <p class="fInstallment"><FirstInstallment term={3} amountToBePaid={calculatePrice(vipGoldPass)} today={new Date()} client:only /></p>
-          { vipGoldPass.price.EUR != vipGoldPass.doorPrice.EUR && <p><s><Currency price={vipGoldPass.doorPrice} client:only /></s></p> }
-          <h3>{vipGoldPass.name}</h3>
-        </div>
-        <div class="button-container">
-          { !vipGoldPass.isSoldOut && <a href={"/pass/" + vipGoldPass.id} class="button action">Buy Now</a> }
-          { vipGoldPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
-        </div>
+    </div>
+  </Card>
+  <Card classes={['ticket-card', 'ticket', 'sametCard', 'sametBangkokPass']}>
+    <div class="installment-annotation">Pay Over 2 Months</div>
+    <div class="container-column">
+      <div>
+        <h2><Currency price={calculatePrice(sametBangkokPass)} client:only /></h2>
+        <p class="fInstallment">
+          <FirstInstallment term={2} amountToBePaid={calculatePrice(sametBangkokPass)} today={new Date()} client:only />
+        </p>
+        {
+          sametBangkokPass.price.EUR != sametBangkokPass.doorPrice.EUR && (
+            <p>
+              <s>
+                <Currency price={sametBangkokPass.doorPrice} client:only />
+              </s>
+            </p>
+          )
+        }
+        <h3>{sametBangkokPass.name}</h3>
       </div>
-    </Card>
+      <div class="button-container">
+        {
+          !sametBangkokPass.isSoldOut && (
+            <a href={'/pass/' + sametBangkokPass.id} class="button action">
+              Buy Now
+            </a>
+          )
+        }
+        {
+          sametBangkokPass.isSoldOut && (
+            <button class="button action disabled" disabled>
+              Sold Out
+            </button>
+          )
+        }
+      </div>
+    </div>
+  </Card>
+  <Card classes={['ticket-card', 'ticket', 'sametCard', 'sametPass']}>
+    <div class="installment-annotation">Pay Over 2 Months</div>
+    <div class="container-column">
+      <div>
+        <h2><Currency price={calculatePrice(sametPass)} client:only /></h2>
+        <p class="fInstallment">
+          <FirstInstallment term={2} amountToBePaid={calculatePrice(sametPass)} today={new Date()} client:only />
+        </p>
+        {
+          sametPass.price.EUR != sametPass.doorPrice.EUR && (
+            <p>
+              <s>
+                <Currency price={sametPass.doorPrice} client:only />
+              </s>
+            </p>
+          )
+        }
+        <h3>{sametPass.name}</h3>
+      </div>
+      <div class="button-container">
+        {
+          !sametPass.isSoldOut && (
+            <a href={'/pass/' + sametPass.id} class="button action">
+              Buy Now
+            </a>
+          )
+        }
+        {
+          sametPass.isSoldOut && (
+            <button class="button action disabled" disabled>
+              Sold Out
+            </button>
+          )
+        }
+      </div>
+    </div>
+  </Card>
+  <Card classes={['ticket-card', 'ticket', 'vipGoldPass']}>
+    <div class="installment-annotation">Pay Over 2 Months</div>
+    <div class="container-column">
+      <div>
+        <h2><Currency price={calculatePrice(vipGoldPass)} client:only /></h2>
+        <p class="fInstallment">
+          <FirstInstallment term={2} amountToBePaid={calculatePrice(vipGoldPass)} today={new Date()} client:only />
+        </p>
+        {
+          vipGoldPass.price.EUR != vipGoldPass.doorPrice.EUR && (
+            <p>
+              <s>
+                <Currency price={vipGoldPass.doorPrice} client:only />
+              </s>
+            </p>
+          )
+        }
+        <h3>{vipGoldPass.name}</h3>
+      </div>
+      <div class="button-container">
+        {
+          !vipGoldPass.isSoldOut && (
+            <a href={'/pass/' + vipGoldPass.id} class="button action">
+              Buy Now
+            </a>
+          )
+        }
+        {
+          vipGoldPass.isSoldOut && (
+            <button class="button action disabled" disabled>
+              Sold Out
+            </button>
+          )
+        }
+      </div>
+    </div>
+  </Card>
 </div>
 
 <style is:global>
@@ -110,9 +225,9 @@ function calculatePrice(pass: Pass) {
   }
   #tickets {
     grid-template-areas:
-      "bangkok bangkok bangkok bangkok bangkok bangkok samet samet samet samet samet samet"
-      "fullpass fullpass fullpass vipSilver vipSilver vipSilver bangkokSamet bangkokSamet bangkokSamet sametGetaway sametGetaway sametGetaway"
-      "vipGold vipGold vipGold none none none none none none none none none";
+      'bangkok bangkok bangkok bangkok bangkok bangkok samet samet samet samet samet samet'
+      'fullpass fullpass fullpass vipSilver vipSilver vipSilver bangkokSamet bangkokSamet bangkokSamet sametGetaway sametGetaway sametGetaway'
+      'vipGold vipGold vipGold none none none none none none none none none';
   }
   .bangkok {
     grid-area: bangkok;
@@ -128,9 +243,10 @@ function calculatePrice(pass: Pass) {
   }
   .fullpassValentine {
     grid-area: fullpassValentine;
-    
   }
-  .fullpassValentine, .vipSilverValentine, .vipGoldValentine {
+  .fullpassValentine,
+  .vipSilverValentine,
+  .vipGoldValentine {
     background-color: var(--secondary-color) !important;
   }
   .fullpassValentine .button-container .button,
@@ -209,11 +325,11 @@ function calculatePrice(pass: Pass) {
     }
     #tickets {
       grid-template-areas:
-        "vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine"
-        "bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok"
-        "fullpass fullpass fullpass fullpass vipSilver vipSilver vipSilver vipSilver vipGold vipGold vipGold vipGold"
-        "samet samet samet samet samet samet samet samet samet samet samet samet"
-        "bangkokSamet bangkokSamet bangkokSamet bangkokSamet sametGetaway sametGetaway sametGetaway sametGetaway none none none none" !important;
+        'vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipSilverValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine vipGoldValentine'
+        'bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok bangkok'
+        'fullpass fullpass fullpass fullpass vipSilver vipSilver vipSilver vipSilver vipGold vipGold vipGold vipGold'
+        'samet samet samet samet samet samet samet samet samet samet samet samet'
+        'bangkokSamet bangkokSamet bangkokSamet bangkokSamet sametGetaway sametGetaway sametGetaway sametGetaway none none none none' !important;
     }
   }
 </style>

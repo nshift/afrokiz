@@ -170,4 +170,10 @@ export class InMemoryRepository implements Repository {
   getAllCruiseCampaignSales(): Promise<Sales[]> {
     throw new Error('Method not implemented.')
   }
+  updateOrdersForTicketOptionCampaign(orderIds: string[]): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
+  getAllTicketOptionCampaignSales(): Promise<Sales[]> {
+    throw new Error('Method not implemented.')
+  }
 }

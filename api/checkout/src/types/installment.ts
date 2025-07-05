@@ -30,8 +30,8 @@ export const makeInstallment3xPayment = (
   principalAmount: amountToBePaid.amount,
   currency: amountToBePaid.currency,
   frequency: 'monthly',
-  term: 3,
-  dueDates: makeMonthlyDueDates({ term: 3, amountToBePaid, today }),
+  term: 2,
+  dueDates: makeMonthlyDueDates({ term: 2, amountToBePaid, today }),
 })
 
 const makeMonthlyDueDates = ({

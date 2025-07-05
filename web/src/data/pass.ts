@@ -508,7 +508,7 @@ export function calculateFirstInstallment(
   selectedOptionIds: string[],
   discount: number = 1
 ): { USD: number; EUR: number; THB: number } {
-  let term = 3
+  let term = 2
   let total = calculateTotal(pass, selectedOptionIds, discount)
   return {
     USD: total.USD - Math.floor(total.USD / term) * (term - 1),

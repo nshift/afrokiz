@@ -77,7 +77,7 @@ export const installmentPaymentStructure = (amount: number, dueDatesAmount: numb
   principalAmount: amount,
   currency: 'USD',
   frequency: 'monthly',
-  term: 3,
+  term: 2,
   dueDates: dueDatesAmount.map((amount, index) => ({
     amount,
     currency: 'USD',

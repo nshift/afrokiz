@@ -17,7 +17,7 @@
             v-if="!canUseInstallmentProgram(total * discount, currency)"
           >
             <div class="option">
-              <p class="title">Pay over 3 months</p>
+              <p class="title">Pay over 2 months</p>
               <p class="subtitle">
                 {{ currency }} {{ (minimumAmountForInstallmentProgram[currency] / 100).toFixed(2) }} minimum
               </p>
@@ -31,11 +31,11 @@
             <div class="option">
               <div>
                 <p class="title">
-                  {{ currency }} {{ ((total * discount - Math.floor((total * discount) / 3) * 2) / 100).toFixed(2) }}
+                  {{ currency }} {{ ((total * discount - Math.floor((total * discount) / 4) * 2) / 100).toFixed(2) }}
                 </p>
                 <p style="line-height: calc(var(--text-font-size) * 0.5)"><small>per month</small></p>
               </div>
-              <p class="subtitle" style="margin-top: calc(var(--text-font-size) * 0.5)">3 months installment</p>
+              <p class="subtitle" style="margin-top: calc(var(--text-font-size) * 0.5)">2 months installment</p>
             </div>
           </div>
         </div>
@@ -185,7 +185,7 @@ import { defaultPasses } from '../data/edition3/pass'
 
 function createMonthlyDueDates(): (PaymentDueDate & { id: string })[] {
   return makeMonthlyDueDates({
-    term: 3,
+    term: 2,
     amountToBePaid: { amount: total.value * discount.value, currency: currency.value },
     today: new Date(),
   }).map((installment) => ({ ...installment, id: uuid() }))

@@ -77,7 +77,7 @@ describe('Create an order when checking out', () => {
     const { order } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,
-      paymentOption: { method: 'card', structure: 'direct' },
+      paymentOption: { method: 'card', structure: 'direct', paymentMethodId: '42' },
       promoCode: null,
     })
 
@@ -94,7 +94,7 @@ describe('Create an order when checking out', () => {
     const { payment } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,
-      paymentOption: { method: 'card', structure: 'direct' },
+      paymentOption: { method: 'card', structure: 'direct', paymentMethodId: '42' },
       promoCode: null,
     })
     expect(fakePaymentIntent.secret).toEqual(payment.intent.secret)
@@ -104,14 +104,14 @@ describe('Create an order when checking out', () => {
       const { order: oldOrder } = await checkout.proceed({
         newOrder: fakeOrder,
         customer: romainCustomer,
-        paymentOption: { method: 'card', structure: 'direct' },
+        paymentOption: { method: 'card', structure: 'direct', paymentMethodId: '42' },
         promoCode: null,
       })
 
       const { order: newOrder } = await checkout.proceed({
         newOrder: { ...fakeOrderWithOptions, id: oldOrder.id },
         customer: romainCustomer,
-        paymentOption: { method: 'card', structure: 'direct' },
+        paymentOption: { method: 'card', structure: 'direct', paymentMethodId: '42' },
         promoCode: null,
       })
 
@@ -138,16 +138,17 @@ describe('Create an order when checking out', () => {
       const { order } = await checkout.proceed({
         newOrder: fakeOrder,
         customer: romainCustomer,
-        paymentOption: { method: 'card', structure: 'installment3x' },
+        paymentOption: { method: 'card', structure: 'installment3x', paymentMethodId: '42' },
         promoCode: null,
       })
 
       expect(paymentAdapter.createPaymentIntentForInstallment).toHaveBeenCalledWith({
         order: expect.objectContaining({ id: order.id }),
-        total: { amount: 10000, currency: 'USD' },
+        total: { amount: 15000, currency: 'USD' },
         customer: fakeStripeCustomer,
+        paymentMethodId: '42'
       })
-      let installmentPaymentStructures = installmentPaymentStructure(30000, [10000, 10000, 10000])
+      let installmentPaymentStructures = installmentPaymentStructure(30000, [15000, 15000])
       expect({
         order: { ...fakeOrder, id: order.id, status: 'pending' },
         payment: { status: 'pending', intent: fakePaymentIntent, customer: fakeStripeCustomer },
@@ -180,7 +181,7 @@ describe('Handling successful payment when checking out', () => {
     const { order: newOrder } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,
-      paymentOption: { method: 'card', structure: 'direct' },
+      paymentOption: { method: 'card', structure: 'direct', paymentMethodId: '42' },
       promoCode: null,
     })
 
@@ -203,7 +204,7 @@ describe('Handling successful payment when checking out', () => {
     const { order: newOrder } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,
-      paymentOption: { method: 'card', structure: 'direct' },
+      paymentOption: { method: 'card', structure: 'direct', paymentMethodId: '42' },
       promoCode: null,
     })
 
@@ -230,7 +231,7 @@ describe('Handling successful payment when checking out', () => {
       const { order: newOrder } = await checkout.proceed({
         newOrder: fakeOrder,
         customer: romainCustomer,
-        paymentOption: { method: 'card', structure: 'installment3x' },
+        paymentOption: { method: 'card', structure: 'installment3x', paymentMethodId: '42' },
         promoCode: null,
       })
 
@@ -270,7 +271,7 @@ describe('Handling failing payment when checking out', () => {
     const { order: newOrder } = await checkout.proceed({
       newOrder: fakeOrder,
       customer: romainCustomer,
-      paymentOption: { method: 'card', structure: 'direct' },
+      paymentOption: { method: 'card', structure: 'direct', paymentMethodId: '42' },
       promoCode: null,
     })
 

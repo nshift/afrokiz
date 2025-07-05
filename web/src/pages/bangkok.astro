@@ -1,12 +1,12 @@
 ---
-import Card from "../components/Card.astro";
-import Layout from "../layouts/Layout.astro";
-import Header from "../sections/edition3/Header.astro";
-import Footer from "../sections/Footer.astro";
-import { calculateTotal, defaultPasses, type Pass } from "../data/edition3/pass";
-import Currency from "../components/Currency.vue";
-import { artists, taxiDancers } from "../data/edition3/artist";
-import FirstInstallment from "../components/FirstInstallment.vue";
+import Card from '../components/Card.astro'
+import Layout from '../layouts/Layout.astro'
+import Header from '../sections/edition3/Header.astro'
+import Footer from '../sections/Footer.astro'
+import { calculateTotal, defaultPasses, type Pass } from '../data/edition3/pass'
+import Currency from '../components/Currency.vue'
+import { artists, taxiDancers } from '../data/edition3/artist'
+import FirstInstallment from '../components/FirstInstallment.vue'
 
 const fullpass = defaultPasses.fullPass
 const partyPass = defaultPasses.partyPass
@@ -18,10 +18,26 @@ const satPass = defaultPasses.sat
 const sunPass = defaultPasses.sun
 const vipSilverPass = defaultPasses.vipSilverPass
 const vipGoldPass = defaultPasses.vipGoldPass
-let instructors = [artists.audilaura, artists.albir, artists.asia, artists.tpeak, artists.ozyshine, artists.quinn, artists.oncleKani, artists.david, artists.tonya, artists.stef];
-let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, artists.tonyaDj, artists.ploy];
+let instructors = [
+  artists.audilaura,
+  artists.albir,
+  artists.asia,
+  artists.tpeak,
+  artists.ozyshine,
+  artists.quinn,
+  artists.oncleKani,
+  artists.david,
+  artists.tonya,
+  artists.stef,
+]
+let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, artists.tonyaDj, artists.ploy]
 function calculatePrice(pass: Pass) {
-  return calculateTotal(pass, Object.values(pass.options).filter((option) => option.selected).map((option) => option.id))
+  return calculateTotal(
+    pass,
+    Object.values(pass.options)
+      .filter((option) => option.selected)
+      .map((option) => option.id)
+  )
 }
 ---
 
@@ -29,53 +45,79 @@ function calculatePrice(pass: Pass) {
   <Header />
   <main>
     <div class="container2">
-      <Card classes={["card header"]} backgroundPath="/images/mahanakhon.png">
+      <Card classes={['card header']} backgroundPath="/images/mahanakhon.png">
         <h3>Bangkok, 5-9 SEP 2025</h3>
-        <h4><a href="https://maps.app.goo.gl/deTHk2Euinkho3Pq6">GLOWFISH, Floor 2, Sathorn Thani 2 Building, Bangkok</a></h4>
+        <h4>
+          <a href="https://maps.app.goo.gl/deTHk2Euinkho3Pq6">GLOWFISH, Floor 2, Sathorn Thani 2 Building, Bangkok</a>
+        </h4>
         <p>The capital of Thailand with beautiful temples, big shopping malls and amazing food.</p>
       </Card>
-      <Card classes={["card header"]} backgroundPath="/images/hotel-room.jpg">
+      <Card classes={['card header']} backgroundPath="/images/hotel-room.jpg">
         <h4>Residence Hotel Silom Hotel</h4>
         <p>Located at 5min walking distance from the venue.</p>
       </Card>
       <ul class="artists">
-        <li><Card classes={["card small"]} backgroundPath="/images/boat4.jpg">
-          <h4>Cruise</h4>
-          <p>Enjoy a 3 hours cruise party in Bangkok with African food.</p>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/daytime-social.png">
-          <h4>Day Time Social</h4>
-          <p>4 hours every day with international DJs.</p>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/room3.png">
-          <h4>Parties</h4>
-          <p>Dance all night until 4AM with the top international DJs.</p>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/artists/afrogiants.jpeg">
-          <h4>Afro Essense Bootcamp</h4>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/artists/audi_laura.png">
-          <h4>Audi & Laura Masterclass</h4>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/artists/tpeak.jpg">
-          <h4>T'Peak Masterclass</h4>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/artists/asia.jpg">
-          <h4>Asia Masterclass</h4>
-        </Card></li>
-        <li><Card classes={["card small"]} backgroundPath="/images/workshop.png">
-          <h4>Workshops</h4>
-          <p>Learn from the world's top internation artists.</p>
-        </Card></li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/boat4.jpg">
+            <h4>Cruise</h4>
+            <p>Enjoy a 3 hours cruise party in Bangkok with African food.</p>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/daytime-social.png">
+            <h4>Day Time Social</h4>
+            <p>4 hours every day with international DJs.</p>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/room3.png">
+            <h4>Parties</h4>
+            <p>Dance all night until 4AM with the top international DJs.</p>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/artists/afrogiants.jpeg">
+            <h4>Afro Essense Bootcamp</h4>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/artists/audi_laura.png">
+            <h4>Audi & Laura Masterclass</h4>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/artists/tpeak.jpg">
+            <h4>T'Peak Masterclass</h4>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/artists/asia.jpg">
+            <h4>Asia Masterclass</h4>
+          </Card>
+        </li>
+        <li>
+          <Card classes={['card small']} backgroundPath="/images/workshop.png">
+            <h4>Workshops</h4>
+            <p>Learn from the world's top internation artists.</p>
+          </Card>
+        </li>
       </ul>
     </div>
     <div class="container2">
-      <Card classes={["card small package"]}>
-        <Card classes={["card"]}>
+      <Card classes={['card small package']}>
+        <Card classes={['card']}>
           <h4>Full Pass</h4>
           <h3><Currency price={fullpass.price} client:only /></h3>
-          { fullpass.price.EUR != fullpass.doorPrice.EUR && <p><s><Currency price={fullpass.doorPrice} client:only /></s></p> }
-          <p><a href={"/pass/" + fullpass.id} class="button action">Buy now</a></p>
+          {
+            fullpass.price.EUR != fullpass.doorPrice.EUR && (
+              <p>
+                <s>
+                  <Currency price={fullpass.doorPrice} client:only />
+                </s>
+              </p>
+            )
+          }
+          <p><a href={'/pass/' + fullpass.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
@@ -91,15 +133,23 @@ function calculatePrice(pass: Pass) {
           <li><i class="fa-solid fa-circle-xmark"></i> Asia Masterclass</li>
         </ul>
       </Card>
-      <Card classes={["card small package"]}>
-        <Card classes={["card"]}>
+      <Card classes={['card small package']}>
+        <Card classes={['card']}>
           <h4>VIP Silver</h4>
-          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(vipSilverPass)} today={new Date()} client:only /></h3>
+          <h3>
+            <FirstInstallment term={2} amountToBePaid={calculatePrice(vipSilverPass)} today={new Date()} client:only />
+          </h3>
           <p>
             <Currency price={vipSilverPass.price} client:only />
-            { vipSilverPass.price.EUR != vipSilverPass.doorPrice.EUR && <s><Currency price={vipSilverPass.doorPrice} client:only /></s> }
+            {
+              vipSilverPass.price.EUR != vipSilverPass.doorPrice.EUR && (
+                <s>
+                  <Currency price={vipSilverPass.doorPrice} client:only />
+                </s>
+              )
+            }
           </p>
-          <p><a href={"/pass/" + vipSilverPass.id} class="button action">Buy now</a></p>
+          <p><a href={'/pass/' + vipSilverPass.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
@@ -115,15 +165,23 @@ function calculatePrice(pass: Pass) {
           <li><i class="fa-solid fa-circle-xmark"></i> Asia Masterclass</li>
         </ul>
       </Card>
-      <Card classes={["card small package"]}>
-        <Card classes={["card"]}>
+      <Card classes={['card small package']}>
+        <Card classes={['card']}>
           <h4>VIP Gold</h4>
-          <h3><FirstInstallment term={3} amountToBePaid={calculatePrice(vipGoldPass)} today={new Date()} client:only /></h3>
+          <h3>
+            <FirstInstallment term={2} amountToBePaid={calculatePrice(vipGoldPass)} today={new Date()} client:only />
+          </h3>
           <p>
             <Currency price={vipGoldPass.price} client:only />
-            { vipGoldPass.price.EUR != vipGoldPass.doorPrice.EUR && <s><Currency price={vipGoldPass.doorPrice} client:only /></s> }
+            {
+              vipGoldPass.price.EUR != vipGoldPass.doorPrice.EUR && (
+                <s>
+                  <Currency price={vipGoldPass.doorPrice} client:only />
+                </s>
+              )
+            }
           </p>
-          <p><a href={"/pass/" + vipGoldPass.id} class="button action">Buy now</a></p>
+          <p><a href={'/pass/' + vipGoldPass.id} class="button action">Buy now</a></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
@@ -139,104 +197,252 @@ function calculatePrice(pass: Pass) {
           <li><i class="fa-solid fa-circle-check"></i> Asia Masterclass</li>
         </ul>
       </Card>
-      <Card classes={["ticket-card", "ticket", "fullpass"]}>
+      <Card classes={['ticket-card', 'ticket', 'fullpass']}>
         <div class="container-column">
           <div>
             <h3><Currency price={calculatePrice(partyPass)} client:only /></h3>
-            { partyPass.price.EUR != partyPass.doorPrice.EUR && <p><s><Currency price={partyPass.doorPrice} client:only /></s></p> }
+            {
+              partyPass.price.EUR != partyPass.doorPrice.EUR && (
+                <p>
+                  <s>
+                    <Currency price={partyPass.doorPrice} client:only />
+                  </s>
+                </p>
+              )
+            }
             <h4>{partyPass.name}</h4>
           </div>
           <div class="button-container">
-            { !partyPass.isSoldOut && <a href={"/pass/" + partyPass.id} class="button action">Buy Now</a> }
-            { partyPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+            {
+              !partyPass.isSoldOut && (
+                <a href={'/pass/' + partyPass.id} class="button action">
+                  Buy Now
+                </a>
+              )
+            }
+            {
+              partyPass.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
           </div>
         </div>
       </Card>
-      <Card classes={["ticket-card", "ticket", "fullpass"]}>
+      <Card classes={['ticket-card', 'ticket', 'fullpass']}>
         <div class="container-column">
           <div>
             <h3><Currency price={calculatePrice(friNight)} client:only /></h3>
-            { friNight.price.EUR != friNight.doorPrice.EUR && <p><s><Currency price={friNight.doorPrice} client:only /></s></p> }
+            {
+              friNight.price.EUR != friNight.doorPrice.EUR && (
+                <p>
+                  <s>
+                    <Currency price={friNight.doorPrice} client:only />
+                  </s>
+                </p>
+              )
+            }
             <h4>{friNight.name}</h4>
           </div>
           <div class="button-container">
-            { !friNight.isSoldOut && <a href={"/pass/" + friNight.id} class="button action">Buy Now</a> }
-            { friNight.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+            {
+              !friNight.isSoldOut && (
+                <a href={'/pass/' + friNight.id} class="button action">
+                  Buy Now
+                </a>
+              )
+            }
+            {
+              friNight.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
           </div>
         </div>
       </Card>
-      <Card classes={["ticket-card", "ticket", "fullpass"]}>
+      <Card classes={['ticket-card', 'ticket', 'fullpass']}>
         <div class="container-column">
           <div>
             <h3><Currency price={calculatePrice(satNight)} client:only /></h3>
-            { satNight.price.EUR != satNight.doorPrice.EUR && <p><s><Currency price={satNight.doorPrice} client:only /></s></p> }
+            {
+              satNight.price.EUR != satNight.doorPrice.EUR && (
+                <p>
+                  <s>
+                    <Currency price={satNight.doorPrice} client:only />
+                  </s>
+                </p>
+              )
+            }
             <h4>{satNight.name}</h4>
           </div>
           <div class="button-container">
-            { !satNight.isSoldOut && <a href={"/pass/" + satNight.id} class="button action">Buy Now</a> }
-            { satNight.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+            {
+              !satNight.isSoldOut && (
+                <a href={'/pass/' + satNight.id} class="button action">
+                  Buy Now
+                </a>
+              )
+            }
+            {
+              satNight.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
           </div>
         </div>
       </Card>
-      <Card classes={["ticket-card", "ticket", "fullpass"]}>
+      <Card classes={['ticket-card', 'ticket', 'fullpass']}>
         <div class="container-column">
           <div>
             <h3><Currency price={calculatePrice(sunNight)} client:only /></h3>
-            { sunNight.price.EUR != sunNight.doorPrice.EUR && <p><s><Currency price={sunNight.doorPrice} client:only /></s></p> }
+            {
+              sunNight.price.EUR != sunNight.doorPrice.EUR && (
+                <p>
+                  <s>
+                    <Currency price={sunNight.doorPrice} client:only />
+                  </s>
+                </p>
+              )
+            }
             <h4>{sunNight.name}</h4>
           </div>
           <div class="button-container">
-            { !sunNight.isSoldOut && <a href={"/pass/" + sunNight.id} class="button action">Buy Now</a> }
-            { sunNight.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+            {
+              !sunNight.isSoldOut && (
+                <a href={'/pass/' + sunNight.id} class="button action">
+                  Buy Now
+                </a>
+              )
+            }
+            {
+              sunNight.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
           </div>
         </div>
       </Card>
 
-    
-      <Card classes={["ticket-card", "ticket", "fullpass"]}>
+      <Card classes={['ticket-card', 'ticket', 'fullpass']}>
         <div class="container-column">
           <div>
             <h3><Currency price={calculatePrice(friPass)} client:only /></h3>
-            { friPass.price.EUR != friPass.doorPrice.EUR && <p><s><Currency price={friPass.doorPrice} client:only /></s></p> }
+            {
+              friPass.price.EUR != friPass.doorPrice.EUR && (
+                <p>
+                  <s>
+                    <Currency price={friPass.doorPrice} client:only />
+                  </s>
+                </p>
+              )
+            }
             <h4>{friPass.name}</h4>
           </div>
           <div class="button-container">
-            { !friPass.isSoldOut && <a href={"/pass/" + friPass.id} class="button action">Buy Now</a> }
-            { friPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+            {
+              !friPass.isSoldOut && (
+                <a href={'/pass/' + friPass.id} class="button action">
+                  Buy Now
+                </a>
+              )
+            }
+            {
+              friPass.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
           </div>
         </div>
       </Card>
-      <Card classes={["ticket-card", "ticket", "fullpass"]}>
+      <Card classes={['ticket-card', 'ticket', 'fullpass']}>
         <div class="container-column">
           <div>
             <h3><Currency price={calculatePrice(satPass)} client:only /></h3>
-            { satPass.price.EUR != satPass.doorPrice.EUR && <p><s><Currency price={satPass.doorPrice} client:only /></s></p> }
+            {
+              satPass.price.EUR != satPass.doorPrice.EUR && (
+                <p>
+                  <s>
+                    <Currency price={satPass.doorPrice} client:only />
+                  </s>
+                </p>
+              )
+            }
             <h4>{satPass.name}</h4>
           </div>
           <div class="button-container">
-            { !satPass.isSoldOut && <a href={"/pass/" + satPass.id} class="button action">Buy Now</a> }
-            { satPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+            {
+              !satPass.isSoldOut && (
+                <a href={'/pass/' + satPass.id} class="button action">
+                  Buy Now
+                </a>
+              )
+            }
+            {
+              satPass.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
           </div>
         </div>
       </Card>
-      <Card classes={["ticket-card", "ticket", "fullpass"]}>
+      <Card classes={['ticket-card', 'ticket', 'fullpass']}>
         <div class="container-column">
           <div>
             <h3><Currency price={calculatePrice(sunPass)} client:only /></h3>
-            { sunPass.price.EUR != sunPass.doorPrice.EUR && <p><s><Currency price={sunPass.doorPrice} client:only /></s></p> }
+            {
+              sunPass.price.EUR != sunPass.doorPrice.EUR && (
+                <p>
+                  <s>
+                    <Currency price={sunPass.doorPrice} client:only />
+                  </s>
+                </p>
+              )
+            }
             <h4>{sunPass.name}</h4>
           </div>
           <div class="button-container">
-            { !sunPass.isSoldOut && <a href={"/pass/" + sunPass.id} class="button action">Buy Now</a> }
-            { sunPass.isSoldOut && <button class="button action disabled" disabled>Sold Out</button> }
+            {
+              !sunPass.isSoldOut && (
+                <a href={'/pass/' + sunPass.id} class="button action">
+                  Buy Now
+                </a>
+              )
+            }
+            {
+              sunPass.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
           </div>
         </div>
       </Card>
     </div>
     <div class="container2">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', gridColumn: 'span 12', textAlign: 'center', color: 'white' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2rem',
+          gridColumn: 'span 12',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
         <h3>Are you interested to dance in Bangkok and Koh Samet?</h3>
-        <p><a href={"/traveling"} class="button action">See our packages</a></p>
+        <p><a href={'/traveling'} class="button action">See our packages</a></p>
       </div>
     </div>
     <div class="container2 artists">
@@ -247,7 +453,7 @@ function calculatePrice(pass: Pass) {
         {
           instructors.map((artist) => (
             <li>
-              <Card backgroundPath={artist.image} classes={["artist-card"]}>
+              <Card backgroundPath={artist.image} classes={['artist-card']}>
                 {artist.name}
               </Card>
             </li>
@@ -263,7 +469,7 @@ function calculatePrice(pass: Pass) {
         {
           djs.map((artist) => (
             <li>
-              <Card backgroundPath={artist.image} classes={["artist-card"]}>
+              <Card backgroundPath={artist.image} classes={['artist-card']}>
                 {artist.name}
               </Card>
             </li>
@@ -279,7 +485,7 @@ function calculatePrice(pass: Pass) {
         {
           taxiDancers.map((artist) => (
             <li>
-              <Card backgroundPath={artist.image} classes={["artist-card"]}>
+              <Card backgroundPath={artist.image} classes={['artist-card']}>
                 {artist.name}
               </Card>
             </li>
@@ -429,10 +635,12 @@ function calculatePrice(pass: Pass) {
     .ticket-card .text {
       padding: 1rem var(--s-padding);
     }
-    .card.header, .card.small {
+    .card.header,
+    .card.small {
       min-height: 180px;
     }
-    .card.big, .card.header {
+    .card.big,
+    .card.header {
       grid-column: span 12;
       min-height: 200px;
     }
