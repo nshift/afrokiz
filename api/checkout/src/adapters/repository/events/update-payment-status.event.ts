@@ -74,7 +74,7 @@ const mapToSale = (
   items: order.items.map((item) => ({
     id: item.id,
     title: item.title,
-    includes: item.includes,
+    includes: item.includes ?? [],
     amount: item.amount,
   })),
   total: { amount: order.total.amount, currency: order.total.currency },

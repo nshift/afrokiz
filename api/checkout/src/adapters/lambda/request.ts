@@ -20,7 +20,7 @@ export const buildProceedToCheckoutRequest = (
     items: request.items.map((item: any) => ({
       id: item.id,
       title: item.title,
-      includes: item.includes,
+      includes: item.includes ?? [],
       amount: item.amount,
       total: { amount: item.total.amount, currency: item.total.currency },
     })),

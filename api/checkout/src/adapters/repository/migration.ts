@@ -24,7 +24,7 @@ export const transformCreateOrderEvent = (
           items: event.data.order.items.map((item) => ({
             id: item.id,
             title: item.title,
-            includes: item.includes,
+            includes: item.includes ?? [],
             amount: item.amount,
             total: { amount: item.total.amount, currency: item.total.currency },
           })),
@@ -87,7 +87,7 @@ export const transformSuccessfulPaymentEvent = (
         items: order.items.map((item) => ({
           id: item.id,
           title: item.title,
-          includes: item.includes,
+          includes: item.includes ?? [],
           amount: item.amount,
         })),
         total: { amount: total.amount, currency: total.currency },

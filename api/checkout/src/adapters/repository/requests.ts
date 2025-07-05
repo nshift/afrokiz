@@ -224,7 +224,7 @@ export const saveOrdersRequest = (orders: OrderSchema[]) => {
             items: order.items.map((item) => ({
               id: item.id,
               title: item.title,
-              includes: item.includes,
+              includes: item.includes ?? [],
               amount: item.amount,
               total: { amount: item.total.amount, currency: item.total.currency },
             })),
@@ -252,7 +252,7 @@ export const orderV3Response = (item: any): OrderSchema => ({
     items: item.items.map((item: any) => ({
       id: item.id,
       title: item.title,
-      includes: item.includes,
+      includes: item.includes ?? [],
       amount: item.amount,
       total: { amount: item.total.amount, currency: item.total.currency },
     })),
@@ -298,7 +298,7 @@ export const orderV2Response = (item: any): OrderSchema => ({
     items: item.items.map((item: any) => ({
       id: item.id,
       title: item.title,
-      includes: item.includes,
+      includes: item.includes ?? [],
       amount: item.amount,
       total: { amount: item.total.amount, currency: item.total.currency },
     })),
@@ -332,7 +332,7 @@ export const orderV1Response = (item: any): OrderSchema => ({
     items: item.items.map((item: any) => ({
       id: item.id,
       title: item.title,
-      includes: item.includes,
+      includes: item.includes ?? [],
       amount: item.amount,
       total: { amount: item.total.amount, currency: item.total.currency },
     })),
@@ -490,7 +490,7 @@ export const saveSalesRequest = (sales: SaleSchema[]) =>
             items: sale.items.map((item) => ({
               id: item.id,
               title: item.title,
-              includes: item.includes,
+              includes: item.includes ?? [],
               amount: item.amount,
             })),
             total: { amount: sale.total.amount, currency: sale.total.currency },
@@ -540,7 +540,7 @@ export const salesResponse = (response: any): SaleSchema[] =>
       items: item.items.map((item: any) => ({
         id: item.id,
         title: item.title,
-        includes: item.includes,
+        includes: item.includes ?? [],
         amount: item.amount,
       })),
     })
@@ -559,7 +559,7 @@ export const listOrdersResponse = (response: any): Sales[] =>
       items: item.items.map((item: any) => ({
         id: item.id,
         title: item.title,
-        includes: item.includes,
+        includes: item.includes ?? [],
         amount: item.amount,
         total: { amount: item.total.amount, currency: item.total.currency },
       })),

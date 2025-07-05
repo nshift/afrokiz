@@ -389,6 +389,7 @@ export class Checkout {
         return { order, customer, promoCode, qrCodeUrl: link }
       })
     )
+    console.log(">>>>> SENDING EMAILS: ", JSON.stringify(ordersWithQrCode))
     await this.emailApi.sendBulkEmails(confirmationEmail(ordersWithQrCode, this.uuidGenerator))
     return newOrders.map(({ order }) => order)
   }

@@ -240,8 +240,15 @@ export class DynamoDbRepository implements Repository {
   }
 
   async getImportOrdersByFingerprints(fingerprints: string[]): Promise<ImportOrder[]> {
-    const response = await this.dynamodb.send(getImportOrdersByFingerprintsRequest(fingerprints))
-    return importOrdersResponse(response.Responses?.[Environment.ImportOrderTableName()] ?? [])
+    if (fingerprints.length == 0) {
+      return []
+    }
+    const responses = await Promise.all(
+      chunk(fingerprints, DynamoDbRepository.WriteBulkLimit).map((fingerprints) =>
+        this.dynamodb.send(getImportOrdersByFingerprintsRequest(fingerprints))
+      )
+    )
+    return importOrdersResponse(responses.flatMap((response) => response.Responses?.[Environment.ImportOrderTableName()]) ?? [])
   }
 
   async updateOrderCheckIn(orderId: string, value: boolean): Promise<void> {

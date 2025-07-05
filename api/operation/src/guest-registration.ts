@@ -15,9 +15,9 @@ export class GuestRegistration {
 
   async preRegister(guest: { email: string; fullname: string }): Promise<void> {
     const preRegisteredGuest: Guest = { ...guest, id: makeId(), checkedIn: false }
+    await this.repository.saveGuest(preRegisteredGuest)
     const qrCodeFile = await this.qrCode.generateGuestQrCode(guest.email)
     const link = await this.document.uploadQrCode(preRegisteredGuest.id, qrCodeFile)
-    await this.repository.saveGuest(preRegisteredGuest)
     await this.email.sendBulkEmails(preGuestRegistrationEmail({ guest: preRegisteredGuest, qrCodeUrl: link }))
   }
 }
