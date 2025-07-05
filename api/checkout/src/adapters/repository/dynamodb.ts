@@ -152,6 +152,7 @@ export class DynamoDbRepository implements Repository {
       MEL: makeEdition3PromoterDiscount('MEL'),
       MELISSA: makeEdition3PromoterDiscount('MELISSA'),
       MOU: makeEdition3PromoterDiscount('MOU'),
+      NATALY: makeEdition3PromoterDiscount('NATALY'),
       NEHA: makeEdition3PromoterDiscount('NEHA'),
       NEIL: makeEdition3PromoterDiscount('NEIL'),
       NICHA: makeEdition3PromoterDiscount('NICHA'),
