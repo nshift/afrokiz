@@ -64,6 +64,17 @@ export const makeEdition3PromoterDiscount = (code: string) =>
       !['fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun'].includes(passId),
   })
 
+export const make10PercentDiscount = (code: string) =>
+  makeDiscountPromotion({
+    id: `promoter-${code.toLowerCase()}`,
+    isActive: true,
+    code: code.toUpperCase(),
+    expirationDate: new Date('2025-09-01'),
+    discount: 0.90,
+    isAppliable: (passId: string) =>
+      !['fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun'].includes(passId),
+  })
+
 export const makeKizIslandPromoterDiscount = (code: string) =>
   makeDiscountPromotion({
     id: `kiz-island`,

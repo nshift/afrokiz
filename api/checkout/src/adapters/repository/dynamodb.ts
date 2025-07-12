@@ -20,7 +20,7 @@ import {
   processProceedToCheckoutEvent,
 } from './events/proceed-to-checkout.event.v2'
 import { processUpdatePaymentStatusEvent } from './events/update-payment-status.event.v2'
-import { makeEdition3PromoterDiscount, makeKizIslandPromoterDiscount } from './promotions'
+import { make10PercentDiscount, makeEdition3PromoterDiscount, makeKizIslandPromoterDiscount } from './promotions'
 import { Repository } from './repository'
 import {
   OrderSchema,
@@ -126,6 +126,7 @@ export class DynamoDbRepository implements Repository {
   async getAllPromotions(passId: string): Promise<{ [key: string]: Promotion }> {
     return {
       AIKIZ: makeEdition3PromoterDiscount('AIKIZ'),
+      ALLAN: makeEdition3PromoterDiscount('ALLAN'),
       ANAKIZ: makeEdition3PromoterDiscount('ANAKIZ'),
       ARIELTW: makeEdition3PromoterDiscount('ARIELTW'),
       BONNY: makeEdition3PromoterDiscount('BONNY'),
@@ -153,6 +154,7 @@ export class DynamoDbRepository implements Repository {
       MELISSA: makeEdition3PromoterDiscount('MELISSA'),
       MOU: makeEdition3PromoterDiscount('MOU'),
       NATALY: makeEdition3PromoterDiscount('NATALY'),
+      NATALY10: make10PercentDiscount('NATALY10'),
       NEHA: makeEdition3PromoterDiscount('NEHA'),
       NEIL: makeEdition3PromoterDiscount('NEIL'),
       NICHA: makeEdition3PromoterDiscount('NICHA'),
@@ -165,11 +167,12 @@ export class DynamoDbRepository implements Repository {
       RUSLADA: makeEdition3PromoterDiscount('RUSLADA'),
       RYAN: makeEdition3PromoterDiscount('RYAN'),
       SALSAMADRAS: makeEdition3PromoterDiscount('SALSAMADRAS'),
-      SANJAYA: makeEdition3PromoterDiscount('SANJAYA'),
+      SANJAYA: make10PercentDiscount('SANJAYA'),
       SAOMAI: makeEdition3PromoterDiscount('SAOMAI'),
       SHAN: makeEdition3PromoterDiscount('SHAN'),
       SNEHA: makeEdition3PromoterDiscount('SNEHA'),
       SOULKIZDANANG: makeEdition3PromoterDiscount('SOULKIZDANANG'),
+      TATI: makeEdition3PromoterDiscount('TATI'),
       THEO: makeEdition3PromoterDiscount('THEO'),
       THEONE: makeEdition3PromoterDiscount('THEONE'),
       TRIXIE: makeEdition3PromoterDiscount('TRIXIE'),
