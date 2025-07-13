@@ -28,7 +28,7 @@ import {
   buildResendConfirmationEmailRequest,
   buildUpdateOrderPaymentRequest,
 } from './request'
-import { buildOrderResponse, buildPaymentIntentsResponse, buildPromotionResponse } from './response'
+import { buildOrderResponse, buildPaymentIntentsResponse, buildPaymentResponse, buildPromotionResponse } from './response'
 
 export const proceedToCheckout = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body ?? '{}')
@@ -116,6 +116,23 @@ export const getOrder = async (event: APIGatewayEvent, context: Context): Promis
       return notFoundErrorResponse(`Order (${orderId}) is not found.`)
     }
     return successResponse(buildOrderResponse(order))
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const getPayment = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  const paymentId = event.pathParameters?.id
+  if (!paymentId) {
+    return notFoundErrorResponse('Order id is required.')
+  }
+  try {
+    const order = await checkout.getPayment(paymentId)
+    if (!order) {
+      return notFoundErrorResponse(`Payment (${paymentId}) is not found.`)
+    }
+    return successResponse(buildPaymentResponse(order))
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)

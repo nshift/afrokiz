@@ -52,6 +52,7 @@ export interface SavingPayment {
 }
 
 export interface GettingPayment {
+  getPaymentById(id: string): Promise<Payment | null>
   getPendingPayments(before: Date): Promise<Payment[]>
   getPaymentByStripeId(stripeId: string): Promise<Payment | null>
 }

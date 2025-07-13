@@ -210,7 +210,7 @@ describe('Dynamodb', () => {
 
       const events = await getEventById(dynamodb, successPaymentStatusEvent3.id)
       expect(events).toEqual(expect.arrayContaining([formatDynamoDbJson(successPaymentStatusEvent3)]))
-      expect(await repository.getPaymentByStripeId(fakePaymentIntent.id)).toEqual({
+      let expectedPayment = {
         id: 'id-1',
         orderId: fakeOrder.id,
         amount: 30000,
@@ -218,7 +218,9 @@ describe('Dynamodb', () => {
         status: 'completed',
         dueDate: null,
         stripe: { id: fakePaymentIntent.id, secret: fakePaymentIntent.secret, customerId: fakeStripeCustomer.id },
-      })
+      }
+      expect(await repository.getPaymentByStripeId(fakePaymentIntent.id)).toEqual(expectedPayment)
+      expect(await repository.getPaymentById(expectedPayment.id)).toEqual(expectedPayment)
       let order = await repository.getOrderById(fakeOrder.id)
       expect(order?.order).toMatchObject({ status: 'paid' })
     })

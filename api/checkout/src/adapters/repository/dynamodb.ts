@@ -28,6 +28,7 @@ import {
   getEventFromRangeRequest,
   getImportOrdersByFingerprintsRequest,
   getOrderByIdRequest,
+  getPaymentById,
   getPaymentByStripeIdRequest,
   getPendingPaymentsRequest,
   importOrdersResponse,
@@ -185,6 +186,24 @@ export class DynamoDbRepository implements Repository {
       WINO: makeEdition3PromoterDiscount('WINO'),
       ZIKIMMY: makeEdition3PromoterDiscount('ZIKIMMY'),
     }
+  }
+
+  async getPaymentById(id: string): Promise<Payment | null> {
+    const response = await this.dynamodb.send(getPaymentById(id))
+    let payments = paymentsResponse(response.Items).map((payment) => ({
+      id: payment.id,
+      orderId: payment.orderId,
+      amount: payment.amount,
+      currency: payment.currency as Currency,
+      dueDate: payment.dueDate,
+      status: payment.status as PaymentStatus,
+      stripe: {
+        id: payment.stripePaymentIntentId ?? null,
+        secret: payment.stripePaymentIntentSecret ?? null,
+        customerId: payment.stripeCustomerId,
+      },
+    }))
+    return payments[0] ?? null
   }
 
   async getPendingPayments(before: Date): Promise<Payment[]> {

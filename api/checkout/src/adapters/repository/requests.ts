@@ -396,6 +396,14 @@ export const savePaymentsRequest = (payments: PaymentSchema[]) =>
     },
   })
 
+export const getPaymentById = (id: string) =>
+  new QueryCommand({
+    TableName: Environment.PaymentTableName(),
+    KeyConditionExpression: '#id = :id',
+    ExpressionAttributeNames: { '#id': 'id' },
+    ExpressionAttributeValues: { ':id': id },
+  })
+
 export const getPendingPaymentsRequest = () =>
   new QueryCommand({
     TableName: Environment.PaymentTableName(),

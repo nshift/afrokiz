@@ -1,6 +1,6 @@
 import { Customer } from '../../types/customer'
 import { Order } from '../../types/order'
-import { isInstallment, PaymentStructure } from '../../types/payment'
+import { isInstallment, Payment, PaymentStructure } from '../../types/payment'
 import { PaymentIntent } from '../../types/payment-intent'
 import { DiscountPromotion, GiveAwayPromotion, Promotion } from '../../types/promotion'
 
@@ -52,6 +52,31 @@ export const buildOrderResponse = ({
           status: paymentStructure.status,
         }
   ),
+})
+
+export const buildPaymentResponse = ({
+  payment,
+  order,
+  paymentStructures,
+  customer,
+  promoCode,
+  checkedIn,
+}: {
+  payment: Payment
+  order: Order
+  paymentStructures: PaymentStructure[]
+  customer: Customer
+  promoCode: string | null
+  checkedIn: boolean
+}) => ({
+  payment: {
+    id: payment.id,
+    amount: payment.amount,
+    currency: payment.currency,
+    dueDate: payment.dueDate,
+    status: payment.status,
+  },
+  order: buildOrderResponse({ order, paymentStructures, customer, promoCode, checkedIn })
 })
 
 export const buildPromotionResponse = (promotion: Promotion) => ({

@@ -162,6 +162,21 @@
         </div>
         <p class="validation-error" v-if="promoCodeValidationError">The promo code is not valid.</p>
       </div>
+      <hr />
+      <div class="information-element">
+        <div class="information-element" v-if="shouldRequestOrderId">
+        <label>Order Id</label>
+        <div class="field-container">
+          <input
+            :class="['field', orderIdValidationError ? 'validation-error' : '']"
+            type="text"
+            placeholder="#123456"
+            v-model="requestedOrderId"
+          />
+        </div>
+        <p class="validation-error" v-if="orderIdValidationError">You must provide the order id when you bought your ticket.</p>
+      </div>
+      </div>
       <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
       <button class="button action" v-if="!submitting && !pass.isSoldOut && total > 0">Pay</button>
       <button class="button action disabled" v-if="!submitting && total <= 0 && !pass.isSoldOut" disabled>Pay</button>
@@ -230,6 +245,9 @@ const minimumAmountForInstallmentProgram =  defaultPasses.fullPass.price
 const canUseInstallmentProgram = (amount: number, currency: Currency) =>
   props.pass.id == 'testpass' || amount > minimumAmountForInstallmentProgram[currency]
 const shouldRequestPersonalInformation = props.order === undefined
+const shouldRequestOrderId = false // pass.shouldRequestOrderId
+const orderIdValidationError = ref(false)
+const requestedOrderId = ref('')
 
 const getStripeAmount = () => {
   return total.value > 0 ? total.value * discount.value : 100
@@ -312,6 +330,7 @@ async function submit() {
   fullNameValidationError.value = !fullName.value
   emailValidationError.value = !email.value
   dancerTypeValidationError.value = dancerType.value.length == 0
+  orderIdValidationError.value = shouldRequestOrderId ? requestedOrderId.value.length == 0 : false
   installmentTermsApprovementError.value = !installmentTermsApprovement.value.includes('approved')
   const { error: submitError } = await elements.submit()
   if (submitError) {
@@ -324,6 +343,7 @@ async function submit() {
     fullNameValidationError.value ||
     emailValidationError.value ||
     dancerTypeValidationError.value ||
+    orderIdValidationError.value ||
     (paymentOption.value == 'installment3x' && installmentTermsApprovementError.value)
   ) {
     submitting.value = false

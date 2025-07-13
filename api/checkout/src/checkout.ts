@@ -25,6 +25,7 @@ import { makeFingerprint, makeOrderId, NewOrder, Order } from './types/order'
 import {
   isInstallment,
   makePaymentStructure,
+  Payment,
   PaymentMethod,
   PaymentStatus,
   PaymentStructure,
@@ -143,6 +144,25 @@ export class Checkout {
     checkedIn: boolean
   } | null> {
     return this.repository.getOrderById(id)
+  }
+
+  async getPayment(id: string): Promise<{
+    payment: Payment
+    order: Order
+    customer: Customer
+    promoCode: string | null
+    paymentStructures: PaymentStructure[]
+    checkedIn: boolean
+  } | null> {
+    let payment = await this.repository.getPaymentById(id)
+    if (!payment) {
+      return null
+    }
+    let order = await this.repository.getOrderById(payment.orderId)
+    if (!order) {
+      return null
+    }
+    return { payment, ...order }
   }
 
   async getPromotion(passId: string, code: string): Promise<Promotion | null> {
