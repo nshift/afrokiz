@@ -307,7 +307,7 @@ ul {
   gap: var(--grid-lg-gap);
   margin-bottom: var(--lg-padding);
 }
-.payment-section {
+.checkout-details > * {
   width: 100%;
 }
 @media only screen and (max-width: 920px) {
