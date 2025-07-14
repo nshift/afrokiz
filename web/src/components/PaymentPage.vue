@@ -307,6 +307,9 @@ ul {
   gap: var(--grid-lg-gap);
   margin-bottom: var(--lg-padding);
 }
+.payment-section {
+  width: 100%;
+}
 @media only screen and (max-width: 920px) {
   .section {
     flex-direction: column;
