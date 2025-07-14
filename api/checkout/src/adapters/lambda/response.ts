@@ -80,6 +80,22 @@ export const buildPaymentResponse = ({
   order: buildOrderResponse({ order, paymentStructures, customer, promoCode, checkedIn })
 })
 
+export const buildPaymentsResponse = (payments: { payment: Payment, order: Order, customer: Customer }[]) => payments.map(({ payment, order, customer }) => ({
+    id: payment.id,
+    amount: payment.amount,
+    currency: payment.currency,
+    dueDate: payment.dueDate,
+    status: payment.status,
+    stripe: { id: payment.stripe.id, secret: payment.stripe.secret, customerId: payment.stripe.customerId },
+    order: {
+      id: order.id,
+      email: customer.email,
+      fullname: customer.fullname,
+      dancer_type: customer.type,
+      pass_id: order.items[0].id,
+    }
+  }))
+
 export const buildPromotionResponse = (promotion: Promotion) => ({
   id: promotion.id,
   code: promotion.code,

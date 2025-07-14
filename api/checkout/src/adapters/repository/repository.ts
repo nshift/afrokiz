@@ -37,6 +37,13 @@ export interface GettingOrders {
     paymentStructures: PaymentStructure[]
     checkedIn: boolean
   } | null>
+  getOrderByIds(ids: string[]): Promise<{
+    order: Order
+    customer: Customer
+    promoCode: string | null
+    paymentStructures: PaymentStructure[]
+    checkedIn: boolean
+  }[]>
   // getOrderByPaymentIntentId(paymentIntentId: string): Promise<Order | null>
 }
 

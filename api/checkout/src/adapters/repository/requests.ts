@@ -110,6 +110,15 @@ export const getOrderByIdRequest = (id: string) =>
     ExpressionAttributeValues: { ':id': id },
   })
 
+export const getOrderByIdsRequest = (ids: string[]) =>
+  new BatchGetCommand({
+    RequestItems: {
+      [Environment.OrderTableName()]: {
+        Keys: ids.map((id) => ({ id })),
+      },
+    },
+  })
+
 export type PaymentDueDateSchema = {
   amount: number
   currency: Currency

@@ -35,6 +35,7 @@ export const makeCheckoutEndpoints = (props: {
     makeCheckInEndpoint({ ...props, ...context }),
     makeGetPaymentEndpoint({ ...props, ...context }),
     makeCreatePaymentAuthorizationEndpoint({ ...props, ...context }),
+    makeGetLatePaymentsEndpoint({ ...props, ...context }),
     // makeMarkPaymentAsSucceedEndpoint({ ...props, ...context }),
   ]
 }
@@ -165,6 +166,37 @@ const makeGetPaymentEndpoint = (props: {
     ...props,
   })
   props.orderTable.grant(endpoint.lambda, 'dynamodb:Query')
+  props.paymentTable.grant(endpoint.lambda, 'dynamodb:Query')
+  return endpoint
+}
+
+const makeGetLatePaymentsEndpoint = (props: {
+  stack: cdk.Stack
+  codeUri: string
+  api: cdk.aws_apigatewayv2.CfnApi
+  sharedLayer: cdk.aws_lambda.LayerVersion
+  orderTable: cdk.aws_dynamodb.Table
+  paymentTable: cdk.aws_dynamodb.Table
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
+}) => {
+  const endpoint = createEndpoint('GetLatePayments', {
+    handler: 'adapters/lambda/lambda.getLatePayments',
+    method: 'GET',
+    path: '/payments/late',
+    environment: {
+      NODE_ENV: 'PROD',
+      LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
+      ORDER_TABLE_NAME: props.orderTable.tableName,
+      PAYMENT_TABLE_NAME: props.paymentTable.tableName,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
+    },
+    memorySize: 2048,
+    ...props,
+  })
+  props.orderTable.grant(endpoint.lambda, 'dynamodb:BatchGetItem')
   props.paymentTable.grant(endpoint.lambda, 'dynamodb:Query')
   return endpoint
 }

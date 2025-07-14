@@ -33,6 +33,7 @@ import {
 } from './types/payment'
 import { PaymentIntent } from './types/payment-intent'
 import { Promotion } from './types/promotion'
+import { DateTime } from 'luxon'
 
 export class Checkout {
   constructor(
@@ -134,6 +135,36 @@ export class Checkout {
     let errors = results.filter((result) => result.status != 'fulfilled').map((result: any) => result.reason)
     console.error(errors)
     return paymentIntents
+  }
+
+  async getLatePayments(): Promise<{ payment: Payment; order: Order; customer: Customer }[]> {
+    let today = this.dateGenerator.today()
+    let payments = await this.repository.getPendingPayments(today)
+    let latePayments = payments.filter((payment) => {
+      if (!payment.dueDate) {
+        return false
+      }
+      const dueDate = DateTime.fromJSDate(payment.dueDate)
+      const todayDateTime = DateTime.fromJSDate(today)
+      return todayDateTime.diff(dueDate, 'days').days > 3
+    })
+    let orders = await this.repository.getOrderByIds(latePayments.map((payment) => payment.orderId))
+    const orderMap = orders.reduce<Record<string, { order: Order; customer: Customer; paymentStructures: PaymentStructure[]; }>>((orders, { order, customer, paymentStructures }) => {
+      orders[order.id] = { order, customer, paymentStructures }
+      return orders
+    }, {})
+    return latePayments
+      .reduce<{ payment: Payment; order: Order; customer: Customer }[]>((latePayments, payment) => {
+        let { order, customer, paymentStructures } = orderMap[payment.orderId]
+        let isFailingPayment = paymentStructures.every((payment) => {
+          if (isInstallment(payment)) {
+            return payment.dueDates.every((dueDate) => dueDate.status != 'completed')
+          } else {
+            return payment.status != 'completed'
+          }
+        })
+        return latePayments.concat(order && !isFailingPayment ? [{ payment, order, customer }] : [])
+      }, [])
   }
 
   async getOrder(id: string): Promise<{

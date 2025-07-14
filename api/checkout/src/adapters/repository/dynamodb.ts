@@ -28,6 +28,7 @@ import {
   getEventFromRangeRequest,
   getImportOrdersByFingerprintsRequest,
   getOrderByIdRequest,
+  getOrderByIdsRequest,
   getPaymentById,
   getPaymentByStripeIdRequest,
   getPendingPaymentsRequest,
@@ -122,6 +123,18 @@ export class DynamoDbRepository implements Repository {
     const getOrderByIdResponse = await this.dynamodb.send(getOrderByIdRequest(id))
     const orders = orderResponse(getOrderByIdResponse.Items)
     return orders[0] ?? null
+  }
+
+  async getOrderByIds(ids: string[]): Promise<OrderSchema[]> {
+    if (ids.length == 0) {
+      return []
+    }
+    const responses = await Promise.all(
+      chunk([...new Set(ids)], DynamoDbRepository.WriteBulkLimit).map((ids) =>
+        this.dynamodb.send(getOrderByIdsRequest(ids))
+      )
+    )
+    return orderResponse(responses.flatMap((response) => response.Responses?.[Environment.OrderTableName()]) ?? [])
   }
 
   async getAllPromotions(passId: string): Promise<{ [key: string]: Promotion }> {
