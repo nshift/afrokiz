@@ -21,6 +21,7 @@ import { QrCodeGenerator } from '../qr-code/qr-code.generator'
 import { QueueAdapter } from '../queue.adapter'
 import { DynamoDbRepository } from '../repository/dynamodb'
 import {
+  buildCreatePaymentAuthorizationRequest,
   buildImportOrderRequest,
   buildMarkPaymentAsSucceedRequest,
   buildProceedToCheckoutRequest,
@@ -28,7 +29,7 @@ import {
   buildResendConfirmationEmailRequest,
   buildUpdateOrderPaymentRequest,
 } from './request'
-import { buildOrderResponse, buildPaymentIntentsResponse, buildPaymentResponse, buildPromotionResponse } from './response'
+import { buildOrderResponse, buildPaymentIntentResponse, buildPaymentIntentsResponse, buildPaymentResponse, buildPromotionResponse } from './response'
 
 export const proceedToCheckout = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const body = JSON.parse(event.body ?? '{}')
@@ -125,7 +126,7 @@ export const getOrder = async (event: APIGatewayEvent, context: Context): Promis
 export const getPayment = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   const paymentId = event.pathParameters?.id
   if (!paymentId) {
-    return notFoundErrorResponse('Order id is required.')
+    return notFoundErrorResponse('Payment id is required.')
   }
   try {
     const order = await checkout.getPayment(paymentId)
@@ -133,6 +134,27 @@ export const getPayment = async (event: APIGatewayEvent, context: Context): Prom
       return notFoundErrorResponse(`Payment (${paymentId}) is not found.`)
     }
     return successResponse(buildPaymentResponse(order))
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const createPaymentAuthorization = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  const paymentId = event.pathParameters?.id
+  if (!paymentId) {
+    return notFoundErrorResponse('Payment id is required.')
+  }
+  let request = buildCreatePaymentAuthorizationRequest(event)
+  if (!request.paymentMethodId) {
+    return notFoundErrorResponse('Payment method id is required.')
+  }
+  try {
+    const paymentIntent = await checkout.createPaymentAuthorization(paymentId, request.paymentMethodId)
+    if (!paymentIntent) {
+      return notFoundErrorResponse(`Payment (${paymentId}) is not found.`)
+    }
+    return successResponse(buildPaymentIntentResponse(paymentIntent))
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)

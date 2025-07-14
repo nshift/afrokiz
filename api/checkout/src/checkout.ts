@@ -165,6 +165,29 @@ export class Checkout {
     return { payment, ...order }
   }
 
+  async createPaymentAuthorization(paymentId: string, paymentMethodId: string): Promise<PaymentIntent | null> {
+    let payment = await this.repository.getPaymentById(paymentId)
+    if (!payment) {
+      return null
+    }
+    let order = await this.repository.getOrderById(payment.orderId)
+    if (!order) {
+      return null
+    }
+    const paymentIntent = await this.paymentAdapter.createPaymentIntent({
+        order: order.order,
+        total: { amount: payment.amount, currency: payment.currency},
+        customer: { id: payment.stripe.customerId },
+        paymentMethodId,
+      })
+    
+    payment.stripe.id = paymentIntent.id
+    payment.stripe.secret = paymentIntent.secret
+    
+    await this.repository.savePayment(payment)
+    return paymentIntent
+  }
+
   async getPromotion(passId: string, code: string): Promise<Promotion | null> {
     const promotions = await this.repository.getAllPromotions(passId)
     const promotion = promotions[code.toUpperCase()]

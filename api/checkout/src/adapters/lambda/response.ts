@@ -75,6 +75,7 @@ export const buildPaymentResponse = ({
     currency: payment.currency,
     dueDate: payment.dueDate,
     status: payment.status,
+    stripe: { id: payment.stripe.id, secret: payment.stripe.secret, customerId: payment.stripe.customerId }
   },
   order: buildOrderResponse({ order, paymentStructures, customer, promoCode, checkedIn })
 })
@@ -98,3 +99,8 @@ export const buildPaymentIntentsResponse = (paymentIntents: PaymentIntent[]) =>
     id: paymentIntent.id,
     secret: paymentIntent.secret,
   }))
+
+export const buildPaymentIntentResponse = (paymentIntent: PaymentIntent) => ({
+  id: paymentIntent.id,
+  secret: paymentIntent.secret,
+})

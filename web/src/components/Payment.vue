@@ -14,7 +14,7 @@
           </div>
           <div
             :class="['payment-option', 'field', 'disabled']"
-            v-if="!canUseInstallmentProgram(total * discount, currency)"
+            v-if="showInstallment !== false && !canUseInstallmentProgram(total * discount, currency)"
           >
             <div class="option">
               <p class="title">Pay over 2 months</p>
@@ -26,7 +26,7 @@
           <div
             :class="['payment-option', 'field', paymentOption == 'installment3x' ? 'selected' : '']"
             @click="paymentOption = 'installment3x'"
-            v-if="canUseInstallmentProgram(total, currency)"
+            v-if="showInstallment !== false && canUseInstallmentProgram(total, currency)"
           >
             <div class="option">
               <div>
@@ -188,7 +188,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch, watchEffect } from 'vue'
-import { PaymentAPI, type NewOrder, type Order, type PaymentOption } from '../payment-api/payment.api'
+import { PaymentAPI, type NewOrder, type Order, type Payment, type PaymentOption } from '../payment-api/payment.api'
 import type { Currency, Pass } from '../data/pass'
 import { makeMonthlyDueDates, type PaymentDueDate } from '../installment'
 import { v4 as uuid } from 'uuid'
@@ -213,6 +213,8 @@ const props = defineProps<{
   optionIds: string[]
   order?: Order
   classes?: string[]
+  showInstallment?: boolean
+  payment?: Payment
 }>()
 let stripe: Stripe
 let elements: StripeElements
@@ -408,10 +410,13 @@ async function submit() {
       }))
     ),
   }
-  const { error } = await stripe.confirmPayment(elements, order, {
-    method: 'automatic',
-    structure: paymentOption.value,
-  })
+  const payment = props.payment
+  const { error } =  payment 
+    ? await stripe.confirmPayment(elements, payment, order) 
+    : await stripe.createPayment(elements, order, {
+        method: 'automatic',
+        structure: paymentOption.value,
+      })
   submitting.value = false
   if (error) {
     cardDeclinedError.value = true

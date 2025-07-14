@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Header from '../sections/edition3/Header.astro'
+import Footer from '../sections/Footer.astro'
+import { PaymentAPI } from '../payment-api/payment.api'
+import { defaultPasses } from '../data/edition3/pass'
+import PaymentPage from '../components/PaymentPage.vue'
+
+const queryParams = Astro.url.searchParams
+const paymentId = queryParams.get('id')
+if (!paymentId) {
+  return Astro.redirect('/')
+}
+const paymentApi = new PaymentAPI()
+const { payment, order } = await paymentApi.getPaymentById(paymentId)
+const pass = Object.values(defaultPasses).filter((pass) => pass.id == order.passId)[0]
+---
+
+<Layout title={`Order #${order.id} | Afrokiz Bkk Festival Edition 3`}>
+  <Header />
+  <main>
+    <PaymentPage client:load pass={pass} order={order} payment={payment} />
+  </main>
+  <Footer />
+</Layout>

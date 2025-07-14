@@ -5,7 +5,7 @@ import {
   type StripeError,
 } from '@stripe/stripe-js'
 import { Environment } from './environment'
-import { PaymentAPI, type NewOrder, type PaymentOption } from './payment-api/payment.api'
+import { PaymentAPI, type NewOrder, type Payment, type PaymentOption } from './payment-api/payment.api'
 
 export { type StripeElements, type StripeError } from '@stripe/stripe-js'
 
@@ -38,7 +38,7 @@ export class Stripe {
     paymentElement.mount(domElement)
   }
 
-  async confirmPayment(
+  async createPayment(
     elements: StripeElements,
     newOrder: NewOrder,
     paymentOption: PaymentOption
@@ -51,6 +51,26 @@ export class Stripe {
     return await this.stripe.confirmPayment({
       elements,
       clientSecret,
+      confirmParams: {
+        return_url: Environment.Host() + '/checkout?order_id=' + order.id,
+        payment_method: paymentMethod.id,
+      },
+    })
+  }
+
+  async confirmPayment(
+    elements: StripeElements,
+    payment: Payment,
+    order: NewOrder,
+  ): Promise<never | { error: StripeError }> {
+    let { paymentMethod, error } = await this.stripe.createPaymentMethod({ elements })
+    if (!paymentMethod) {
+      return { error: error! }
+    }
+    const { secret } = await this.paymentApi.createPaymentAuthorization(payment.id, paymentMethod.id)
+    return await this.stripe.confirmPayment({
+      elements,
+      clientSecret: secret,
       confirmParams: {
         return_url: Environment.Host() + '/checkout?order_id=' + order.id,
         payment_method: paymentMethod.id,

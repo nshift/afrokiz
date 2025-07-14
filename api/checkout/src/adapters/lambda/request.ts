@@ -71,3 +71,8 @@ export const buildMarkPaymentAsSucceedRequest = (event: APIGatewayEvent) => {
   const body = JSON.parse(event.body ?? '{}')
   return { orderId: body.orderId, stripeId: body.stripeId }
 }
+
+export const buildCreatePaymentAuthorizationRequest = (event: APIGatewayEvent) => {
+  const body = JSON.parse(event.body ?? '{}')
+  return { paymentMethodId: body.paymentMethodId }
+}

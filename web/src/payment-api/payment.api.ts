@@ -119,6 +119,65 @@ export class PaymentAPI {
     }
   }
 
+  async getPaymentById(id: string): Promise<{ payment: Payment; order: Order }> {
+    const json = await this.request({ method: 'GET', path: '/payment/' + id })
+    return {
+      payment: {
+        id: json.payment.id,
+        amount: json.payment.amount,
+        currency: json.payment.currency,
+        dueDate: json.payment.dueDate,
+        status: json.payment.status,
+        stripe: { id: json.payment.stripe.id, secret: json.payment.stripe.secret, customerId: json.payment.stripe.customerId }
+      },
+      order: {
+        id: json.order.id,
+        email: json.order.email,
+        fullname: json.order.fullname,
+        dancerType: json.order.dancer_type,
+        passId: json.order.pass_id,
+        date: new Date(json.order.date),
+        paymentIntentId: json.order.paymentIntentId,
+        paymentStatus: json.order.paymentStatus,
+        checkedIn: json.order.checked_in,
+        items: json.order.items.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          includes: item.includes ?? [],
+          amount: item.amount,
+          total: { amount: item.total.amount, currency: item.total.currency },
+        })),
+        paymentStructures:
+          json.order.paymentStructures?.map((paymentStructure: any) =>
+            isInstallment(paymentStructure)
+              ? {
+                  principalAmount: paymentStructure.principalAmount,
+                  currency: paymentStructure.currency,
+                  frequency: paymentStructure.frequency,
+                  term: paymentStructure.term,
+                  dueDates:
+                    paymentStructure.dueDates?.map((dueDate) => ({
+                      amount: dueDate.amount,
+                      currency: dueDate.currency,
+                      dueDate: new Date(dueDate.dueDate),
+                      status: dueDate.status,
+                    })) ?? [],
+                }
+              : {
+                  amount: paymentStructure.amount,
+                  currency: paymentStructure.currency,
+                  status: paymentStructure.status,
+                }
+          ) ?? [],
+      }
+    }
+  }
+
+  async createPaymentAuthorization(paymentId: string, paymentMethodId: string): Promise<{ id: string; secret: string}> {
+    const response = await this.request({ method: 'POST', path: `/payment/authorization/${paymentId}`, body: JSON.stringify({ paymentMethodId }) })
+    return { id: response.id, secret: response.secret }
+  }
+
   async applyPromoCode(passId: string, code: string): Promise<Promotion> {
     const response = await this.request({ method: 'GET', path: `/promotion/${passId}/${code}` })
     return {
@@ -274,6 +333,15 @@ export type NewOrder = {
     amount: number
     total: { amount: number; currency: 'USD' | 'EUR' | 'THB' }
   }[]
+}
+
+export type Payment = {
+  id: string
+  amount: number
+  currency: Currency
+  dueDate?: Date
+  status: PaymentStatus
+  stripe: { id: string | null; secret: string | null; customerId: string }
 }
 
 export type Guest = {
