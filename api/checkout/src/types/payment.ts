@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { Currency } from './currency'
 import { InstallmentPayment, makeInstallment3xPayment } from './installment'
 
@@ -29,6 +30,15 @@ export type Payment = {
   dueDate?: Date
   status: PaymentStatus
   stripe: { id: string | null; secret: string | null; customerId: string }
+}
+
+export const isPaymentOverdue = (payment: Payment, today: Date) => {
+  if (!payment.dueDate || payment.status != 'pending') {
+    return false
+  }
+  const dueDate = DateTime.fromJSDate(payment.dueDate)
+  const todayDateTime = DateTime.fromJSDate(today)
+  return todayDateTime.diff(dueDate, 'days').days > 3
 }
 
 export const makeDirectPayment = (amountToBePaid: { amount: number; currency: Currency }): DirectPayment => ({

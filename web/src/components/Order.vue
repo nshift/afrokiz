@@ -133,6 +133,7 @@ const paymentStatusIcon = {
                     <th>Amount</th>
                     <th>Date</th>
                     <th>Status</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody v-for="(paymentStructure, index) in order.paymentStructures" :key="'ps-' + index">
@@ -145,12 +146,14 @@ const paymentStatusIcon = {
                     <td>{{ installment.currency }} {{ (installment.amount / 100).toFixed(2) }}</td>
                     <td>{{ DateTime.fromJSDate(installment.dueDate).toISODate() }}</td>
                     <td>{{ installment.status }}</td>
+                    <td><a :href="`/payment?id=${installment.paymentId}`" v-if="['pending', 'overdue', 'default'].includes(installment.status)">Pay</a></td>
                   </tr>
                   <tr v-if="!isInstallment(paymentStructure)">
                     <td><i :class="['fa-solid', paymentStatusIcon[paymentStructure.status] ?? '']"></i></td>
                     <td>{{ paymentStructure.currency }} {{ (paymentStructure.amount / 100).toFixed(2) }}</td>
                     <td>{{ DateTime.fromJSDate(order.date).toISODate() ?? 'null' }}</td>
                     <td>{{ paymentStructure.status }}</td>
+                    <td><a :href="`/payment?id=${paymentStructure.paymentId}`" v-if="['pending', 'overdue', 'default'].includes(paymentStructure.status)">Pay</a></td>
                   </tr>
                 </tbody>
               </table>

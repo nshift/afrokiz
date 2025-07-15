@@ -108,12 +108,14 @@ export class PaymentAPI {
                     currency: dueDate.currency,
                     dueDate: new Date(dueDate.dueDate),
                     status: dueDate.status,
+                    paymentId: dueDate.paymentId,
                   })) ?? [],
               }
             : {
                 amount: paymentStructure.amount,
                 currency: paymentStructure.currency,
                 status: paymentStructure.status,
+                paymentId: paymentStructure.paymentId,
               }
         ) ?? [],
     }
@@ -161,12 +163,14 @@ export class PaymentAPI {
                       currency: dueDate.currency,
                       dueDate: new Date(dueDate.dueDate),
                       status: dueDate.status,
+                      paymentId: dueDate.paymentId,
                     })) ?? [],
                 }
               : {
                   amount: paymentStructure.amount,
                   currency: paymentStructure.currency,
                   status: paymentStructure.status,
+                  paymentId: paymentStructure.paymentId,
                 }
           ) ?? [],
       }
@@ -272,6 +276,7 @@ export type DirectPayment = {
   amount: number
   currency: Currency
   status: PaymentStatus
+  paymentId: string
 }
 
 export type InstallmentFrequency = 'monthly'
@@ -281,6 +286,7 @@ export type PaymentDueDate = {
   currency: Currency
   dueDate: Date
   status: PaymentStatus
+  paymentId: string
 }
 
 export type InstallmentPayment = {

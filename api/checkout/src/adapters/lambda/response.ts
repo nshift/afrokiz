@@ -44,12 +44,14 @@ export const buildOrderResponse = ({
             currency: dueDate.currency,
             dueDate: dueDate.dueDate,
             status: dueDate.status,
+            paymentId: dueDate.paymentId
           })),
         }
       : {
           amount: paymentStructure.amount,
           currency: paymentStructure.currency,
           status: paymentStructure.status,
+          paymentId: paymentStructure.paymentId
         }
   ),
 })

@@ -24,6 +24,7 @@ import { InstallmentPayment } from './types/installment'
 import { makeFingerprint, makeOrderId, NewOrder, Order } from './types/order'
 import {
   isInstallment,
+  isPaymentOverdue,
   makePaymentStructure,
   Payment,
   PaymentMethod,
@@ -126,6 +127,7 @@ export class Checkout {
         })
         await this.repository.savePayment({
           ...payment,
+          status: isPaymentOverdue(payment, this.dateGenerator.today()) ? 'overdue' : payment.status,
           stripe: { ...payment.stripe, id: paymentIntent.id, secret: paymentIntent.secret },
         })
         return paymentIntent
