@@ -411,18 +411,23 @@ async function submit() {
     ),
   }
   const payment = props.payment
-  const { error } =  payment 
-    ? await stripe.confirmPayment(elements, payment, order) 
-    : await stripe.createPayment(elements, order, {
-        method: 'automatic',
-        structure: paymentOption.value,
-      })
-  submitting.value = false
-  if (error) {
+  try {
+    const { error } =  payment 
+      ? await stripe.confirmPayment(elements, payment, order) 
+      : await stripe.createPayment(elements, order, {
+          method: 'automatic',
+          structure: paymentOption.value,
+        })
+    if (error) {
+      cardDeclinedError.value = true
+      cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
+    }
+  }
+  catch (error: any) {
     cardDeclinedError.value = true
     cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
-    return console.error('Confirm payment error: ', error)
   }
+  submitting.value = false
 }
 </script>
 

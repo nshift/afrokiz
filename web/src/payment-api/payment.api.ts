@@ -259,9 +259,19 @@ export class PaymentAPI {
     }
     const json = await response.json()
     if (response.status < 200 || response.status > 299) {
-      throw new Error(`Failed to request ${options.path}: ${JSON.stringify(json)}`)
+      throw new PaymentApiError(json)
     }
     return json
+  }
+}
+
+export class PaymentApiError extends Error {
+  code?: string
+  
+  constructor(data: any) {
+    let message = data?.message ?? `Failed to request with error: ${JSON.stringify(data)}`
+    super(message)
+    this.code = data?.code
   }
 }
 

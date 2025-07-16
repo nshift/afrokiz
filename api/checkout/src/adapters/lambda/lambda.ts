@@ -165,8 +165,11 @@ export const createPaymentAuthorization = async (event: APIGatewayEvent, context
       return notFoundErrorResponse(`Payment (${paymentId}) is not found.`)
     }
     return successResponse(buildPaymentIntentResponse(paymentIntent))
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
+    if (error.code) {
+      return stripeErrorResponse(error)
+    }
     return internalServerErrorResponse(error)
   }
 }
@@ -417,6 +420,15 @@ const internalServerErrorResponse = (error: any) => ({
   statusCode: 500,
   headers,
   body: JSON.stringify({ message: error?.message ?? `Unknown error: ${error}` }),
+})
+
+const stripeErrorResponse = (error: any) => ({
+  statusCode: error?.statusCode ?? 500,
+  headers,
+  body: JSON.stringify({
+    code: error?.code,
+    message: error?.message ?? error?.raw?.message ?? `Unknown error: ${error}`
+  }),
 })
 
 const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
