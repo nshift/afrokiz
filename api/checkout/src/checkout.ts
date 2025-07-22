@@ -118,18 +118,29 @@ export class Checkout {
 
   async processPendingPayments(): Promise<PaymentIntent[]> {
     let payments = await this.repository.getPendingPayments(this.dateGenerator.today())
+    console.log("Pending payments: ", JSON.stringify(payments))
     let results = await Promise.allSettled(
       payments.map(async (payment) => {
-        let paymentIntent = await this.paymentAdapter.chargeCustomerInstallment({
-          order: { id: payment.orderId },
-          total: { amount: payment.amount, currency: payment.currency },
-          customer: { id: payment.stripe.customerId },
-        })
+        let paymentIntent: PaymentIntent | undefined
+        try {
+          paymentIntent = await this.paymentAdapter.chargeCustomerInstallment({
+            order: { id: payment.orderId },
+            total: { amount: payment.amount, currency: payment.currency },
+            customer: { id: payment.stripe.customerId },
+          })
+        }
+        catch (error) {
+          console.error(error)
+        }
         await this.repository.savePayment({
           ...payment,
           status: isPaymentOverdue(payment, this.dateGenerator.today()) ? 'overdue' : payment.status,
-          stripe: { ...payment.stripe, id: paymentIntent.id, secret: paymentIntent.secret },
+          stripe: paymentIntent ? { ...payment.stripe, id: paymentIntent.id, secret: paymentIntent.secret } : payment.stripe,
         })
+        let paymentStatus = isPaymentOverdue(payment, this.dateGenerator.today()) ? 'overdue' : payment.status
+        if (paymentStatus != payment.status) {
+          await this.repository.savePaymentStatus({ order: { id: payment.orderId }, payment: { stripeId: '', status: paymentStatus }})
+        }
         return paymentIntent
       })
     )
