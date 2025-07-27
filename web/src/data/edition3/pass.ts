@@ -623,7 +623,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   vipGoldPass: {
     id: 'vip-gold',
     name: 'VIP Gold',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 49900, EUR: 45000, THB: 1650000 },
     doorPrice: { USD: 53000, EUR: 47500, THB: 1700000 },
     includes: [
@@ -875,7 +875,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   allInclusivePackage: {
     id: 'all-inclusive-package',
     name: 'All Inclusive Package',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 66000, EUR: 57000, THB: 2140000 },
     doorPrice: { USD: 75000, EUR: 72000, THB: 2570000 },
     includes: [

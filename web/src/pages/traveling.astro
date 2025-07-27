@@ -6,6 +6,7 @@ import Footer from '../sections/Footer.astro'
 import { calculateTotal, defaultPasses, type Pass } from '../data/edition3/pass'
 import Currency from '../components/Currency.vue'
 import FirstInstallment from '../components/FirstInstallment.vue'
+import BuyButton from '../components/BuyButton.astro'
 
 const allInclusivePackage = defaultPasses.allInclusivePackage
 const partyPackage = defaultPasses.partyPackage
@@ -49,7 +50,7 @@ function calculatePrice(pass: Pass) {
               )
             }
           </p>
-          <p><a href={'/pass/' + partyPackage.id} class="button action">Buy now</a></p>
+          <p><BuyButton isSoldOut={partyPackage.isSoldOut} passId={partyPackage.id} /></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
@@ -88,7 +89,7 @@ function calculatePrice(pass: Pass) {
               )
             }
           </p>
-          <p><a href={'/pass/' + sametBangkokPass.id} class="button action">Buy now</a></p>
+          <p><BuyButton isSoldOut={sametBangkokPass.isSoldOut} passId={sametBangkokPass.id} /></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>
@@ -127,7 +128,7 @@ function calculatePrice(pass: Pass) {
               )
             }
           </p>
-          <p><a href={'/pass/' + allInclusivePackage.id} class="button action">Buy now</a></p>
+          <p><BuyButton isSoldOut={allInclusivePackage.isSoldOut} passId={allInclusivePackage.id} /></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> 3 Nights Stay at Koh Samet hotel</li>

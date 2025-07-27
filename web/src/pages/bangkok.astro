@@ -7,6 +7,7 @@ import { calculateTotal, defaultPasses, type Pass } from '../data/edition3/pass'
 import Currency from '../components/Currency.vue'
 import { artists, taxiDancers } from '../data/edition3/artist'
 import FirstInstallment from '../components/FirstInstallment.vue'
+import BuyButton from '../components/BuyButton.astro'
 
 const fullpass = defaultPasses.fullPass
 const partyPass = defaultPasses.partyPass
@@ -117,7 +118,7 @@ function calculatePrice(pass: Pass) {
               </p>
             )
           }
-          <p><a href={'/pass/' + fullpass.id} class="button action">Buy now</a></p>
+          <p><BuyButton isSoldOut={fullpass.isSoldOut} passId={fullpass.id} /></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
@@ -149,7 +150,7 @@ function calculatePrice(pass: Pass) {
               )
             }
           </p>
-          <p><a href={'/pass/' + vipSilverPass.id} class="button action">Buy now</a></p>
+          <p><BuyButton isSoldOut={vipSilverPass.isSoldOut} passId={vipSilverPass.id} /></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
@@ -181,7 +182,7 @@ function calculatePrice(pass: Pass) {
               )
             }
           </p>
-          <p><a href={'/pass/' + vipGoldPass.id} class="button action">Buy now</a></p>
+          <p><BuyButton isSoldOut={vipGoldPass.isSoldOut} passId={vipGoldPass.id} /></p>
         </Card>
         <ul class="options">
           <li><i class="fa-solid fa-circle-check"></i> All Parties</li>
@@ -213,20 +214,7 @@ function calculatePrice(pass: Pass) {
             <h4>{partyPass.name}</h4>
           </div>
           <div class="button-container">
-            {
-              !partyPass.isSoldOut && (
-                <a href={'/pass/' + partyPass.id} class="button action">
-                  Buy Now
-                </a>
-              )
-            }
-            {
-              partyPass.isSoldOut && (
-                <button class="button action disabled" disabled>
-                  Sold Out
-                </button>
-              )
-            }
+            <BuyButton isSoldOut={partyPass.isSoldOut} passId={partyPass.id} />
           </div>
         </div>
       </Card>
@@ -246,20 +234,7 @@ function calculatePrice(pass: Pass) {
             <h4>{friNight.name}</h4>
           </div>
           <div class="button-container">
-            {
-              !friNight.isSoldOut && (
-                <a href={'/pass/' + friNight.id} class="button action">
-                  Buy Now
-                </a>
-              )
-            }
-            {
-              friNight.isSoldOut && (
-                <button class="button action disabled" disabled>
-                  Sold Out
-                </button>
-              )
-            }
+            <BuyButton isSoldOut={friNight.isSoldOut} passId={friNight.id} />
           </div>
         </div>
       </Card>
@@ -279,20 +254,7 @@ function calculatePrice(pass: Pass) {
             <h4>{satNight.name}</h4>
           </div>
           <div class="button-container">
-            {
-              !satNight.isSoldOut && (
-                <a href={'/pass/' + satNight.id} class="button action">
-                  Buy Now
-                </a>
-              )
-            }
-            {
-              satNight.isSoldOut && (
-                <button class="button action disabled" disabled>
-                  Sold Out
-                </button>
-              )
-            }
+            <BuyButton isSoldOut={satNight.isSoldOut} passId={satNight.id} />
           </div>
         </div>
       </Card>
@@ -312,20 +274,7 @@ function calculatePrice(pass: Pass) {
             <h4>{sunNight.name}</h4>
           </div>
           <div class="button-container">
-            {
-              !sunNight.isSoldOut && (
-                <a href={'/pass/' + sunNight.id} class="button action">
-                  Buy Now
-                </a>
-              )
-            }
-            {
-              sunNight.isSoldOut && (
-                <button class="button action disabled" disabled>
-                  Sold Out
-                </button>
-              )
-            }
+            <BuyButton isSoldOut={sunNight.isSoldOut} passId={sunNight.id} />
           </div>
         </div>
       </Card>
@@ -346,20 +295,7 @@ function calculatePrice(pass: Pass) {
             <h4>{friPass.name}</h4>
           </div>
           <div class="button-container">
-            {
-              !friPass.isSoldOut && (
-                <a href={'/pass/' + friPass.id} class="button action">
-                  Buy Now
-                </a>
-              )
-            }
-            {
-              friPass.isSoldOut && (
-                <button class="button action disabled" disabled>
-                  Sold Out
-                </button>
-              )
-            }
+            <BuyButton isSoldOut={friPass.isSoldOut} passId={friPass.id} />
           </div>
         </div>
       </Card>
@@ -379,20 +315,7 @@ function calculatePrice(pass: Pass) {
             <h4>{satPass.name}</h4>
           </div>
           <div class="button-container">
-            {
-              !satPass.isSoldOut && (
-                <a href={'/pass/' + satPass.id} class="button action">
-                  Buy Now
-                </a>
-              )
-            }
-            {
-              satPass.isSoldOut && (
-                <button class="button action disabled" disabled>
-                  Sold Out
-                </button>
-              )
-            }
+            <BuyButton isSoldOut={satPass.isSoldOut} passId={satPass.id} />
           </div>
         </div>
       </Card>
@@ -412,20 +335,7 @@ function calculatePrice(pass: Pass) {
             <h4>{sunPass.name}</h4>
           </div>
           <div class="button-container">
-            {
-              !sunPass.isSoldOut && (
-                <a href={'/pass/' + sunPass.id} class="button action">
-                  Buy Now
-                </a>
-              )
-            }
-            {
-              sunPass.isSoldOut && (
-                <button class="button action disabled" disabled>
-                  Sold Out
-                </button>
-              )
-            }
+            <BuyButton isSoldOut={sunPass.isSoldOut} passId={sunPass.id} />
           </div>
         </div>
       </Card>

@@ -1,0 +1,38 @@
+---
+interface Props {
+  isSoldOut: boolean
+  passId: string
+  classes?: string[]
+}
+
+const { isSoldOut, passId } = Astro.props
+---
+
+<>
+  {
+    !isSoldOut && (
+      <a href={'/pass/' + passId} class="button action">
+        Buy now
+      </a>
+    )
+  }
+  {
+    isSoldOut && (
+      <button class="button action disabled" disabled>
+        Sold Out
+      </button>
+    )
+  }
+</>
+
+<style>
+  .button {
+    /* background-color: var(--primary-color);
+    display: inline-block;
+    font-size: 0.8rem !important; */
+  }
+  .button.disabled {
+    background-color: rgb(72, 72, 72) !important;
+    cursor: initial;
+  }
+</style>
