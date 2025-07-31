@@ -69,7 +69,7 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
               'Airport Pickup':
                 sale.includes.includes('Airport Pick Up') || sale.includes.includes('Airport Pick up') ? 1 : 0,
               'Bangkok Hotel': sale.includes.some((inc) =>
-                ['3 Nights Stay at I-Residence Silom', '3 Nights Stay at Bangkok hotel', '4 Nights Stay at Bangkok hotel'].some((a) => inc.includes(a))
+                ['3 Nights Stay at I-Residence Silom', '3 Nights Stay at Bangkok hotel', '4 Nights Stay at Bangkok hotel', '3 Nights Stay at Heritage Bangkok Hotel (breakfast included)'].some((a) => inc.includes(a))
               )
                 ? 1
                 : 0,

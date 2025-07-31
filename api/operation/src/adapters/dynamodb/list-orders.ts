@@ -12,7 +12,14 @@ export const listOrdersResponse = (response: any) =>
       date: new Date(item.date),
       email: item.customer?.email ?? item.email,
       fullname: item.customer?.fullname ?? item.fullname,
-      pass: item.items[0].id,
+      pass: (item.items as { id: string }[]).reduce((item, pass) => {
+        if (item == 'all-inclusive-package') {
+          return item
+        }
+        let upgradePasses: {[key: string]: string} = {'vip-silver-upgrade': 'vip-silver', 'vip-gold-upgrade': 'vip-gold'}
+        let upgradedPass = upgradePasses[pass.id]
+        return upgradedPass ?? item
+      }, item.items[0].id as string),
       promoCode: item.promoCode,
       customerType: item.customer?.type ?? item.dancerType,
       includes: item.items.flatMap((item: any) => ((item.includes?.length ?? 0) > 0 ? item.includes : [item.title])),
