@@ -193,6 +193,7 @@ const paymentStatusIcon = {
             :total="total"
             :currency="currency"
             :optionIds="optionIds"
+            :showInstallment="false"
           />
         </div>
       </div>

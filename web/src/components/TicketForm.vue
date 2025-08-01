@@ -166,7 +166,8 @@ const shouldDisabled = (id: string) => {
       :pass="pass" 
       :total="total" 
       :currency="currency ?? defaultCurrency" 
-      :optionIds="optionIds" 
+      :optionIds="optionIds"
+      :showInstallment="false"
       />
   </div>
 </template>

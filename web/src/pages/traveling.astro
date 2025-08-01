@@ -38,10 +38,10 @@ function calculatePrice(pass: Pass) {
         <Card classes={['card']}>
           <h4>Party Package</h4>
           <h3>
-            <FirstInstallment term={2} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only />
+            <!-- <FirstInstallment term={2} amountToBePaid={calculatePrice(partyPackage)} today={new Date()} client:only /> -->
+            <Currency price={calculatePrice(partyPackage)} client:only />
           </h3>
           <p>
-            <Currency price={calculatePrice(partyPackage)} client:only />
             {
               partyPackage.price.EUR != partyPackage.doorPrice.EUR && (
                 <s>
@@ -72,15 +72,15 @@ function calculatePrice(pass: Pass) {
         <Card classes={['card']}>
           <h4>Full Pass Package</h4>
           <h3>
-            <FirstInstallment
+            <!-- <FirstInstallment
               term={2}
               amountToBePaid={calculatePrice(sametBangkokPass)}
               today={new Date()}
               client:only
-            />
+            /> -->
+            <Currency price={calculatePrice(sametBangkokPass)} client:only />
           </h3>
           <p>
-            <Currency price={calculatePrice(sametBangkokPass)} client:only />
             {
               sametBangkokPass.price.EUR != sametBangkokPass.doorPrice.EUR && (
                 <s>
@@ -111,15 +111,15 @@ function calculatePrice(pass: Pass) {
         <Card classes={['card']}>
           <h4>All Inclusive Package</h4>
           <h3>
-            <FirstInstallment
+            <!-- <FirstInstallment
               term={2}
               amountToBePaid={calculatePrice(allInclusivePackage)}
               today={new Date()}
               client:only
-            />
+            /> -->
+            <Currency price={calculatePrice(allInclusivePackage)} client:only />
           </h3>
           <p>
-            <Currency price={calculatePrice(allInclusivePackage)} client:only />
             {
               allInclusivePackage.price.EUR != allInclusivePackage.doorPrice.EUR && (
                 <s>

@@ -138,10 +138,10 @@ function calculatePrice(pass: Pass) {
         <Card classes={['card']}>
           <h4>VIP Silver</h4>
           <h3>
-            <FirstInstallment term={2} amountToBePaid={calculatePrice(vipSilverPass)} today={new Date()} client:only />
+            <!-- <FirstInstallment term={2} amountToBePaid={calculatePrice(vipSilverPass)} today={new Date()} client:only /> -->
+            <Currency price={vipSilverPass.price} client:only />
           </h3>
           <p>
-            <Currency price={vipSilverPass.price} client:only />
             {
               vipSilverPass.price.EUR != vipSilverPass.doorPrice.EUR && (
                 <s>
@@ -170,10 +170,10 @@ function calculatePrice(pass: Pass) {
         <Card classes={['card']}>
           <h4>VIP Gold</h4>
           <h3>
-            <FirstInstallment term={2} amountToBePaid={calculatePrice(vipGoldPass)} today={new Date()} client:only />
+            <!-- <FirstInstallment term={2} amountToBePaid={calculatePrice(vipGoldPass)} today={new Date()} client:only /> -->
+            <Currency price={vipGoldPass.price} client:only />
           </h3>
           <p>
-            <Currency price={vipGoldPass.price} client:only />
             {
               vipGoldPass.price.EUR != vipGoldPass.doorPrice.EUR && (
                 <s>
