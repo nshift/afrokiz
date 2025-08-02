@@ -180,7 +180,7 @@
       <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
       <button class="button action" v-if="!submitting && (forcePayment || !pass.isSoldOut) && total > 0">Pay</button>
       <button class="button action disabled" v-if="!submitting && total <= 0 && (forcePayment || !pass.isSoldOut)" disabled>Pay</button>
-      <button class="button action disabled" v-if="!submitting && pass.isSoldOut" disabled>Sold Out</button>
+      <button class="button action disabled" v-if="!submitting && (pass.isSoldOut && !forcePayment)" disabled>Sold Out</button>
       <p class="validation-error card-error" v-if="cardDeclinedError">{{ cardDeclinedErrorMessage }}</p>
     </form>
   </Card>
