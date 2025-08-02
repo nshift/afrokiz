@@ -107,6 +107,7 @@ const paymentStatusIcon = {
             :optionIds="[]"
             :showInstallment="false"
             :payment="payment"
+            :forcePayment="true"
           />
         </div>
       </div>

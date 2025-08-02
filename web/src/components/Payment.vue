@@ -178,8 +178,8 @@
       </div>
       </div>
       <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
-      <button class="button action" v-if="!submitting && !pass.isSoldOut && total > 0">Pay</button>
-      <button class="button action disabled" v-if="!submitting && total <= 0 && !pass.isSoldOut" disabled>Pay</button>
+      <button class="button action" v-if="!submitting && (forcePayment || !pass.isSoldOut) && total > 0">Pay</button>
+      <button class="button action disabled" v-if="!submitting && total <= 0 && (forcePayment || !pass.isSoldOut)" disabled>Pay</button>
       <button class="button action disabled" v-if="!submitting && pass.isSoldOut" disabled>Sold Out</button>
       <p class="validation-error card-error" v-if="cardDeclinedError">{{ cardDeclinedErrorMessage }}</p>
     </form>
@@ -215,6 +215,7 @@ const props = defineProps<{
   classes?: string[]
   showInstallment?: boolean
   payment?: Payment
+  forcePayment?: boolean
 }>()
 let stripe: Stripe
 let elements: StripeElements
