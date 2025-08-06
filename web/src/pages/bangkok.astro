@@ -18,6 +18,7 @@ const friPass = defaultPasses.fri
 const satPass = defaultPasses.sat
 const sunPass = defaultPasses.sun
 const vipSilverPass = defaultPasses.vipSilverPass
+const vipSilverTwinPass = defaultPasses.vipSilverTwinPass
 const vipGoldPass = defaultPasses.vipGoldPass
 let instructors = [
   artists.audilaura,
@@ -197,6 +198,26 @@ function calculatePrice(pass: Pass) {
           <li><i class="fa-solid fa-circle-check"></i> T'Peak Masterclass</li>
           <li><i class="fa-solid fa-circle-check"></i> Asia Masterclass</li>
         </ul>
+      </Card>
+      <Card classes={['ticket-card', 'ticket', 'fullpass']}>
+        <div class="container-column">
+          <div>
+            <h3><Currency price={calculatePrice(vipSilverTwinPass)} client:only /></h3>
+            {
+              vipSilverTwinPass.price.EUR != vipSilverTwinPass.doorPrice.EUR && (
+                <p>
+                  <s>
+                    <Currency price={vipSilverTwinPass.doorPrice} client:only />
+                  </s>
+                </p>
+              )
+            }
+            <h4>{vipSilverTwinPass.name}</h4>
+          </div>
+          <div class="button-container">
+            <BuyButton isSoldOut={vipSilverTwinPass.isSoldOut} passId={vipSilverTwinPass.id} />
+          </div>
+        </div>
       </Card>
       <Card classes={['ticket-card', 'ticket', 'fullpass']}>
         <div class="container-column">

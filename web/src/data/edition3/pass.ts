@@ -620,6 +620,34 @@ export const defaultPasses: { [key: string]: Pass } = {
       },
     },
   },
+  vipSilverTwinPass: {
+    id: 'vip-silver-twin',
+    name: 'VIP Silver Twin Room',
+    isSoldOut: false,
+    price: { USD: 63500, EUR: 54500, THB: 2055000 },
+    doorPrice: { USD: 80000, EUR: 75600, THB: 2720000 },
+    includes: [
+      'All options are for 2 persons',
+      'All workshops',
+      'Day time social',
+      'Evening parties during September 5-7',
+      '3 welcome drinks per person',
+      '3 Nights Stay at I-Residence Silom Bangkok Hotel (breakfast included)',
+      'Exclusive Cruise Party',
+      '1H Foot Massage at Lek Massage per person',
+      'Non-refundable',
+    ],
+    giveAways: [],
+    isPromoted: true,
+    options: {
+      ...Object.keys(afroBootcampOption).reduce((option, key) => 
+        ({ ...option, [key]: { ...afroBootcampOption[key], price: { USD: afroBootcampOption[key].price.USD * 2, EUR: afroBootcampOption[key].price.EUR * 2, THB: afroBootcampOption[key].price.THB * 2 } }})
+      , {} as { [key: string]: any }),
+      ...Object.keys(masterClassOptions).reduce((option, key) => 
+        ({ ...option, [key]: { ...masterClassOptions[key], price: { USD: masterClassOptions[key].price.USD * 2, EUR: masterClassOptions[key].price.EUR * 2, THB: masterClassOptions[key].price.THB * 2 } }})
+      , {} as { [key: string]: any })
+    },
+  },
   vipGoldPass: {
     id: 'vip-gold',
     name: 'VIP Gold',
@@ -1111,4 +1139,8 @@ export function sumPrices(prices: { USD: number; EUR: number; THB: number }[]) {
     },
     { USD: 0, EUR: 0, THB: 0 }
   )
+}
+
+export function doubleOption() {
+
 }
