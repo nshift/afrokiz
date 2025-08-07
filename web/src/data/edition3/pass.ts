@@ -624,7 +624,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'vip-silver-twin',
     name: 'VIP Silver Twin Room',
     isSoldOut: false,
-    price: { USD: 63500, EUR: 54500, THB: 2055000 },
+    price: { USD: 67500, EUR: 58000, THB: 2180000 },
     doorPrice: { USD: 80000, EUR: 75600, THB: 2720000 },
     includes: [
       'All options are for 2 persons',
