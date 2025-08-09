@@ -903,7 +903,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   allInclusivePackage: {
     id: 'all-inclusive-package',
     name: 'All Inclusive Package',
-    isSoldOut: true,
+    isSoldOut: false,
     price: { USD: 69000, EUR: 60000, THB: 2260000 },
     doorPrice: { USD: 75000, EUR: 72000, THB: 2570000 },
     includes: [
