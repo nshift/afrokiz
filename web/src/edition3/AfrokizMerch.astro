@@ -1,0 +1,59 @@
+---
+import Card from '../components/Card.astro'
+---
+
+<div class="container1">
+  <div class="section-header">
+    <div>
+      <h2>Limited Edition Afrokiz Merch</h2>
+      <p>
+        We partnered with Kobby to create limited and amazing t-shirts and custom Vans. The t-shirts have been designed
+        to celebrate the connection between dancers. Each Vans is handmade to offer the best quality.
+      </p>
+    </div>
+  </div>
+  <Card classes={['background-card']}>
+    <Card classes={['top-card']} backgroundPath="/images/tshirt/all.jpg">
+      <h2 style="margin-bottom: 1rem;">Only available online</h2>
+      <div class="button-container"><a href="/merch" class="button action arrow">Buy</a></div>
+    </Card>
+    <ul class="featured">
+      <li>
+        <Card classes={['small-card']} backgroundPath="/images/tshirt/vans.jpg" />
+        <p>Custom Vans</p>
+      </li>
+      <li>
+        <Card classes={['small-card']} backgroundPath="/images/tshirt/woman-black1.jpg" />
+        <p>Woman crop top</p>
+      </li>
+      <li>
+        <Card classes={['small-card']} backgroundPath="/images/tshirt/purple4.jpg" />
+        <p>Man t-shirt</p>
+      </li>
+    </ul>
+  </Card>
+</div>
+
+<style is:global>
+  .travel {
+    padding: 0.75rem;
+    padding-bottom: 2rem;
+    grid-column: span 12;
+  }
+  .travel > .text {
+    width: 100%;
+  }
+  .travel .big {
+    width: 100%;
+    height: 300px;
+    justify-content: center !important;
+    align-items: end !important;
+  }
+  .travel .big > .text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 2rem;
+    text-align: center;
+  }
+</style>

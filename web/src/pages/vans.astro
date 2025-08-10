@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Header from '../sections/edition3/Header.astro'
+import Footer from '../sections/Footer.astro'
+import ShoesComp from '../components/Shoes.vue'
+import { afrokizShoes } from '../data/vans'
+---
+
+<Layout title={`${afrokizShoes.vans.name} | Afrokiz Bkk Festival Edition 3`}>
+  <Header />
+  <main>
+    <ShoesComp client:load item={afrokizShoes.vans} />
+  </main>
+  <Footer />
+</Layout>

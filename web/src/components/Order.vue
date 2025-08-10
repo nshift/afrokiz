@@ -194,6 +194,8 @@ const paymentStatusIcon = {
             :currency="currency"
             :optionIds="optionIds"
             :showInstallment="false"
+            :items="[]"
+            :enablePayment="true"
           />
         </div>
       </div>

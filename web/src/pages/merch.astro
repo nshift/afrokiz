@@ -1,0 +1,362 @@
+---
+import Card from '../components/Card.astro'
+import Layout from '../layouts/Layout.astro'
+import Header from '../sections/edition3/Header.astro'
+import Footer from '../sections/Footer.astro'
+import Currency from '../components/Currency.vue'
+import { artists, taxiDancers } from '../data/edition3/artist'
+import { afrokizTshirts } from '../data/tshirt'
+import { afrokizShoes } from '../data/vans'
+
+let instructors = [
+  artists.audilaura,
+  artists.albir,
+  artists.asia,
+  artists.tpeak,
+  artists.ozyshine,
+  artists.quinn,
+  artists.oncleKani,
+  artists.david,
+  artists.tonya,
+  artists.stef,
+]
+let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, artists.tonyaDj, artists.ploy]
+---
+
+<Layout title="Bangkok | Afrokiz Bkk Festival Edition 3">
+  <Header />
+  <main>
+    <div class="container2">
+      <Card classes={['card header']} backgroundPath="/images/tshirt/all.jpg">
+        <h2>Vans Afrokiz Edition</h2>
+        <p>Handmade by Kobby <br /><br /></p>
+        <h3><Currency price={afrokizShoes.vans.price} client:only /></h3>
+        <p><a href={'/vans'} class="button action">Buy now</a></p>
+      </Card>
+      <div class="tshirt-container">
+        <Card classes={['card header']} backgroundPath="/images/tshirt/woman-black1.jpg">
+          <h2>Woman Crop Top</h2>
+          <p>Let's celebrate the Kizomba connection.<br /><br /></p>
+          <h3><Currency price={afrokizTshirts.woman.price} client:only /></h3>
+          <p><a href={'/t-shirt?id=woman'} class="button action">Buy now</a></p>
+        </Card>
+        <Card classes={['card header']} backgroundPath="/images/tshirt/purple4.jpg">
+          <h2>Man T-Shirt</h2>
+          <p>Let's celebrate the Kizomba connection.<br /><br /></p>
+          <h3><Currency price={afrokizTshirts.man.price} client:only /></h3>
+          <p><a href={'/t-shirt?id=man'} class="button action">Buy now</a></p>
+        </Card>
+      </div>
+    </div>
+    <div class="container2">
+      <Card classes={['card package information']}>
+        <Card classes={['card']}>
+          <h3>Available for pre-ordering only</h3>
+          <p>
+            Get your hands on exclusive, handmade Afrokiz merchandise available for pre-order online only!<br />
+            Each item is crafted with care by Kobby, our talented designer and producer, who’s dedicated to delivering the
+            highest quality just for you. These limited-edition pieces are available only until August 31s!
+          </p>
+        </Card>
+      </Card>
+    </div>
+    <div class="container2">
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2rem',
+          gridColumn: 'span 12',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h3>Are you interested to dance in Bangkok and Koh Samet?</h3>
+        <p><a href={'/traveling'} class="button action">See our packages</a></p>
+      </div>
+    </div>
+    <div class="container2 artists">
+      <div class="section-header">
+        <h2>Instructors</h2>
+      </div>
+      <ul class="artists">
+        {
+          instructors.map((artist) => (
+            <li>
+              <Card backgroundPath={artist.image} classes={['artist-card']}>
+                {artist.name}
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="container2 artists">
+      <div class="section-header">
+        <h2>Djs</h2>
+      </div>
+      <ul class="artists">
+        {
+          djs.map((artist) => (
+            <li>
+              <Card backgroundPath={artist.image} classes={['artist-card']}>
+                {artist.name}
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="container2 artists">
+      <div class="section-header">
+        <h2>Taxi Dancers</h2>
+      </div>
+      <ul class="artists">
+        {
+          taxiDancers.map((artist) => (
+            <li>
+              <Card backgroundPath={artist.image} classes={['artist-card']}>
+                {artist.name}
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  .container.artists .artists {
+    /* gap: 0.5rem; */
+  }
+  .card > .text {
+    padding: var(--lg-padding);
+  }
+  .card.header.big {
+    grid-column: span 12;
+    min-height: 400px;
+  }
+  .card.header > .text {
+    width: 50%;
+  }
+  .card.header {
+    grid-column: span 6;
+    min-height: 350px;
+  }
+  .card.header a {
+    color: white;
+  }
+  .card.big {
+    grid-column: span 12;
+    min-height: 350px;
+  }
+  .card.big > .text {
+    max-width: 50%;
+  }
+  .card.small {
+    grid-column: span 3;
+  }
+  .card.small.package {
+    grid-column: span 4;
+  }
+  .card.small {
+    min-height: 250px;
+  }
+  .artists .card.small {
+    width: 230px;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+  }
+  .card.package {
+    align-items: start;
+  }
+  .card.information {
+    grid-column: span 12;
+  }
+  .card.package > .text {
+    padding: var(--xs-padding);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-s-gap);
+  }
+  .card.package .card {
+    background-color: var(--secondary-color);
+    width: 100%;
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-s-gap);
+  }
+  .card.package .card > .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-xs-gap);
+    align-items: center;
+    text-align: center;
+  }
+  .card.package .options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .card.package .button {
+    background-color: var(--primary-color);
+    display: inline-block;
+    font-size: 0.8rem !important;
+  }
+  .card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+  }
+  .artist-card {
+    width: 160px;
+    height: 170px;
+    border-radius: 16px !important;
+    align-items: end !important;
+  }
+  .artist-card .background {
+    border-radius: 16px !important;
+  }
+  .artist-card .background .overlay {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+  .artist-card > .text {
+    padding: 1rem;
+  }
+  .ticket-card {
+    min-height: 275px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    grid-column: span 3;
+  }
+  .ticket-card .text {
+    padding: var(--s-padding);
+  }
+  .ticket-card h3 {
+    margin-top: 0.75rem;
+  }
+  .container-column {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-m-gap);
+    text-align: center;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .button-container {
+    padding: 1rem;
+  }
+  .tshirt-container {
+    display: grid;
+    grid-column: span 6;
+    gap: 1rem;
+  }
+  .button {
+    display: inline-block;
+  }
+  @media only screen and (min-width: 920px) {
+    .artist-card {
+      width: 230px;
+      height: 250px;
+    }
+  }
+  @media only screen and (max-width: 920px) {
+    .ticket-card {
+      width: 100% !important;
+    }
+    .ticket-card {
+      min-height: 215px;
+    }
+    .ticket-card .text {
+      padding: 1rem var(--m-padding);
+    }
+    .card.header,
+    .card.small {
+      min-height: 180px;
+    }
+    .card.big,
+    .card.header {
+      grid-column: span 12;
+      min-height: 200px;
+    }
+    .card.small {
+      grid-column: span 6;
+    }
+    .card.small.package {
+      grid-column: span 12;
+    }
+    .card.header > .text {
+      width: 100%;
+    }
+    .card.package .button {
+      font-size: 0.7rem !important;
+    }
+    .card.header.big {
+      min-height: 300px;
+    }
+    .card.header.big > .text {
+      width: 100%;
+    }
+    .artists .card.small {
+      width: 200px;
+      height: 170px;
+    }
+    .tshirt-container {
+      grid-column: span 12;
+    }
+  }
+</style>
+
+<style>
+  .container2 {
+    padding: 0 var(--grid-side-padding);
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: var(--grid-s-gap);
+  }
+  .container2.artists {
+    display: flex;
+    flex-direction: column;
+    color: white;
+  }
+  .options {
+    padding: 1rem !important;
+  }
+  .options li {
+    margin-bottom: 0.5rem;
+  }
+  .options li i {
+    margin-right: 0.5rem;
+  }
+  .fa-circle-check {
+    color: rgb(0, 208, 0);
+  }
+  .fa-circle-xmark {
+    color: gray;
+  }
+  ul.artists {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    overflow: scroll;
+    padding: 0;
+    margin: 0;
+    grid-column: span 12;
+    overflow-y: hidden;
+  }
+  ul.artists > li {
+    padding: 0.25rem;
+  }
+  @media only screen and (max-width: 920px) {
+    .packageContainer {
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+</style>

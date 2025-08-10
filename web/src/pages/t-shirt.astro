@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Header from '../sections/edition3/Header.astro'
+import Footer from '../sections/Footer.astro'
+import TShirtComp from '../components/TShirt.vue'
+import { afrokizTshirts } from '../data/tshirt'
+
+const queryParams = Astro.url.searchParams
+const id = queryParams.get('id') ?? 'woman'
+---
+
+<Layout title={`${afrokizTshirts[id].name} | Afrokiz Bkk Festival Edition 3`}>
+  <Header />
+  <main>
+    <TShirtComp client:load item={afrokizTshirts[id]} />
+  </main>
+  <Footer />
+</Layout>

@@ -367,6 +367,17 @@ export const valentinePasses: { [key: string]: Pass } = {
 }
 
 export const defaultPasses: { [key: string]: Pass } = {
+  none: {
+    id: 'none',
+    name: 'None',
+    isSoldOut: false,
+    price: { USD: 0, EUR: 0, THB: 0 },
+    doorPrice: { USD: 0, EUR: 0, THB: 0 },
+    includes: [],
+    giveAways: [],
+    isPromoted: true,
+    options: { },
+  },
   ...valentinePasses,
   fullPass: {
     id: 'fullpass',

@@ -73,7 +73,8 @@
         v-if="
           !optionIds.includes('couple-option') &&
           !['dj', 'fullpass-valentine', 'vip-silver-valentine', 'vip-gold-valentine'].includes(pass.id) &&
-          shouldRequestPersonalInformation
+          shouldRequestPersonalInformation &&
+          pass.id != 'none'
         "
       >
         <div class="dancer-type-options">
@@ -102,7 +103,7 @@
         </div>
         <p class="validation-error" v-if="dancerTypeValidationError">Your gender is incomplete.</p>
       </div>
-      <div class="information-element" v-if="shouldRequestPersonalInformation">
+      <div class="information-element" v-if="shouldRequestPersonalInformation && !shouldRequestOrderId">
         <label>{{ isValentinePass ? 'Miss full name' : 'Full name' }}</label>
         <div class="field-container">
           <input
@@ -114,7 +115,7 @@
         </div>
         <p class="validation-error" v-if="fullNameValidationError">Your full name is incomplete.</p>
       </div>
-      <div class="information-element" v-if="isValentinePass && shouldRequestPersonalInformation">
+      <div class="information-element" v-if="isValentinePass && shouldRequestPersonalInformation && !shouldRequestOrderId">
         <label>Mister full name</label>
         <div class="field-container">
           <input
@@ -126,7 +127,7 @@
         </div>
         <p class="validation-error" v-if="fullNameValidationError">Your full name is incomplete.</p>
       </div>
-      <div class="information-element" v-if="shouldRequestPersonalInformation">
+      <div class="information-element" v-if="shouldRequestPersonalInformation && !shouldRequestOrderId">
         <label>Email</label>
         <div class="field-container">
           <input
@@ -138,8 +139,20 @@
         </div>
         <p class="validation-error" v-if="emailValidationError">Your email is incomplete.</p>
       </div>
+      <div class="information-element" v-if="shouldRequestOrderId">
+        <label>Order Id</label>
+        <div class="field-container">
+          <input
+            :class="['field', orderIdValidationError ? 'validation-error' : '']"
+            type="text"
+            placeholder="AB3456"
+            v-model="requestedOrderId"
+          />
+        </div>
+        <p class="validation-error" v-if="orderIdValidationError">Your order does not exist.</p>
+      </div>
       <div id="payment-element"></div>
-      <div class="information-element" v-if="pass.id != 'fullpass-edition3'">
+      <div class="information-element" v-if="pass.id != 'fullpass-edition3' && !shouldRequestOrderId">
         <label>Promo Code</label>
         <div class="field-container">
           <input
@@ -163,24 +176,10 @@
         <p class="validation-error" v-if="promoCodeValidationError">The promo code is not valid.</p>
       </div>
       <hr />
-      <div class="information-element">
-        <div class="information-element" v-if="shouldRequestOrderId">
-        <label>Order Id</label>
-        <div class="field-container">
-          <input
-            :class="['field', orderIdValidationError ? 'validation-error' : '']"
-            type="text"
-            placeholder="#123456"
-            v-model="requestedOrderId"
-          />
-        </div>
-        <p class="validation-error" v-if="orderIdValidationError">You must provide the order id when you bought your ticket.</p>
-      </div>
-      </div>
       <button class="button action" v-if="submitting" disabled><span class="loader"></span></button>
-      <button class="button action" v-if="!submitting && (forcePayment || !pass.isSoldOut) && total > 0">Pay</button>
-      <button class="button action disabled" v-if="!submitting && total <= 0 && (forcePayment || !pass.isSoldOut)" disabled>Pay</button>
-      <button class="button action disabled" v-if="!submitting && (pass.isSoldOut && !forcePayment)" disabled>Sold Out</button>
+      <button class="button action" v-if="!submitting && (forcePayment || !pass.isSoldOut) && total > 0 && props.enablePayment">Pay</button>
+      <button class="button action disabled" v-if="!submitting && (total <= 0 && (forcePayment || !pass.isSoldOut)) || !props.enablePayment" disabled>Pay</button>
+      <button class="button action disabled" v-if="!submitting && (pass.isSoldOut && !forcePayment) && props.enablePayment" disabled>Sold Out</button>
       <p class="validation-error card-error" v-if="cardDeclinedError">{{ cardDeclinedErrorMessage }}</p>
     </form>
   </Card>
@@ -216,6 +215,8 @@ const props = defineProps<{
   showInstallment?: boolean
   payment?: Payment
   forcePayment?: boolean
+  items: Order['items']
+  enablePayment: boolean
 }>()
 let stripe: Stripe
 let elements: StripeElements
@@ -248,7 +249,7 @@ const minimumAmountForInstallmentProgram =  defaultPasses.fullPass.price
 const canUseInstallmentProgram = (amount: number, currency: Currency) =>
   props.pass.id == 'testpass' || amount > minimumAmountForInstallmentProgram[currency]
 const shouldRequestPersonalInformation = props.order === undefined
-const shouldRequestOrderId = false // pass.shouldRequestOrderId
+const shouldRequestOrderId = props.pass.id == 'none'
 const orderIdValidationError = ref(false)
 const requestedOrderId = ref('')
 
@@ -329,12 +330,38 @@ async function applyPromoCode() {
   }
 }
 async function submit() {
+  if (shouldRequestOrderId) {
+    submitting.value = true
+    if (requestedOrderId.value.length == 0) {
+      orderIdValidationError.value = true
+      submitting.value = false
+      return
+    }
+    const paymentApi = new PaymentAPI()
+    try {
+      const order = await paymentApi.getOrderById(requestedOrderId.value)
+      const pass = Object.values(defaultPasses).filter((pass) => pass.id == order.passId)[0]
+      console.log(">>>> total: ", total.value)
+      console.log(">>>> currency: ", currency.value)
+      await confirmPayment(pass, props.items, order)
+      submitting.value = false
+    } catch (error: any) {
+      orderIdValidationError.value = true
+      submitting.value = false
+    }
+    return
+  }
   submitting.value = true
   fullNameValidationError.value = !fullName.value
   emailValidationError.value = !email.value
   dancerTypeValidationError.value = dancerType.value.length == 0
   orderIdValidationError.value = shouldRequestOrderId ? requestedOrderId.value.length == 0 : false
   installmentTermsApprovementError.value = !installmentTermsApprovement.value.includes('approved')
+  await confirmPayment(props.pass, props.items, props.order)
+  submitting.value = false
+}
+
+async function confirmPayment(pass: Pass, items: Order['items'], order?: Order) {
   const { error: submitError } = await elements.submit()
   if (submitError) {
     cardDeclinedError.value = true
@@ -352,27 +379,29 @@ async function submit() {
     submitting.value = false
     return
   }
-  const options = props.optionIds.map((option) => props.pass.options[option])
-  const order: NewOrder = {
-    id: props.order?.id,
-    email: email.value,
-    fullname: [fullName.value, fullName2.value].join(', '),
-    dancerType: props.optionIds.includes('couple-option') ? 'couple' : dancerType.value[0],
-    passId: props.pass.id,
+  const options = props.optionIds.map((option) => pass.options[option])
+  const newOrder: NewOrder = {
+    id: order?.id,
+    email: order?.email ?? email.value,
+    fullname: order?.fullname ?? [fullName.value, fullName2.value].join(', '),
+    dancerType: order?.dancerType ?? props.optionIds.includes('couple-option') ? 'couple' : dancerType.value[0],
+    passId: pass.id,
     date: new Date(),
-    promoCode: promoCode.value ?? undefined,
-    items: (props.order
-      ? props.order.items
+    promoCode: order?.promoCode ?? promoCode.value ?? undefined,
+    items: (order
+      ? order.items
       : [
           {
-            id: props.pass.id,
-            title: props.pass.name,
-            includes: props.pass.includes,
+            id: pass.id,
+            title: pass.name,
+            includes: pass.includes,
             amount: 1,
-            total: { amount: props.pass.price[currency.value], currency: currency.value },
+            total: { amount: pass.price[currency.value], currency: currency.value },
           },
         ]
-    ).concat(
+    )
+    .concat(items)
+    .concat(
       ...(discount.value != 1
         ? [
             {
@@ -414,8 +443,8 @@ async function submit() {
   const payment = props.payment
   try {
     const { error } =  payment 
-      ? await stripe.confirmPayment(elements, payment, order) 
-      : await stripe.createPayment(elements, order, {
+      ? await stripe.confirmPayment(elements, payment, newOrder) 
+      : await stripe.createPayment(elements, newOrder, {
           method: 'automatic',
           structure: paymentOption.value,
         })
@@ -428,7 +457,6 @@ async function submit() {
     cardDeclinedError.value = true
     cardDeclinedErrorMessage.value = error.message ?? 'Your card has been declined.'
   }
-  submitting.value = false
 }
 </script>
 

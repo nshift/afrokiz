@@ -168,6 +168,8 @@ const shouldDisabled = (id: string) => {
       :currency="currency ?? defaultCurrency" 
       :optionIds="optionIds"
       :showInstallment="false"
+      :items="[]"
+      :enablePayment="true"
       />
   </div>
 </template>
@@ -185,7 +187,7 @@ const shouldDisabled = (id: string) => {
 
 .ticket {
   grid-column: span 7;
-  min-height: var(--card-lg-height) !important;
+  /* min-height: var(--card-lg-height) !important; */
   align-items: start !important;
   justify-content: start !important;
 }
