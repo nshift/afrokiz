@@ -10,7 +10,7 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
   private client: SES = new SES({})
   constructor(private source: { email: string; name: string }) {}
 
-  async sendBulkEmails(template: EmailTemplate) {
+  async createTemplate(template: EmailTemplate) {
     await this.client.createTemplate({
       Template: {
         TemplateName: template.name,
@@ -18,6 +18,22 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
         HtmlPart: template.html,
       },
     })
+  }
+
+  async cleanUp(names: string[]) {
+    for (let name of names) {
+      await this.client.deleteTemplate({ TemplateName: name })
+    }
+  }
+
+  async sendBulkEmails(template: EmailTemplate) {
+    // await this.client.createTemplate({
+    //   Template: {
+    //     TemplateName: template.name,
+    //     SubjectPart: template.subject,
+    //     HtmlPart: template.html,
+    //   },
+    // })
     await Promise.all(
       chunk(template.destinations, SESEmailService.BulkTemplateEmailLimit).map(async (destinations) => {
         return await this.client.sendBulkTemplatedEmail({
@@ -32,7 +48,7 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
         })
       })
     )
-    await this.client.deleteTemplate({ TemplateName: template.name })
+    // await this.client.deleteTemplate({ TemplateName: template.name })
   }
 
   async sendEmail(email: Email) {

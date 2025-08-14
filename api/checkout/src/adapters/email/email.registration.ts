@@ -4,8 +4,16 @@ import { v4 as uuid } from 'uuid'
 import { Sales } from '../../types/sales'
 import { EmailTemplate } from './email.template'
 
+export const registrationEmailTemplate = (): EmailTemplate => ({
+  name: 'RegistrationEmail',
+  destinations: [],
+  subject: 'Registration - AfroKiz Bangkok #3',
+  html: fs.readFileSync(path.join(__dirname, 'registration.html')).toString(),
+})
+
 export const registrationEmail = (data: { sale: Sales; qrCodeUrl: string }[]): EmailTemplate => ({
-  name: 'RegistrationEmail-' + uuid(),
+  // name: 'RegistrationEmail-' + uuid(),
+  name: 'RegistrationEmail',
   destinations: data.map(({ sale, qrCodeUrl }) => ({
     toAddresses: [sale.email],
     data: {
@@ -16,7 +24,7 @@ export const registrationEmail = (data: { sale: Sales; qrCodeUrl: string }[]): E
       passName: getPassName(sale.pass),
     },
   })),
-  subject: 'Registration - AfroKiz Bangkok #2',
+  subject: 'Registration - AfroKiz Bangkok #3',
   html: fs.readFileSync(path.join(__dirname, 'registration.html')).toString(),
 })
 

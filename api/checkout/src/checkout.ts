@@ -1,12 +1,12 @@
 import { DateGenerator } from './adapters/date.generator'
 import { GetOrders, UploadQrCode } from './adapters/document/storage.gateway'
-import { confirmationEmail } from './adapters/email/email.confirmation'
-import { cruiseEmail } from './adapters/email/email.cruise'
+import { confirmationEmail, confirmationEmailTemplate } from './adapters/email/email.confirmation'
+import { cruiseEmail, cruiseEmailTemplate } from './adapters/email/email.cruise'
 import { SendingBulkEmails, SendingEmail } from './adapters/email/email.gateway'
-import { paymentConfirmationEmail } from './adapters/email/email.payment.confirmation'
-import { registrationEmail } from './adapters/email/email.registration'
-import { registrationReminderEmail } from './adapters/email/email.registration-reminder'
-import { ticketOptionEmail } from './adapters/email/email.ticket-option'
+import { paymentConfirmationEmail, paymentConfirmationEmailTemplate } from './adapters/email/email.payment.confirmation'
+import { registrationEmail, registrationEmailTemplate } from './adapters/email/email.registration'
+import { registrationReminderEmail, registrationReminderEmailTemplate } from './adapters/email/email.registration-reminder'
+import { ticketOptionEmail, ticketOptionEmailTemplate } from './adapters/email/email.ticket-option'
 import { CreatingPaymentIntent } from './adapters/payment/payment.gateway'
 import { GeneratingQRCode } from './adapters/qr-code/qr-code.gateway'
 import { ImportOrderQueueRequest } from './adapters/queue.gateway'
@@ -358,6 +358,13 @@ export class Checkout {
       throw new Error(`Order (${orderId}) is not found.`)
     }
     const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+    // await this.emailApi.cleanUp(['ConfirmationEmail-17e438b3-23fa-405e-93e7-1c595ad62b51'])
+    // await this.emailApi.createTemplate(confirmationEmailTemplate())
+    // await this.emailApi.createTemplate(paymentConfirmationEmailTemplate())
+    // await this.emailApi.createTemplate(registrationEmailTemplate())
+    // await this.emailApi.createTemplate(cruiseEmailTemplate())
+    // await this.emailApi.createTemplate(registrationReminderEmailTemplate())
+    // await this.emailApi.createTemplate(ticketOptionEmailTemplate())
     await this.sendConfirmationEmail({ order, customer, qrCode: qrCodeFile })
   }
 

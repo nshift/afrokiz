@@ -4,8 +4,16 @@ import { v4 as uuid } from 'uuid'
 import { Sales } from '../../types/sales'
 import { EmailTemplate } from './email.template'
 
+export const registrationReminderEmailTemplate = (): EmailTemplate => ({
+  name: 'RegistrationReminderEmail',
+  destinations: [],
+  subject: '3 Days Before AfroKiz Bangkok #3',
+  html: fs.readFileSync(path.join(__dirname, 'registration-reminder.html')).toString(),
+})
+
 export const registrationReminderEmail = (data: { sale: Sales; qrCodeUrl: string }[]): EmailTemplate => ({
-  name: 'RegistrationReminderEmail-' + uuid(),
+  // name: 'RegistrationReminderEmail-' + uuid(),
+  name: 'RegistrationReminderEmail',
   destinations: data.map(({ sale, qrCodeUrl }) => ({
     toAddresses: [sale.email],
     data: {

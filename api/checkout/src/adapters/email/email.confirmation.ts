@@ -5,6 +5,13 @@ import { Order } from '../../types/order'
 import { UUIDGenerator } from '../uuid.generator'
 import { EmailTemplate } from './email.template'
 
+export const confirmationEmailTemplate = (): EmailTemplate => ({
+  name: 'ConfirmationEmail',
+  destinations: [],
+  subject: 'Confirmation - AfroKiz Bangkok #3',
+  html: fs.readFileSync(path.join(__dirname, 'confirmation.html')).toString(),
+})
+
 export const confirmationEmail = (
   data: {
     order: Order
@@ -13,7 +20,8 @@ export const confirmationEmail = (
   }[],
   uuidGenerator: UUIDGenerator
 ): EmailTemplate => ({
-  name: 'ConfirmationEmail-' + uuidGenerator.generate(),
+  // name: 'ConfirmationEmail-' + uuidGenerator.generate(),
+  name: 'ConfirmationEmail',
   destinations: data.map(({ order, customer, qrCodeUrl }) => ({
     toAddresses: [customer.email],
     data: {

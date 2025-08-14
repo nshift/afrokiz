@@ -7,6 +7,13 @@ import { Order } from '../../types/order'
 import { UUIDGenerator } from '../uuid.generator'
 import { EmailTemplate } from './email.template'
 
+export const paymentConfirmationEmailTemplate = (): EmailTemplate => ({
+  name: 'PaymentConfirmationEmail',
+  destinations: [],
+  subject: 'Payment confirmation - AfroKiz Bangkok #3',
+  html: fs.readFileSync(path.join(__dirname, 'payment-confirmation.html')).toString(),
+})
+
 export const paymentConfirmationEmail = (
   data: {
     order: Order
@@ -15,7 +22,8 @@ export const paymentConfirmationEmail = (
   }[],
   uuidGenerator: UUIDGenerator
 ): EmailTemplate => ({
-  name: 'PaymentConfirmationEmail-' + uuidGenerator.generate(),
+  // name: 'PaymentConfirmationEmail-' + uuidGenerator.generate(),
+  name: 'PaymentConfirmationEmail',
   destinations: data.map(({ order, customer, installment }) => {
     let completedDueDates = installment.dueDates.filter((dueDate) => dueDate.status == 'completed')
     let paidDueDate = completedDueDates[completedDueDates.length - 1]
