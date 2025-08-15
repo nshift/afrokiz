@@ -663,7 +663,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'vip-gold',
     name: 'VIP Gold',
     isSoldOut: false,
-    price: { USD: 53000, EUR: 45000, THB: 1710000 },
+    price: { USD: 49900, EUR: 45000, THB: 1650000 },
     doorPrice: { USD: 57000, EUR: 48500, THB: 1850000 },
     includes: [
       'All workshops',
