@@ -87,6 +87,7 @@ export class PaymentAPI {
       paymentIntentId: json.paymentIntentId,
       paymentStatus: json.paymentStatus,
       checkedIn: json.checked_in,
+      promoCode: json.promo_code,
       items: json.items.map((item: any) => ({
         id: item.id,
         title: item.title,

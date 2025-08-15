@@ -329,6 +329,7 @@ async function applyPromoCode() {
     }
   }
 }
+
 async function submit() {
   if (shouldRequestOrderId) {
     submitting.value = true
@@ -341,8 +342,6 @@ async function submit() {
     try {
       const order = await paymentApi.getOrderById(requestedOrderId.value)
       const pass = Object.values(defaultPasses).filter((pass) => pass.id == order.passId)[0]
-      console.log(">>>> total: ", total.value)
-      console.log(">>>> currency: ", currency.value)
       await confirmPayment(pass, props.items, order)
       submitting.value = false
     } catch (error: any) {
@@ -384,7 +383,7 @@ async function confirmPayment(pass: Pass, items: Order['items'], order?: Order) 
     id: order?.id,
     email: order?.email ?? email.value,
     fullname: order?.fullname ?? [fullName.value, fullName2.value].join(', '),
-    dancerType: order?.dancerType ?? props.optionIds.includes('couple-option') ? 'couple' : dancerType.value[0],
+    dancerType: order?.dancerType ?? (props.optionIds.includes('couple-option') ? 'couple' : dancerType.value[0]),
     passId: pass.id,
     date: new Date(),
     promoCode: order?.promoCode ?? promoCode.value ?? undefined,
