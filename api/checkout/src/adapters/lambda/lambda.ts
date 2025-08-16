@@ -327,6 +327,16 @@ export const checkIn = async (event: APIGatewayEvent, context: Context): Promise
   }
 }
 
+export const remakeEmailTemplates = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  try {
+    await checkout.remakeEmailTemplates()
+    return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
 const makeCheckout = () => {
   const dynamodb = DynamoDBDocumentClient.from(new DynamoDB({}), {
     marshallOptions: { removeUndefinedValues: true },
@@ -335,7 +345,7 @@ const makeCheckout = () => {
   const dateGenerator = { today: () => new Date() }
   const repository = new DynamoDbRepository(dynamodb, uuidGenerator, dateGenerator)
   const paymentAdapter = new StripePaymentAdapter(stripe)
-  const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
+  const emailApi = new SESEmailService({ email: 'no-reply@afrokizbkk.com', name: 'AfroKiz BKK' })
   const qrCodeGenerator = new QrCodeGenerator()
   const s3Client = new S3Storage(new S3({}), Environment.DocumentBucketName())
   const documentAdapter = new StorageAdapter(s3Client, { mapCustomer, mapOrder, mapPromoCode }, dateGenerator)
@@ -361,7 +371,7 @@ const makeEdition2Checkout = () => {
   const dateGenerator = { today: () => new Date() }
   const repository = new DynamoDbRepository(dynamodb, uuidGenerator, dateGenerator)
   const paymentAdapter = new StripePaymentAdapter(stripe)
-  const emailApi = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
+  const emailApi = new SESEmailService({ email: 'no-reply@afrokizbkk.com', name: 'AfroKiz BKK' })
   const qrCodeGenerator = new QrCodeGenerator()
   const s3Client = new S3Storage(new S3({}), Environment.DocumentBucketName())
   const documentAdapter = new StorageAdapter(

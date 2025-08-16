@@ -21,3 +21,16 @@ export type Sales = {
     currency: Currency
   }
 }
+
+export const calculateAmountInTHB = (amount: number, currency: Currency) => {
+  switch (currency) {
+    case 'EUR':
+      return Number((amount / 0.025).toFixed(0))
+    case 'USD':
+      return Number((amount / 0.028).toFixed(0))
+    case 'THB':
+      return amount
+    default:
+      throw new Error('Can not calculate amount in THB because currency is unknown.')
+  }
+}

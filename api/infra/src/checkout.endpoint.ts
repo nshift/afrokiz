@@ -36,6 +36,7 @@ export const makeCheckoutEndpoints = (props: {
     makeGetPaymentEndpoint({ ...props, ...context }),
     makeCreatePaymentAuthorizationEndpoint({ ...props, ...context }),
     makeGetLatePaymentsEndpoint({ ...props, ...context }),
+    makeRemakeEmailTemplatesEndpoint({ ...props, ...context }),
     // makeMarkPaymentAsSucceedEndpoint({ ...props, ...context }),
   ]
 }
@@ -642,6 +643,39 @@ const makeCheckInEndpoint = (props: {
   })
   props.eventTable.grant(endpoint.lambda, 'dynamodb:PutItem')
   props.orderTable.grant(endpoint.lambda, 'dynamodb:UpdateItem')
+  return endpoint
+}
+
+const makeRemakeEmailTemplatesEndpoint = (props: {
+  stack: cdk.Stack
+  codeUri: string
+  api: cdk.aws_apigatewayv2.CfnApi
+  sharedLayer: cdk.aws_lambda.LayerVersion
+  documentBucket: cdk.aws_s3.Bucket
+  stripeSecrets: { secret: string; webhook: string }
+}) => {
+  const endpoint = createEndpoint('RemakeEmailTemplates', {
+    handler: 'adapters/lambda/lambda.remakeEmailTemplates',
+    method: 'POST',
+    path: '/email/templates',
+    environment: {
+      NODE_ENV: 'PROD',
+      LOG_LEVEL: 'info',
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
+      STRIPE_SECRET_KEY: props.stripeSecrets.secret,
+      STRIPE_WEBHOOK_SECRET_KEY: props.stripeSecrets.webhook,
+      WEB_APP_HOST: Environment.WebAppHost(),
+    },
+    memorySize: 2048,
+    ...props,
+  })
+  endpoint.lambda.addToRolePolicy(
+    new cdk.aws_iam.PolicyStatement({
+      actions: ['ses:CreateTemplate', 'ses:DeleteTemplate'],
+      resources: ['*'],
+      effect: cdk.aws_iam.Effect.ALLOW,
+    })
+  )
   return endpoint
 }
 

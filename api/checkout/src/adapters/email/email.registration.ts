@@ -1,13 +1,13 @@
 import fs from 'fs'
 import path from 'path'
-import { v4 as uuid } from 'uuid'
+// import { v4 as uuid } from 'uuid'
 import { Sales } from '../../types/sales'
 import { EmailTemplate } from './email.template'
 
 export const registrationEmailTemplate = (): EmailTemplate => ({
   name: 'RegistrationEmail',
   destinations: [],
-  subject: 'Registration - AfroKiz Bangkok #3',
+  subject: 'See you soon at AfroKiz Bangkok #3',
   html: fs.readFileSync(path.join(__dirname, 'registration.html')).toString(),
 })
 
@@ -24,7 +24,7 @@ export const registrationEmail = (data: { sale: Sales; qrCodeUrl: string }[]): E
       passName: getPassName(sale.pass),
     },
   })),
-  subject: 'Registration - AfroKiz Bangkok #3',
+  subject: 'See you soon at AfroKiz Bangkok #3',
   html: fs.readFileSync(path.join(__dirname, 'registration.html')).toString(),
 })
 
