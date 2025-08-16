@@ -342,7 +342,12 @@ async function submit() {
     try {
       const order = await paymentApi.getOrderById(requestedOrderId.value)
       const pass = Object.values(defaultPasses).filter((pass) => pass.id == order.passId)[0]
-      await confirmPayment(pass, props.items, order)
+      try {
+        await confirmPayment(pass, props.items, order)
+      } catch (error: any) {
+        cardDeclinedError.value = true
+        cardDeclinedErrorMessage.value = error?.message ?? 'Your card has been declined.'
+      }
       submitting.value = false
     } catch (error: any) {
       orderIdValidationError.value = true
@@ -366,6 +371,7 @@ async function confirmPayment(pass: Pass, items: Order['items'], order?: Order) 
     cardDeclinedError.value = true
     cardDeclinedErrorMessage.value = submitError.message ?? 'Your card has been declined.'
     console.error('Confirm payment error: ', submitError)
+    return
   }
   if (
     cardDeclinedError.value ||
