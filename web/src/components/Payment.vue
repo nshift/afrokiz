@@ -341,15 +341,18 @@ async function submit() {
     const paymentApi = new PaymentAPI()
     try {
       const order = await paymentApi.getOrderById(requestedOrderId.value)
+      console.log(">>>> found order: ", JSON.stringify(order))
       const pass = Object.values(defaultPasses).filter((pass) => pass.id == order.passId)[0]
       try {
         await confirmPayment(pass, props.items, order)
       } catch (error: any) {
+        console.error('Confirm payment failed.')
         cardDeclinedError.value = true
         cardDeclinedErrorMessage.value = error?.message ?? 'Your card has been declined.'
       }
       submitting.value = false
     } catch (error: any) {
+      console.error('Can not find order.')
       orderIdValidationError.value = true
       submitting.value = false
     }
