@@ -35,6 +35,7 @@ import {
 import { PaymentIntent } from './types/payment-intent'
 import { Promotion } from './types/promotion'
 import { DateTime } from 'luxon'
+import { calculateAmountInTHB, Sales } from './types/sales'
 
 export class Checkout {
   constructor(
@@ -358,24 +359,49 @@ export class Checkout {
       throw new Error(`Order (${orderId}) is not found.`)
     }
     const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
-    // await this.emailApi.cleanUp(['ConfirmationEmail-17e438b3-23fa-405e-93e7-1c595ad62b51'])
-    // await this.emailApi.createTemplate(confirmationEmailTemplate())
-    // await this.emailApi.createTemplate(paymentConfirmationEmailTemplate())
-    // await this.emailApi.createTemplate(registrationEmailTemplate())
-    // await this.emailApi.createTemplate(cruiseEmailTemplate())
-    // await this.emailApi.createTemplate(registrationReminderEmailTemplate())
-    // await this.emailApi.createTemplate(ticketOptionEmailTemplate())
     await this.sendConfirmationEmail({ order, customer, qrCode: qrCodeFile })
+  }
+
+  async remakeEmailTemplates() {
+    await this.emailApi.cleanUp(['ConfirmationEmail', 'PaymentConfirmationEmail', 'RegistrationEmail', 'CruiseEmail', 'RegistrationReminderEmail', 'TicketOption'])
+    await this.emailApi.createTemplate(confirmationEmailTemplate())
+    await this.emailApi.createTemplate(paymentConfirmationEmailTemplate())
+    await this.emailApi.createTemplate(registrationEmailTemplate())
+    await this.emailApi.createTemplate(cruiseEmailTemplate())
+    await this.emailApi.createTemplate(registrationReminderEmailTemplate())
+    await this.emailApi.createTemplate(ticketOptionEmailTemplate())
   }
 
   async sendRegistrationCampaign() {
     const allSales = await this.repository.getAllRegistrationCampaignSales()
-    const sales = allSales.filter((sale) => sale.paymentStatus == 'success')
+    const sales = allSales.filter(
+        (sale) =>
+          ((sale.paymentStatus as string).startsWith('success') || (sale.paymentStatus as string).startsWith('completed')) &&
+          sale.date.getTime() > new Date('2024-09-05').getTime() &&
+          !['testpass'].includes(sale.pass)
+      )
+      .reduce((sales, sale) => {
+        if (sale.pass == 'fullpass-valentine') {
+          return sales.concat([
+            { ...sale, fullname: sale.fullname.split(',')[0] ?? sale.fullname, customerType: 'follower' },
+            { ...sale, fullname: sale.fullname.split(',')[1] ?? sale.fullname, customerType: 'leader' },
+          ])
+        }
+        return sales.concat([sale])
+      }, [] as Sales[])
+      .map((sale) => ({
+        ...sale,
+        total: { amount: calculateAmountInTHB(sale.total.amount, sale.total.currency), currency: 'THB' as const },
+      }))
     if (sales.length == 0) {
       return []
     }
     const data = await Promise.all(
       sales.map(async (sale) => {
+        const existingLink = await this.documentAdapter.getQrCodeUrl(sale.id)
+        if (existingLink) {
+          return { sale, qrCodeUrl: existingLink }
+        }
         const qrCode = await this.qrCodeGenerator.generateOrderQrCode({ id: sale.id })
         const link = await this.documentAdapter.uploadQrCode(sale.id, qrCode)
         return { sale, qrCodeUrl: link }
