@@ -150,7 +150,7 @@ const passes: { [key: string]: Pass } = {
       'All workshops at Bangkok and Koh Samet',
       'Day time social',
       'Evening parties during September 5-12',
-      '3 Nights Stay at Bangkok hotel',
+      '4 Nights Stay at Bangkok hotel',
       'Cruise Party in Bangkok',
       '3 Nights Stay at Koh Samet hotel',
       'Breakfast, Lunch and Dinner for 3 Days in Koh Samet',
