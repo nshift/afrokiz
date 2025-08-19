@@ -74,7 +74,7 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
                 ? 1
                 : 0,
               'Shared Room Samet': sale.includes.some((inc) =>
-                ['3 Nights in a shared room', '3 Nights Stay at Koh Samet hotel'].some((a) => inc.includes(a))
+                ['3 Nights in a shared room', '3 Nights Stay at Koh Samet hotel', '3 Nights Stay in shared room at Koh Samet hotel'].some((a) => inc.includes(a))
               )
                 ? 1
                 : 0,

@@ -915,7 +915,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'all-inclusive-package',
     name: 'All Inclusive Package',
     isSoldOut: false,
-    price: { USD: 69000, EUR: 60000, THB: 2260000 },
+    price: { USD: 64000, EUR: 56000, THB: 2110000 },
     doorPrice: { USD: 75000, EUR: 72000, THB: 2570000 },
     includes: [
       'All workshops at Bangkok and Koh Samet',
@@ -923,7 +923,6 @@ export const defaultPasses: { [key: string]: Pass } = {
       'Evening parties during September 5-12',
       '4 Nights Stay at Bangkok hotel',
       'Cruise Party in Bangkok',
-      '3 Nights Stay at Koh Samet hotel',
       'Breakfast, Lunch and Dinner for 3 Days in Koh Samet',
       'Transportation Bangkok to Samet and return',
       'Fire Show in Koh Samet',
@@ -932,6 +931,20 @@ export const defaultPasses: { [key: string]: Pass } = {
     giveAways: [],
     isPromoted: true,
     options: {
+      'hotel-room-option': {
+        id: 'hotel-room-option',
+        icon: 'fa-hotel',
+        title: 'Shared Hotel Room',
+        includesInShortDescription: ['3 Nights Stay in shared room at Koh Samet hotel'],
+        includes: ['3 Nights Stay in shared room at Koh Samet hotel'],
+        selected: true,
+        soldOut: false,
+        price: {
+          USD: 5000,
+          EUR: 4000,
+          THB: 150000,
+        },
+      },
       'couple-option': {
         id: 'couple-option',
         icon: 'fa-user-group',
