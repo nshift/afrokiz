@@ -702,7 +702,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   sametBangkokPass: {
     id: 'samet-bangkok',
     name: 'Bangkok x Samet Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 48000, EUR: 40000, THB: 1500000 },
     doorPrice: { USD: 80000, EUR: 75600, THB: 2700000 },
     includes: [
@@ -790,7 +790,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   sametPass: {
     id: 'samet',
     name: 'Samet Getaway Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 35000, EUR: 33200, THB: 1250000 },
     doorPrice: { USD: 48900, EUR: 45000, THB: 1670000 },
     includes: [
@@ -823,7 +823,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   partyPackage: {
     id: 'party-package',
     name: 'Party Package',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 43000, EUR: 37500, THB: 1400000 },
     doorPrice: { USD: 50000, EUR: 48000, THB: 1700000 },
     includes: [
@@ -914,7 +914,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   allInclusivePackage: {
     id: 'all-inclusive-package',
     name: 'All Inclusive Package',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 64000, EUR: 56000, THB: 2110000 },
     doorPrice: { USD: 75000, EUR: 72000, THB: 2570000 },
     includes: [
