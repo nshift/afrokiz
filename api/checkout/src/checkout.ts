@@ -69,6 +69,7 @@ export class Checkout {
       amountToBePaid,
       type: paymentOption.structure,
       today: this.dateGenerator.today(),
+      uuidGenerator: this.uuidGenerator
     })
     let paymentStructures = (existingCheckout?.paymentStructures ?? []).concat(paymentStructure)
     let payment = await this.createPayment({
@@ -83,38 +84,41 @@ export class Checkout {
     return checkout
   }
 
-  async handlePayment({ orderId, payment }: { orderId: string; payment: { stripeId: string; status: PaymentStatus } }) {
-    const { order, customer } = (await this.repository.getOrderById(orderId)) || {}
-    if (!order || !customer) {
+  async handlePayment({ orderId, payment }: { orderId: string; payment: { id: string, status: PaymentStatus } }) {
+    const checkoutOrder = (await this.repository.getOrderById(orderId))
+    if (!checkoutOrder) {
       throw new Error(`Order (${orderId}) is not found.`)
     }
-    let processedPayment = await this.repository.getPaymentByStripeId(payment.stripeId)
+    const { order, customer, paymentStructures } = checkoutOrder
+    const processedPayment = await this.repository.getPaymentById(payment.id)
     if (!processedPayment) {
-      throw new Error(`Payment with stripe id ${payment.stripeId} doesn't exist.`)
+      throw new Error(`Payment with stripe id ${payment.id} doesn't exist.`)
     }
     await this.repository.savePaymentStatus({ order, payment })
-    if (this.isPaymentSuccess(payment)) {
-      const { paymentStructures } = (await this.repository.getOrderById(orderId))!
-      let paymentStructure = paymentStructures.find((paymentStructure) =>
-        isInstallment(paymentStructure)
-          ? paymentStructure.dueDates.some((dueDate) => dueDate.paymentId == processedPayment!.id)
-          : paymentStructure.paymentId == processedPayment!.id
-      )
-      if (!paymentStructure) {
-        throw new Error(`No payment structures for order ${order.id} is matching with payment ${processedPayment.id}.`)
-      }
-      if (paymentStructures.length > 1 && !isInstallment(paymentStructure)) {
-        return
-      }
-      if (
-        isInstallment(paymentStructure) &&
-        paymentStructure.dueDates.filter((paymentStructure) => paymentStructure.status === 'completed').length > 1
-      ) {
-        return this.sendPaymentConfirmationEmail({ order, customer, installment: paymentStructure })
-      }
-      const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
-      await this.sendConfirmationEmail({ order, customer, qrCode: qrCodeFile })
+    if (!this.isPaymentSuccess(payment)) {
+      return
     }
+    let paymentStructure = paymentStructures.find((paymentStructure) =>
+      isInstallment(paymentStructure)
+        ? paymentStructure.dueDates.some((dueDate) => dueDate.paymentId == processedPayment.id)
+        : paymentStructure.paymentId == processedPayment.id
+    )
+    if (!paymentStructure) {
+      throw new Error(`No payment structures for order ${order.id} is matching with payment ${processedPayment.id}.`)
+    }
+    if (paymentStructures.length > 1 && !isInstallment(paymentStructure)) {
+
+      return
+    }
+    if (
+      isInstallment(paymentStructure) &&
+      paymentStructure.dueDates.filter((paymentStructure) => paymentStructure.status === 'completed').length > 1
+    ) {
+
+      return this.sendPaymentConfirmationEmail({ order, customer, installment: paymentStructure })
+    }
+    const qrCodeFile = await this.qrCodeGenerator.generateOrderQrCode(order)
+    await this.sendConfirmationEmail({ order, customer, qrCode: qrCodeFile })
   }
 
   async processPendingPayments(): Promise<PaymentIntent[]> {
@@ -140,7 +144,7 @@ export class Checkout {
         })
         let paymentStatus = isPaymentOverdue(payment, this.dateGenerator.today()) ? 'overdue' : payment.status
         if (paymentStatus != payment.status) {
-          await this.repository.savePaymentStatus({ order: { id: payment.orderId }, payment: { stripeId: '', status: paymentStatus }})
+          await this.repository.savePaymentStatus({ order: { id: payment.orderId }, payment: { id: payment.id, status: paymentStatus }})
         }
         return paymentIntent
       })
@@ -224,6 +228,7 @@ export class Checkout {
         total: { amount: payment.amount, currency: payment.currency},
         customer: { id: payment.stripe.customerId },
         paymentMethodId,
+        payment: { id: paymentId }
       })
     
     payment.stripe.id = paymentIntent.id
@@ -282,11 +287,12 @@ export class Checkout {
         total,
         customer,
         paymentMethodId,
+        payment: { id: firstDueDate.paymentId }
       })
       return { status: firstDueDate.status, intent: paymentIntent, customer }
     } else {
       let total = { amount: paymentStructure.amount, currency: paymentStructure.currency }
-      const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total, customer, paymentMethodId })
+      const paymentIntent = await this.paymentAdapter.createPaymentIntent({ order, total, customer, paymentMethodId, payment: { id: paymentStructure.paymentId } })
       return { status: paymentStructure.status, intent: paymentIntent, customer }
     }
   }
@@ -557,6 +563,7 @@ export class Checkout {
         payment: { status: 'completed', intent: null, customer: { id: 'imported' } },
         paymentStructures: [
           {
+            paymentId: this.uuidGenerator.generate(),
             amount: order.order.total.amount,
             currency: order.order.total.currency,
             status: 'completed',

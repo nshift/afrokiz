@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { Currency } from './currency'
 import { PaymentStatus } from './payment'
+import { UUIDGenerator } from '../adapters/uuid.generator'
 
 export type InstallmentFrequency = 'monthly'
 
@@ -9,7 +10,7 @@ export type PaymentDueDate = {
   currency: Currency
   dueDate: Date
   status: PaymentStatus
-  paymentId?: string
+  paymentId: string
 }
 
 export type InstallmentPayment = {
@@ -25,29 +26,33 @@ export const makeInstallment3xPayment = (
     amount: number
     currency: Currency
   },
-  today: Date
+  today: Date,
+  uuidGenerator: UUIDGenerator
 ): InstallmentPayment => ({
   principalAmount: amountToBePaid.amount,
   currency: amountToBePaid.currency,
   frequency: 'monthly',
   term: 2,
-  dueDates: makeMonthlyDueDates({ term: 2, amountToBePaid, today }),
+  dueDates: makeMonthlyDueDates({ term: 2, amountToBePaid, today, uuidGenerator }),
 })
 
 const makeMonthlyDueDates = ({
   term,
   amountToBePaid,
   today,
+  uuidGenerator
 }: {
   term: number
   amountToBePaid: { amount: number; currency: Currency }
   today: Date
+  uuidGenerator: UUIDGenerator
 }): PaymentDueDate[] => {
   let amountByMonth = Math.floor(amountToBePaid.amount / term)
   return Array(term)
     .fill(0)
     .map((_, index) => (index == 0 ? amountToBePaid.amount - amountByMonth * (term - 1) : amountByMonth))
     .map((amount, index) => ({
+      paymentId: uuidGenerator.generate(),
       amount,
       currency: amountToBePaid.currency,
       dueDate: DateTime.fromJSDate(today).plus({ month: index }).toJSDate(),

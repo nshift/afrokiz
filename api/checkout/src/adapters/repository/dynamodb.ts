@@ -53,20 +53,12 @@ export class DynamoDbRepository implements Repository {
     private readonly dateGenerator: DateGenerator
   ) {}
 
-  async savePaymentStatus(data: {
+  async savePaymentStatus({ order, payment }: {
     order: { id: string }
-    payment: { stripeId: string; status: PaymentStatus }
+    payment: { id: string; status: PaymentStatus }
   }): Promise<void> {
-    const { order, customer } = (await this.getOrderById(data.order.id)) || {}
-    if (!order || !customer) {
-      throw new Error(`Order ${data.order.id} does not exist`)
-    }
-    let payment = await this.getPaymentByStripeId(data.payment.stripeId)
-    if (!payment) {
-      throw new Error(`Payment with stripe id ${data.payment.stripeId} does not exist`)
-    }
     await processUpdatePaymentStatusEvent(this.dynamodb, this.uuidGenerator, this.dateGenerator, {
-      payment: { id: payment.id, status: data.payment.status },
+      payment: { id: payment.id, status: payment.status },
       order,
     })
   }
@@ -102,12 +94,12 @@ export class DynamoDbRepository implements Repository {
       return
     }
     const events = checkouts.map((checkout) => {
-      let payments = mapToPayments(checkout, this.uuidGenerator)
+      let payments = mapToPayments(checkout)
       return proceedToCheckoutEvent({
         id: this.uuidGenerator.generate(),
         name: 'ProceedToCheckout',
         time: this.dateGenerator.today(),
-        data: { checkout: mapToOrder(checkout, payments), payments },
+        data: { checkout: mapToOrder(checkout), payments },
       })
     })
     await Promise.all(

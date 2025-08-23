@@ -48,7 +48,7 @@ export const buildUpdateOrderPaymentRequest = (event: APIGatewayEvent, stripe: S
   return {
     type: stripeEvent.type,
     orderId: (stripeEvent.data.object as Stripe.PaymentIntent).metadata.orderId,
-    stripeId: (stripeEvent.data.object as Stripe.PaymentIntent).id,
+    paymentId: (stripeEvent.data.object as Stripe.PaymentIntent).metadata.paymentId,
   }
 }
 
@@ -69,7 +69,7 @@ export const buildImportOrderRequest = (record: SQSRecord) => {
 
 export const buildMarkPaymentAsSucceedRequest = (event: APIGatewayEvent) => {
   const body = JSON.parse(event.body ?? '{}')
-  return { orderId: body.orderId, stripeId: body.stripeId }
+  return { orderId: body.orderId, paymentId: body.paymentId }
 }
 
 export const buildCreatePaymentAuthorizationRequest = (event: APIGatewayEvent) => {

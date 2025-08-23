@@ -12,7 +12,7 @@ import { discountPromotion, massagePromotion } from './fixtures'
 export class InMemoryRepository implements Repository {
   constructor(private uuidGenerator: UUIDGenerator) {}
 
-  private payments: { [key: string]: Payment } = {}
+  payments: { [key: string]: Payment } = {}
   private orders: {
     [key: string]: {
       order: Order
@@ -114,6 +114,10 @@ export class InMemoryRepository implements Repository {
     return Object.values(this.payments).filter(
       (payment) => payment.status == 'pending' && payment.dueDate && payment.dueDate.getTime() < before.getTime()
     )
+  }
+
+  async getPaymentById(id: string): Promise<Payment | null> {
+    return Object.values(this.payments).find((payment) => payment.id == id) ?? null
   }
 
   async getPaymentByStripeId(stripeId: string): Promise<Payment | null> {

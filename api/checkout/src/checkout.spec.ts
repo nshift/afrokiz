@@ -146,7 +146,8 @@ describe('Create an order when checking out', () => {
         order: expect.objectContaining({ id: order.id }),
         total: { amount: 15000, currency: 'USD' },
         customer: fakeStripeCustomer,
-        paymentMethodId: '42'
+        paymentMethodId: '42',
+        payment: { id: '1' }
       })
       let installmentPaymentStructures = installmentPaymentStructure(30000, [15000, 15000])
       expect({
@@ -187,7 +188,7 @@ describe('Handling successful payment when checking out', () => {
 
     await checkout.handlePayment({
       orderId: newOrder.id,
-      payment: { stripeId: fakePaymentIntent.id, status: 'completed' },
+      payment: { id: '1', status: 'completed' },
     })
 
     const updatedOrder = await repository.getOrderById(newOrder.id)
@@ -210,7 +211,7 @@ describe('Handling successful payment when checking out', () => {
 
     await checkout.handlePayment({
       orderId: newOrder.id,
-      payment: { stripeId: fakePaymentIntent.id, status: 'completed' },
+      payment: { id: '1', status: 'completed' },
     })
 
     expect(emailGateway.sendBulkEmails).toHaveBeenCalledWith(
@@ -237,11 +238,11 @@ describe('Handling successful payment when checking out', () => {
 
       await checkout.handlePayment({
         orderId: newOrder.id,
-        payment: { stripeId: fakePaymentIntent.id, status: 'completed' },
+        payment: { id: '1', status: 'completed' },
       })
       await checkout.handlePayment({
         orderId: newOrder.id,
-        payment: { stripeId: fakePaymentIntent.id, status: 'completed' },
+        payment: { id: '2', status: 'completed' },
       })
 
       let expectedInstallment = installmentPaymentStructureSchema(30000, [10000, 10000, 10000])
@@ -277,7 +278,7 @@ describe('Handling failing payment when checking out', () => {
 
     await checkout.handlePayment({
       orderId: newOrder.id,
-      payment: { stripeId: fakePaymentIntent.id, status: 'failed' },
+      payment: { id: '1', status: 'failed' },
     })
 
     const updatedOrder = await repository.getOrderById(newOrder.id)

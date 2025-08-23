@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { Currency } from './currency'
 import { InstallmentPayment, makeInstallment3xPayment } from './installment'
+import { UUIDGenerator } from '../adapters/uuid.generator'
 
 export type PaymentStatus = 'pending' | 'overdue' | 'default' | 'completed' | 'failed'
 
@@ -10,7 +11,7 @@ export type DirectPayment = {
   amount: number
   currency: Currency
   status: PaymentStatus
-  paymentId?: string
+  paymentId: string
 }
 
 export type PaymentStructure = DirectPayment | InstallmentPayment
@@ -41,7 +42,8 @@ export const isPaymentOverdue = (payment: Payment, today: Date) => {
   return todayDateTime.diff(dueDate, 'days').days > 3
 }
 
-export const makeDirectPayment = (amountToBePaid: { amount: number; currency: Currency }): DirectPayment => ({
+export const makeDirectPayment = (amountToBePaid: { amount: number; currency: Currency }, uuidGenerator: UUIDGenerator): DirectPayment => ({
+  paymentId: uuidGenerator.generate(),
   amount: amountToBePaid.amount,
   currency: amountToBePaid.currency,
   status: 'pending',
@@ -51,15 +53,17 @@ export const makePaymentStructure = ({
   amountToBePaid,
   type,
   today,
+  uuidGenerator
 }: {
   amountToBePaid: { amount: number; currency: Currency }
   type: PaymentStructureType
   today: Date
+  uuidGenerator: UUIDGenerator
 }): PaymentStructure => {
   switch (type) {
     case 'direct':
-      return makeDirectPayment(amountToBePaid)
+      return makeDirectPayment(amountToBePaid, uuidGenerator)
     case 'installment3x':
-      return makeInstallment3xPayment(amountToBePaid, today)
+      return makeInstallment3xPayment(amountToBePaid, today, uuidGenerator)
   }
 }

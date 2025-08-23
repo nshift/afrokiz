@@ -11,11 +11,13 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
     total,
     customer,
     paymentMethodId,
+    payment
   }: {
     order: { id: string }
     total: { amount: number; currency: Currency }
     customer: { id: string }
     paymentMethodId: string
+    payment: { id: string }
   }): Promise<PaymentIntent> {
     await this.stripe.paymentMethods.attach(paymentMethodId, { customer: customer.id })
     const paymentIntent = await this.stripe.paymentIntents.create({
@@ -23,7 +25,7 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
       amount: total.amount,
       currency: total.currency,
       automatic_payment_methods: { enabled: true },
-      metadata: { orderId: order.id },
+      metadata: { orderId: order.id, paymentId: payment.id },
     })
     if (!paymentIntent.client_secret) {
       throw new Error(`Payment intent (${paymentIntent.id}) does not contain any client secret.`)
@@ -40,11 +42,13 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
     total,
     customer,
     paymentMethodId,
+    payment
   }: {
     order: { id: string }
     total: { amount: number; currency: Currency }
     customer: { id: string }
     paymentMethodId: string
+    payment: { id: string }
   }): Promise<PaymentIntent> {
     // await this.stripe.paymentMethods.attach(paymentMethodId, { customer: customer.id })
     const paymentIntent = await this.stripe.paymentIntents.create({
@@ -53,7 +57,7 @@ export class StripePaymentAdapter implements CreatingPaymentIntent {
       currency: total.currency,
       automatic_payment_methods: { enabled: true },
       setup_future_usage: 'off_session',
-      metadata: { orderId: order.id },
+      metadata: { orderId: order.id, paymentId: payment.id },
       payment_method: paymentMethodId,
     })
     if (!paymentIntent.client_secret) {

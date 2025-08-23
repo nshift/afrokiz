@@ -56,13 +56,13 @@ export const updateOrderPaymentStatus = async (
       case 'payment_intent.succeeded':
         await checkout.handlePayment({
           orderId: request.orderId,
-          payment: { stripeId: request.stripeId, status: 'completed' },
+          payment: { id: request.paymentId, status: 'completed' },
         })
         break
       case 'payment_intent.payment_failed':
         await checkout.handlePayment({
           orderId: request.orderId,
-          payment: { stripeId: request.stripeId, status: 'failed' },
+          payment: { id: request.paymentId, status: 'failed' },
         })
         break
       default:
@@ -97,7 +97,7 @@ export const markPaymentAsSucceed = async (
     console.log('[markPaymentAsSucceed] Request.', { request })
     await checkout.handlePayment({
       orderId: request.orderId,
-      payment: { stripeId: request.stripeId, status: 'completed' },
+      payment: { id: request.paymentId, status: 'completed' },
     })
     return successfullyCreatedResponse()
   } catch (error) {

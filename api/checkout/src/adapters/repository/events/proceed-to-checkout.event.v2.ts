@@ -36,12 +36,12 @@ export const processProceedToCheckoutEvent = async (
   dateGenerator: DateGenerator,
   checkout: Checkout
 ): Promise<ProceedToCheckoutEvent> => {
-  let payments = mapToPayments(checkout, uuidGenerator)
+  let payments = mapToPayments(checkout)
   const event = proceedToCheckoutEvent({
     id: uuidGenerator.generate(),
     name: 'ProceedToCheckoutV2',
     time: dateGenerator.today(),
-    data: { checkout: mapToOrder(checkout, payments), payments },
+    data: { checkout: mapToOrder(checkout), payments },
   })
   const eventStore = new EventStore(dynamodb)
   await eventStore.process([event])
@@ -50,7 +50,6 @@ export const processProceedToCheckoutEvent = async (
 
 export const mapToOrder = (
   checkout: Checkout,
-  payments: PaymentSchema[]
 ): {
   order: Order
   customer: Customer
@@ -58,7 +57,6 @@ export const mapToOrder = (
   paymentStructures: PaymentStructureSchema[]
   checkedIn: boolean
 } => {
-  var paymentIndex = 0
   return {
     order: checkout.order,
     customer: checkout.customer,
@@ -75,25 +73,25 @@ export const mapToOrder = (
               currency: dueDate.currency,
               dueDate: dueDate.dueDate,
               status: dueDate.status,
-              paymentId: payments[paymentIndex++].id,
+              paymentId: dueDate.paymentId,
             })),
           }
         : {
             amount: paymentStructure.amount,
             currency: paymentStructure.currency,
             status: paymentStructure.status,
-            paymentId: payments[paymentIndex++].id,
+            paymentId: paymentStructure.paymentId,
           }
     ),
     checkedIn: checkout.checkedIn,
   }
 }
 
-export const mapToPayments = (checkout: Checkout, uuidGenerator: UUIDGenerator): PaymentSchema[] => {
+export const mapToPayments = (checkout: Checkout): PaymentSchema[] => {
   return checkout.paymentStructures.flatMap((paymentStructure) =>
     isInstallment(paymentStructure)
       ? paymentStructure.dueDates.map((dueDate, index) => ({
-          id: uuidGenerator.generate(),
+          id: dueDate.paymentId,
           orderId: checkout.order.id,
           amount: dueDate.amount,
           currency: dueDate.currency,
@@ -105,7 +103,7 @@ export const mapToPayments = (checkout: Checkout, uuidGenerator: UUIDGenerator):
         }))
       : [
           {
-            id: uuidGenerator.generate(),
+            id: paymentStructure.paymentId,
             orderId: checkout.order.id,
             amount: paymentStructure.amount,
             currency: paymentStructure.currency,

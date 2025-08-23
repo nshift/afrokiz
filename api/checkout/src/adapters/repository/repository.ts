@@ -54,7 +54,7 @@ export interface GettingPromotions {
 export interface SavingPayment {
   // savePaymentSuccessfulOrder(order: Order): Promise<void>
   // savePaymentFailedOrder(order: Order): Promise<void>
-  savePaymentStatus(_: { order: { id: string }; payment: { stripeId: string; status: PaymentStatus } }): Promise<void>
+  savePaymentStatus(_: { order: { id: string }; payment: { id: string; status: PaymentStatus } }): Promise<void>
   savePayment(payment: Payment): Promise<void>
 }
 
