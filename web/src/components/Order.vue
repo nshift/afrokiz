@@ -196,6 +196,7 @@ const paymentStatusIcon = {
             :showInstallment="false"
             :items="[]"
             :enablePayment="true"
+            :forcePayment="true"
           />
         </div>
       </div>
