@@ -416,7 +416,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           '1H Foot Massage at Lek Massage per person',
         ],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 20500,
           EUR: 18000,
@@ -483,7 +483,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           '1H Foot Massage at Lek Massage per person',
         ],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 20000,
           EUR: 19500,
@@ -504,7 +504,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           'Airport Pick up',
         ],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 30000,
           EUR: 29000,
@@ -550,7 +550,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           '1H Foot Massage at Lek Massage per person',
         ],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 20000,
           EUR: 19500,
@@ -571,7 +571,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           'Airport Pick up',
         ],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 30000,
           EUR: 29000,
@@ -757,7 +757,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           '1H Foot Massage at Lek Massage per person',
         ],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 20500,
           EUR: 18000,
@@ -879,7 +879,7 @@ export const defaultPasses: { [key: string]: Pass } = {
           '1H Foot Massage at Lek Massage per person',
         ],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 25000,
           EUR: 24000,
