@@ -295,7 +295,7 @@ export const valentinePasses: { [key: string]: Pass } = {
   fullPassValentine: {
     id: 'fullpass-valentine',
     name: 'Full Pass For Couple',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 26900, EUR: 26000, THB: 910000 },
     doorPrice: { USD: 20000 * 2, EUR: 19000 * 2, THB: 680000 * 2 },
     includes: [
@@ -323,7 +323,7 @@ export const valentinePasses: { [key: string]: Pass } = {
   vipSilverValentine: {
     id: 'vip-silver-valentine',
     name: 'Vip Silver For Couple',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 59900, EUR: 58000, THB: 2000000 },
     doorPrice: { USD: 40000 * 2, EUR: 37800 * 2, THB: 1360000 * 2 },
     includes: [
@@ -343,7 +343,7 @@ export const valentinePasses: { [key: string]: Pass } = {
   vipGoldValentine: {
     id: 'vip-gold-valentine',
     name: 'Vip Gold For Couple',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 79900, EUR: 77000, THB: 2700000 },
     doorPrice: { USD: 50000 * 2, EUR: 47500 * 2, THB: 1700000 * 2 },
     includes: [
@@ -449,7 +449,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   'fullpass-edition3': {
     id: 'fullpass-edition3',
     name: 'SUPER EARLY BIRD Full Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 8900, EUR: 8000, THB: 300000 },
     doorPrice: { USD: 8900, EUR: 8000, THB: 300000 },
     includes: ['All workshops', 'All parties in main venue', '3 welcome drinks per person'],
@@ -516,7 +516,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   'early-bird-fullpass-edition3': {
     id: 'early-bird-fullpass-edition3',
     name: 'EARLY BIRD Full Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 11000, EUR: 10500, THB: 380000 },
     doorPrice: { USD: 11000, EUR: 10500, THB: 380000 },
     includes: ['Includes all workshops', 'Day time social', 'Evening parties during September 5-7', 'Non-refundable'],
@@ -583,7 +583,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   vipSilverPass: {
     id: 'vip-silver',
     name: 'VIP Silver',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 38500, EUR: 33600, THB: 1260000 },
     doorPrice: { USD: 40000, EUR: 37800, THB: 1360000 },
     includes: [
@@ -634,7 +634,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   vipSilverTwinPass: {
     id: 'vip-silver-twin',
     name: 'VIP Silver Twin Room',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 67500, EUR: 58000, THB: 2180000 },
     doorPrice: { USD: 80000, EUR: 75600, THB: 2720000 },
     includes: [
@@ -662,7 +662,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   vipGoldPass: {
     id: 'vip-gold',
     name: 'VIP Gold',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 49900, EUR: 45000, THB: 1650000 },
     doorPrice: { USD: 57000, EUR: 48500, THB: 1850000 },
     includes: [
@@ -985,7 +985,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   partyPass: {
     id: 'partyPass',
     name: 'Party Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 14000, EUR: 12200, THB: 450000 },
     doorPrice: { USD: 16000, EUR: 14500, THB: 540000 },
     includes: ['Evening parties during September 5-7', 'Day time social', 'Includes 3 welcome drinks'],
@@ -1013,7 +1013,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   friNight: {
     id: 'fri-night',
     name: 'Friday Party Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 5500, EUR: 5000, THB: 189000 },
     doorPrice: { USD: 7000, EUR: 6500, THB: 240000 },
     includes: ['Includes 1 welcome drinks', 'Party until 4 am.'],
@@ -1024,7 +1024,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   satNight: {
     id: 'sat-night',
     name: 'Saturday Party Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 6000, EUR: 5500, THB: 200000 },
     doorPrice: { USD: 9000, EUR: 8500, THB: 300000 },
     includes: ['Includes 1 welcome drinks', 'Party until 5 am.'],
@@ -1035,7 +1035,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   sunNight: {
     id: 'sun-night',
     name: 'Sunday Party Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 5500, EUR: 5000, THB: 189000 },
     doorPrice: { USD: 7000, EUR: 6500, THB: 240000 },
     includes: ['Includes 1 welcome drinks', 'Party until 4 am.'],
@@ -1046,7 +1046,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   fri: {
     id: 'fri',
     name: 'Friday Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 9000, EUR: 8000, THB: 299000 },
     doorPrice: { USD: 10000, EUR: 9200, THB: 350000 },
     includes: ['All workshops in Friday', 'Day time social', 'Friday Evening party', 'Includes 1 welcome drinks'],
@@ -1074,7 +1074,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   sat: {
     id: 'sat',
     name: 'Saturday Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 10000, EUR: 8500, THB: 330000 },
     doorPrice: { USD: 12000, EUR: 11500, THB: 400000 },
     includes: ['All workshops in Saturday', 'Day time social', 'Saturday Evening party', 'Includes 1 welcome drinks'],
@@ -1102,7 +1102,7 @@ export const defaultPasses: { [key: string]: Pass } = {
   sun: {
     id: 'sun',
     name: 'Sunday Pass',
-    isSoldOut: false,
+    isSoldOut: true,
     price: { USD: 9000, EUR: 8000, THB: 299000 },
     doorPrice: { USD: 10000, EUR: 9200, THB: 350000 },
     includes: ['All workshops in Sunday', 'Day time social', 'Sunday Evening party', 'Includes 1 welcome drinks'],
