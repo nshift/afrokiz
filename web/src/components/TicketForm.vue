@@ -4,7 +4,7 @@ import Card from '../components/Card.vue'
 import { type Pass, calculateTotal } from '../data/pass'
 import Payment from './Payment.vue'
 
-const { pass } = defineProps<{ pass: Pass }>()
+const { pass } = defineProps<{ pass: Pass; ignoreSoldOut?: boolean }>()
 const isValentinePass = [
   'fullpass-edition3',
   'fullpass-valentine',
@@ -170,6 +170,7 @@ const shouldDisabled = (id: string) => {
       :showInstallment="false"
       :items="[]"
       :enablePayment="true"
+      :forcePayment="ignoreSoldOut == true"
       />
   </div>
 </template>
