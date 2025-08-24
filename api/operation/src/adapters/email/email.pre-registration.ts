@@ -1,23 +1,23 @@
 import fs from 'fs'
 import path from 'path'
-import { v4 as uuid } from 'uuid'
 import { Guest } from '../../entities/guest'
 import { EmailTemplate } from './email.template'
 
-export const preGuestRegistrationEmail = ({
-  guest,
-  qrCodeUrl,
-}: {
-  guest: Guest
-  qrCodeUrl: string
-}): EmailTemplate => ({
-  name: 'PreGuestRegistrationEmail-' + uuid(),
+export const preGuestRegistrationEmailTemplate = (): EmailTemplate => ({
+  name: 'PreGuestRegistrationEmail',
+  destinations: [],
+  subject: 'Pre Registration - AfroKiz Bangkok #3',
+  html: fs.readFileSync(path.join(__dirname, 'pre-registration.html')).toString(),
+})
+
+export const preGuestRegistrationEmail = ({ guest }: { guest: Guest }): EmailTemplate => ({
+  name: 'PreGuestRegistrationEmail',
   destinations: [
     {
       toAddresses: [guest.email],
-      data: { email: guest.email, fullname: guest.fullname, qrCodeUrl },
+      data: { email: guest.email, fullname: guest.fullname },
     },
   ],
-  subject: 'Pre Registration - AfroKiz Bangkok #2',
+  subject: 'Pre Registration - AfroKiz Bangkok #3',
   html: fs.readFileSync(path.join(__dirname, 'pre-registration.html')).toString(),
 })

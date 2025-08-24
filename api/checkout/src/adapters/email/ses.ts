@@ -27,13 +27,6 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
   }
 
   async sendBulkEmails(template: EmailTemplate) {
-    // await this.client.createTemplate({
-    //   Template: {
-    //     TemplateName: template.name,
-    //     SubjectPart: template.subject,
-    //     HtmlPart: template.html,
-    //   },
-    // })
     await Promise.all(
       chunk(template.destinations, SESEmailService.BulkTemplateEmailLimit).map(async (destinations) => {
         return await this.client.sendBulkTemplatedEmail({
@@ -48,7 +41,6 @@ export class SESEmailService implements SendingBulkEmails, SendingEmail {
         })
       })
     )
-    // await this.client.deleteTemplate({ TemplateName: template.name })
   }
 
   async sendEmail(email: Email) {

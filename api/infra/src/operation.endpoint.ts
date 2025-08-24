@@ -22,6 +22,7 @@ export const makeOperationEndpoints = (props: {
     makeGetGuestEndpoint({ ...props, ...context }),
     makeCheckInGuestEndpoint({ ...props, ...context }),
     makeSametGetawayPreRegistrationEndpoint({ ...props, ...context }),
+    makeRemakeEmailTemplatesEndpoint({ ...props, ...context }),
   ]
 }
 
@@ -152,6 +153,38 @@ const makeSametGetawayPreRegistrationEndpoint = (props: {
   endpoint.lambda.addToRolePolicy(
     new cdk.aws_iam.PolicyStatement({
       actions: ['ses:CreateTemplate', 'ses:DeleteTemplate', 'ses:SendBulkTemplatedEmail', 'ses:SendRawEmail'],
+      resources: ['*'],
+      effect: cdk.aws_iam.Effect.ALLOW,
+    })
+  )
+  return endpoint
+}
+
+const makeRemakeEmailTemplatesEndpoint = (props: {
+  stack: cdk.Stack
+  codeUri: string
+  api: cdk.aws_apigatewayv2.CfnApi
+  sharedLayer: cdk.aws_lambda.LayerVersion
+  guestTable: cdk.aws_dynamodb.Table
+  documentBucket: cdk.aws_s3.Bucket
+}) => {
+  const endpoint = createEndpoint('OperationRemakeEmailTemplates', {
+    handler: 'adapters/lambda/lambda.remakeEmailTemplates',
+    method: 'POST',
+    path: '/operation/email/templates',
+    environment: {
+      NODE_ENV: 'PROD',
+      LOG_LEVEL: 'info',
+      GUEST_TABLE_NAME: props.guestTable.tableName,
+      DOCUMENT_BUCKET_NAME: props.documentBucket.bucketName,
+      WEB_APP_HOST: Environment.WebAppHost(),
+    },
+    memorySize: 2048,
+    ...props,
+  })
+  endpoint.lambda.addToRolePolicy(
+    new cdk.aws_iam.PolicyStatement({
+      actions: ['ses:CreateTemplate', 'ses:DeleteTemplate'],
       resources: ['*'],
       effect: cdk.aws_iam.Effect.ALLOW,
     })

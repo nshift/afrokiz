@@ -6,9 +6,11 @@ export const saveGuestRequest = (guest: Guest) =>
   new PutCommand({
     TableName: Environment.GuestTableName(),
     Item: {
+      id: guest.id,
       email: guest.email,
       fullname: guest.fullname,
-      id: guest.id,
+      created_at: guest.createdAt.toISOString(),
+      checkedIn: guest.checkedIn,
     },
   })
 
@@ -26,6 +28,7 @@ export const guestResponse = (response: any): Guest[] =>
       id: item.id,
       email: item.email,
       fullname: item.fullname,
+      createdAt: new Date(item.created_at),
       checkedIn: item.checkedIn ?? false,
     })
   )

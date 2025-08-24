@@ -1,18 +1,14 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { S3 } from '@aws-sdk/client-s3'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
 import { Sales } from '../../entities/sales'
-import { Environment } from '../../environment'
 import { GuestCheckIn } from '../../guest-check-in'
 import { GuestRegistration } from '../../guest-registration'
 import { SalesReporting } from '../../sales.reporting'
 import { SametRegistration } from '../../samet-registration'
-import { StorageAdapter } from '../document/storage.adapter'
-import { S3Storage } from '../document/storage.s3'
 import { DynamoDbAdapter } from '../dynamodb/dynamodb'
 import { SESEmailService } from '../email/ses'
-import { QrCodeGenerator } from '../qr-code/qr-code.generator'
+import { preGuestRegistrationEmailTemplate } from '../email/email.pre-registration'
 
 const repository = new DynamoDbAdapter(
   DynamoDBDocumentClient.from(new DynamoDB({}), {
@@ -74,7 +70,7 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
                 ? 1
                 : 0,
               'Shared Room Samet': sale.includes.some((inc) =>
-                ['3 Nights in a shared room', '3 Nights Stay at Koh Samet hotel', '3 Nights Stay in shared room at Koh Samet hotel'].some((a) => inc.includes(a))
+                ['3 Nights in a shared room', '3 Nights Stay at Koh Samet hotel', '3 Nights Stay in shared room at Koh Samet hotel', '3 Nights in a shared room at Hotel Sangthianbeach Resort'].some((a) => inc.includes(a))
               )
                 ? 1
                 : 0,
@@ -138,11 +134,8 @@ export const preGuestRegistration = async (
     return invalidRequestErrorResponse('Email and fullname is required.')
   }
   try {
-    const emailAdapter = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
-    const qrCodeGenerator = new QrCodeGenerator()
-    const s3Client = new S3Storage(new S3({}), Environment.DocumentBucketName())
-    const documentAdapter = new StorageAdapter(s3Client)
-    const guestRegistration = new GuestRegistration(repository, emailAdapter, qrCodeGenerator, documentAdapter)
+    const emailAdapter = new SESEmailService({ email: 'no-reply@afrokizbkk.com', name: 'AfroKiz BKK' })
+    const guestRegistration = new GuestRegistration(repository, emailAdapter)
     await guestRegistration.preRegister({ email: body.email, fullname: body.fullname })
     return successfullyCreatedResponse()
   } catch (error) {
@@ -160,7 +153,7 @@ export const preRegistraterForSametGetaway = async (
     return invalidRequestErrorResponse('Email and fullname is required.')
   }
   try {
-    const emailAdapter = new SESEmailService({ email: 'afrokiz.bkk@gmail.com', name: 'AfroKiz BKK' })
+    const emailAdapter = new SESEmailService({ email: 'no-reply@afrokizbkk.com', name: 'AfroKiz BKK' })
     const sametRegistration = new SametRegistration(repository, emailAdapter)
     await sametRegistration.preRegister({ email: body.email, fullname: body.fullname })
     return successfullyCreatedResponse()
@@ -197,6 +190,18 @@ export const checkInGuest = async (event: APIGatewayEvent, context: Context): Pr
   try {
     const guestCheckIn = new GuestCheckIn(repository)
     await guestCheckIn.checkIn(body.email)
+    return successfullyCreatedResponse()
+  } catch (error) {
+    console.error(error)
+    return internalServerErrorResponse(error)
+  }
+}
+
+export const remakeEmailTemplates = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+  try {
+    const emailAdapter = new SESEmailService({ email: 'no-reply@afrokizbkk.com', name: 'AfroKiz BKK' })
+    await emailAdapter.cleanUp(['PreGuestRegistrationEmail'])
+    await emailAdapter.createTemplate(preGuestRegistrationEmailTemplate())
     return successfullyCreatedResponse()
   } catch (error) {
     console.error(error)

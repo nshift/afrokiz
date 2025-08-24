@@ -4,6 +4,7 @@ export type Guest = {
   id: string
   email: string
   fullname: string
+  createdAt: Date
   checkedIn: boolean
 }
 
