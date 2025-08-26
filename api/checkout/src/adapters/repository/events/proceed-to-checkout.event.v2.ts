@@ -113,5 +113,5 @@ export const mapToPayments = (checkout: Checkout): PaymentSchema[] => {
             stripePaymentIntentSecret: checkout.payment.intent?.secret ?? null,
           },
         ]
-  )
+  ).filter((payment) => !!payment.id)
 }
