@@ -156,7 +156,7 @@ export const baliPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -246,7 +246,7 @@ export const baliPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas (Bangkok)'],
         includes: ['Exclusive Cruise Party in Bangkok'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -314,7 +314,7 @@ export const valentinePasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: { USD: 5500 * 2, EUR: 5000 * 2, THB: 191000 * 2 },
       },
       ...masterClassOptions,
@@ -397,7 +397,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -464,7 +464,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -531,7 +531,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -737,7 +737,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas (Bangkok)'],
         includes: ['Exclusive Cruise Party in Bangkok'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -858,7 +858,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas (Bangkok)'],
         includes: ['Exclusive Cruise Party in Bangkok'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -1000,7 +1000,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -1061,7 +1061,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -1089,7 +1089,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
@@ -1117,7 +1117,7 @@ export const defaultPasses: { [key: string]: Pass } = {
         includesInShortDescription: ['3H party & Carribean Tappas'],
         includes: ['Exclusive Cruise Party'],
         selected: false,
-        soldOut: false,
+        soldOut: true,
         price: {
           USD: 5500,
           EUR: 5000,
