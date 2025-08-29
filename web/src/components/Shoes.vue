@@ -112,7 +112,7 @@ watch(selectedSize, () => {
     </Card>
     <Payment
       :class="['payment']"
-      :pass="pass"
+      :pass="{ ...pass, isSoldOut: item.isSoldOut }"
       :total="total"
       :currency="currency ?? defaultCurrency"
       :optionIds="[]"

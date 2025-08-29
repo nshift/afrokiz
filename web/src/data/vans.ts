@@ -12,7 +12,7 @@ export const afrokizShoes: { [key: string]: Shoes } = {
     vans: {
         id: 'afrokiz-vans',
         name: 'Vans Afrokiz Edition By Kobby',
-        isSoldOut: false,
+        isSoldOut: true,
         price: { USD: 5500, EUR: 4800, THB: 178000 },
         sizes: ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44'],
         colors: ['Purple'],

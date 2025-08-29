@@ -31,20 +31,65 @@ let djs = [artists.ozyshine, artists.selva, artists.tpeak, artists.lucerne, arti
         <h2>Vans Afrokiz Edition</h2>
         <p>Handmade by Kobby <br /><br /></p>
         <h3><Currency price={afrokizShoes.vans.price} client:only /></h3>
-        <p><a href={'/vans'} class="button action">Buy now</a></p>
+        <p>
+          {
+            !afrokizShoes.vans.isSoldOut && (
+              <a href={'/vans'} class="button action">
+                Buy now
+              </a>
+            )
+          }
+          {
+            afrokizShoes.vans.isSoldOut && (
+              <button class="button action disabled" disabled>
+                Sold Out
+              </button>
+            )
+          }
+        </p>
       </Card>
       <div class="tshirt-container">
         <Card classes={['card header']} backgroundPath="/images/tshirt/woman-black1.jpg">
           <h2>Woman Crop Top</h2>
           <p>Let's celebrate the Kizomba connection.<br /><br /></p>
           <h3><Currency price={afrokizTshirts.woman.price} client:only /></h3>
-          <p><a href={'/t-shirt?id=woman'} class="button action">Buy now</a></p>
+          <p>
+            {
+              !afrokizTshirts.woman.isSoldOut && (
+                <a href={'/t-shirt?id=woman'} class="button action">
+                  Buy now
+                </a>
+              )
+            }
+            {
+              afrokizTshirts.woman.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
+          </p>
         </Card>
         <Card classes={['card header']} backgroundPath="/images/tshirt/purple4.jpg">
           <h2>Man T-Shirt</h2>
           <p>Let's celebrate the Kizomba connection.<br /><br /></p>
           <h3><Currency price={afrokizTshirts.man.price} client:only /></h3>
-          <p><a href={'/t-shirt?id=man'} class="button action">Buy now</a></p>
+          <p>
+            {
+              !afrokizTshirts.man.isSoldOut && (
+                <a href={'/t-shirt?id=man'} class="button action">
+                  Buy now
+                </a>
+              )
+            }
+            {
+              afrokizTshirts.man.isSoldOut && (
+                <button class="button action disabled" disabled>
+                  Sold Out
+                </button>
+              )
+            }
+          </p>
         </Card>
       </div>
     </div>

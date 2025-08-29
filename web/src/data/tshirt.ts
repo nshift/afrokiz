@@ -12,7 +12,7 @@ export const afrokizTshirts: { [key: string]: TShirt } = {
     man: {
         id: 'afrokiz-tshirt-man',
         name: 'Afrokiz TShirt Kobby Edition',
-        isSoldOut: false,
+        isSoldOut: true,
         price: { USD: 3000, EUR: 2500, THB: 97000 },
         sizes: ['S', 'M', 'L'],
         colors: ['Purple', 'Black'],
@@ -24,7 +24,7 @@ export const afrokizTshirts: { [key: string]: TShirt } = {
     woman: {
         id: 'afrokiz-crop-top-woman',
         name: 'Afrokiz Crop Top Kobby Edition',
-        isSoldOut: false,
+        isSoldOut: true,
         price: { USD: 2500, EUR: 2100, THB: 80000 },
         sizes: ['S', 'M', 'L'],
         colors: ['Black', 'White'],
