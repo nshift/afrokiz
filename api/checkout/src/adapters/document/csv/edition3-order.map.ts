@@ -75,6 +75,11 @@ const passes: { [key: string]: Pass } = {
     title: 'Full Pass',
     includes: ['All workshops', 'Day time social', 'Evening parties during September 5-7', 'Non-refundable'],
   },
+  guestPass: {
+    id: 'guest-pass',
+    title: 'Guest Pass',
+    includes: ['All workshops', 'Day time social', 'Evening parties during September 5-7', 'Non-transferable'],
+  },
   vipSilverPass: {
     id: 'vip-silver',
     title: 'VIP Silver',
