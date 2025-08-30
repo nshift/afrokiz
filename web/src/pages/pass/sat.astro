@@ -1,15 +1,18 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import Header from "../../sections/Header.astro";
-import Footer from "../../sections/Footer.astro";
-import TicketForm from "../../components/TicketForm.vue";
-import { defaultPasses } from "../../data/edition3/pass";
+import Layout from '../../layouts/Layout.astro'
+import Header from '../../sections/Header.astro'
+import Footer from '../../sections/Footer.astro'
+import TicketForm from '../../components/TicketForm.vue'
+import { defaultPasses } from '../../data/edition3/pass'
+
+const queryParams = Astro.url.searchParams
+const ignoreSoldOut = queryParams.get('s')
 ---
 
 <Layout title={`${defaultPasses.sat.name} | Afrokiz Bkk Festival Edition 3`}>
   <Header />
   <main>
-    <TicketForm client:load pass={defaultPasses.sat} />
+    <TicketForm client:load pass={defaultPasses.sat} ignoreSoldOut={ignoreSoldOut == '1'} />
   </main>
   <Footer />
 </Layout>
