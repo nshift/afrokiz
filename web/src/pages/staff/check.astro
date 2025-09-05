@@ -24,12 +24,36 @@ function getNumber(pattern: string) {
 }
 
 const items = [
-  { icon: '', title: 'Heneco MC', value: (includedItems.includes('2H Masterclass by Heneco') || includedItems.includes('2H Heneco Masterclass') || includedItems.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')) ? 1 : 0 },
-  { icon: '', title: 'Said MC', value: (includedItems.includes('2H Masterclass by Said & Oksana') || includedItems.includes('2H Said & Oksana Masterclass') || includedItems.includes('2H Said & Oksana Masterclass and 2H Heneco Masterclass')) ? 1 : 0 },
-  { icon: 'fa-ship', title: 'Cruise', value: (includedItems.includes('Exclusive Dinner Cruise Party') || includedItems.includes('Exclusive Dinner Cruise Party (7th September 6:30PM-9:30PM)')) ? 1 : 0 },
+  { icon: '', title: 'Audi & Laura MC', value:
+      includedItems.includes('2H Audi & Laura Masterclass') ||
+      includedItems.includes('2H Masterclass by Audi & Laura')
+        ? 1
+        : 0 },
+  { icon: '', title: 'TPeak MC', value:
+      includedItems.includes("2H T'Peak Masterclass") ||
+      includedItems.includes("2H Masterclass by T'Peak")
+        ? 1
+        : 0 },
+  { icon: '', title: 'Asia MC', value:
+      includedItems.includes('2H Asia Masterclass') ||
+      includedItems.includes('2H Masterclass by Asia')
+        ? 1
+        : 0 },
+  { icon: 'fa-ship', title: 'Cruise', value: includedItems.includes('Exclusive Cruise Party') || includedItems.includes('Cruise Party in Bangkok') ? 1 : 0 },
   { icon: '', title: 'Ginga', value: includedItems.includes('2H Ginga Styling bootcamp (video recorded)') ? 1 : 0 },
   { icon: 'fa-spa', title: 'Massage', value: getNumber('H Foot Massage') },
   { icon: 'fa-martini-glass', title: 'Welcome drinks', value: getNumber(' welcome drinks') },
+  { 
+    icon: '', 
+    title: 'Koh Samet', 
+    value:
+      includedItems.includes('All workshops at Bangkok and Koh Samet') ||
+      includedItems.includes('All workshops at Koh Samet') ||
+      includedItems.includes('Includes all workshops at Bangkok and Koh Samet') ||
+      includedItems.includes('All workshops at Koh Samet only')
+        ? 1
+        : 0 
+  },
 ]
 
 function getPassColorClass(passId: string) {
