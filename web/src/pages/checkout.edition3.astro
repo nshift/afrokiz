@@ -4,7 +4,7 @@ import Header from '../sections/edition3/Header.astro'
 import Footer from '../sections/Footer.astro'
 import Card from '../components/Card.astro'
 import { PaymentAPI } from '../payment-api/payment.api'
-import { defaultPasses as passes } from '../data/edition4/pass'
+import { defaultPasses as passes } from '../data/edition3/pass'
 
 const queryParams = Astro.url.searchParams
 const orderId = queryParams.get('order_id')
@@ -71,11 +71,26 @@ const pass = Object.values(passes).filter((pass) => pass.id == order.passId)[0]
             </table>
           </div>
           <div class="section">
+            <div class="container">
+              <div class="background">
+                <img src="/images/hotel.jpg" width="100" />
+              </div>
+            </div>
+            <div class="text">
+              <h3>Save the date: From 5th to 7th September 2025</h3>
+              <p>
+                Let's have wonderful dances at <a href="https://maps.app.goo.gl/deTHk2Euinkho3Pq6"
+                  >GLOWFISH 92/4, Floor 2, Sathorn Thani 2 Building, Bangkok</a
+                >. You can easily access it using the BTS and getting off at Chong Nonsi station.
+              </p>
+            </div>
+          </div>
+          <div class="section">
             <div class="text">
               <h3>Follow us on social media to get the latest information</h3>
               <p>
                 We will share the latest news, behind-the-scenes content, and community updates. Share your excitement
-                by using the official event hashtag: <b>#AfrokizBKK</b>.
+                by using the official event hashtag: <b>#AfroKizBKK2</b>.
               </p>
               <ul>
                 <li><a href="https://www.facebook.com/afrokizbkk">Facebook</a></li>

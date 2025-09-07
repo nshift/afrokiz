@@ -58,7 +58,7 @@ export const makeEdition3PromoterDiscount = (code: string) =>
     id: `promoter-${code.toLowerCase()}`,
     isActive: true,
     code: code.toUpperCase(),
-    expirationDate: new Date('2025-09-01'),
+    expirationDate: new Date('2026-09-01'),
     discount: 0.95,
     isAppliable: (passId: string) =>
       !['fri-night', 'sat-night', 'sun-night', 'fri', 'sat', 'sun'].includes(passId),

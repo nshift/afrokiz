@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, type Ref, inject, watch } from 'vue'
 import Card from '../components/Card.vue'
-import { type Pass, sumPrices } from '../data/pass'
+import { type Pass, sumPrices } from '../data/edition4/pass'
 import { isInstallment, type Order } from '../payment-api/payment.api'
 import type { Option } from '../data/options'
 import Payment from './Payment.vue'
@@ -9,7 +9,7 @@ import { DateTime } from 'luxon'
 
 const { pass, order } = defineProps<{ pass: Pass; order: Order }>()
 const currency: Ref<'USD' | 'EUR' | 'THB'> = inject('currency') ?? ref('USD')
-const options: Option[] = Object.values(pass.options)
+const options: Option[] = Object.values(pass.options ?? {})
   .filter((option) => !['couple-option'].includes(option.id))
   .filter(
     (option) =>
