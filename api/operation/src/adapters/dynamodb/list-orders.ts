@@ -23,6 +23,8 @@ export const listOrdersResponse = (response: any) =>
       promoCode: item.promoCode,
       customerType: item.customer?.type ?? item.dancerType,
       includes: item.items.flatMap((item: any) => ((item.includes?.length ?? 0) > 0 ? item.includes : [item.title])),
+      items: item.items.map((item: any) => ({ id: item.id, total: { amount: item.total.amount, currency: item.total.currency }})),
+      checkedIn: item.checkedIn,
       paymentStatus:
         item.payment?.status ??
         item.paymentStructures

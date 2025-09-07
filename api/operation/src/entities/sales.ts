@@ -8,8 +8,10 @@ export type Sales = {
   pass: string
   customerType: string
   includes: string[]
+  items: { id: string; total: { amount: number; currency: Currency } }[]
   promoCode: string
   paymentStatus: 'pending' | 'success' | 'failed'
+  checkedIn: boolean
   total: {
     amount: number
     currency: Currency

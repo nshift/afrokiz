@@ -9,6 +9,7 @@ import { SametRegistration } from '../../samet-registration'
 import { DynamoDbAdapter } from '../dynamodb/dynamodb'
 import { SESEmailService } from '../email/ses'
 import { preGuestRegistrationEmailTemplate } from '../email/email.pre-registration'
+import { Currency } from '../../entities/currency'
 
 const repository = new DynamoDbAdapter(
   DynamoDBDocumentClient.from(new DynamoDB({}), {
@@ -47,9 +48,21 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
                 sale.includes.includes('2H Audi & Laura Masterclass') ||
                 sale.includes.includes('2H Masterclass by Audi & Laura') ||
                 sale.pass == 'vip-gold'
+                  ? calculateMasterclass(sale, 'audi-laura-masterclass')
+                  : 0,
+              'Audi & Laura MC Confirm':
+                sale.includes.includes('2H Audi & Laura Masterclass') ||
+                sale.includes.includes('2H Masterclass by Audi & Laura') ||
+                sale.pass == 'vip-gold'
                   ? 1
                   : 0,
               'TPeak MC':
+                sale.includes.includes("2H T'Peak Masterclass") ||
+                sale.includes.includes("2H Masterclass by T'Peak") ||
+                sale.pass == 'vip-gold'
+                  ? calculateMasterclass(sale, 'tpeak-masterclass')
+                  : 0,
+              'TPeak MC Confirm':
                 sale.includes.includes("2H T'Peak Masterclass") ||
                 sale.includes.includes("2H Masterclass by T'Peak") ||
                 sale.pass == 'vip-gold'
@@ -58,6 +71,12 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
               'Asia MC':
                 sale.includes.includes('2H Asia Masterclass') ||
                 sale.includes.includes('2H Masterclass by Asia') ||
+                sale.pass == 'vip-gold'
+                  ? calculateMasterclass(sale, 'asia-masterclass')
+                  : 0,
+              'Asia MC Confirm':
+                sale.includes.includes("2H T'Peak Masterclass") ||
+                sale.includes.includes("2H Masterclass by T'Peak") ||
                 sale.pass == 'vip-gold'
                   ? 1
                   : 0,
@@ -80,6 +99,7 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
                 sale.includes.filter((option) => option == '1H Foot Massage at Lek Massage per person').length ||
                 sale.includes.filter((option) => option == '2H Foot Massage at Lek Massage per person').length * 2,
               'Promo Code': sale.promoCode,
+              'Check in': sale.checkedIn ? 1 : 0,
               Amount: String(sale.total.amount / 100),
               Currency: sale.total.currency,
               includes: sale.includes.join(';'),
@@ -104,14 +124,18 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
               'Koh Samet': 0,
               Cruise: 0,
               'Audi & Laura MC': 0,
+              'Audi & Laura MC Confirm': 0,
               'TPeak MC': 0,
+              'TPeak MC Confirm': 0,
               'Asia MC': 0,
+              'Asia MC Confirm': 0,
               'Afro Bootcamp': 0,
               'Airport Pickup': 0,
               'Bangkok Hotel': 0,
               'Shared Room Samet': 0,
               Massage: 0,
               'Promo Code': '',
+              "Check in": 0,
               Amount: (salesReport.totalInTHB / 100).toLocaleString('en-us', { minimumFractionDigits: 2 }),
               Currency: 'THB',
               includes: '',
@@ -122,6 +146,40 @@ export const makeAllSalesReport = async (event: APIGatewayEvent, context: Contex
   } catch (error) {
     console.error(error)
     return internalServerErrorResponse(error)
+  }
+}
+
+const calculateMasterclass = (sale: Sales, masterclassId: string) => {
+  if (sale.pass == 'vip-gold') {
+    return 1700
+  }
+  const item = sale.items.find(({ id }) => [masterclassId, 'all-masterclass'].includes(id))
+  if (!item) {
+    return -1
+  }
+  const calculateDiscount = (sale: Sales, amount: number) => {
+    if (sale.includes.includes('Discount 5% off')) {
+      return amount * 0.95
+    }
+    if (sale.includes.includes('Discount 10% off')) {
+      return amount * 0.90
+    }
+    return amount
+  }
+  const amount = item.id == 'all-masterclass' ? item.total.amount / 3 : item.total.amount
+  return calculateAmountInTHB(calculateDiscount(sale, amount / 100), item.total.currency)
+}
+
+export const calculateAmountInTHB = (amount: number, currency: Currency) => {
+  switch (currency) {
+    case 'EUR':
+      return Number((amount / 0.025).toFixed(0))
+    case 'USD':
+      return Number((amount / 0.028).toFixed(0))
+    case 'THB':
+      return amount
+    default:
+      throw new Error('Can not calculate amount in THB because currency is unknown.')
   }
 }
 
