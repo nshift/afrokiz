@@ -8,7 +8,7 @@ import { EmailTemplate } from './email.template'
 export const confirmationEmailTemplate = (): EmailTemplate => ({
   name: 'ConfirmationEmail',
   destinations: [],
-  subject: 'Confirmation - AfroKiz Bangkok #3',
+  subject: 'Confirmation - AfroKiz Bangkok #4',
   html: fs.readFileSync(path.join(__dirname, 'confirmation.html')).toString(),
 })
 
@@ -45,7 +45,7 @@ export const confirmationEmail = (
       passName: order.items[0].title,
     },
   })),
-  subject: 'Confirmation - AfroKiz Bangkok #3',
+  subject: 'Confirmation - AfroKiz Bangkok #4',
   html: fs.readFileSync(path.join(__dirname, 'confirmation.html')).toString(),
 })
 

@@ -7,7 +7,7 @@ import { EmailTemplate } from './email.template'
 export const registrationEmailTemplate = (): EmailTemplate => ({
   name: 'RegistrationEmail',
   destinations: [],
-  subject: 'See you soon at AfroKiz Bangkok #3',
+  subject: 'See you soon at AfroKiz Bangkok #4',
   html: fs.readFileSync(path.join(__dirname, 'registration.html')).toString(),
 })
 
