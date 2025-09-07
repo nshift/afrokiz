@@ -1,0 +1,43 @@
+---
+import Card from '../components/Card.astro'
+import { defaultPasses } from '../data/edition4/pass'
+import Currency from '../components/Currency.vue'
+---
+
+<div class="container1">
+  <Card classes={['background-card']}>
+    <Card classes={['top-card']} backgroundPath="/images/membership.jpeg">
+      <h2 style="margin-bottom: 1rem;">Afrokiz Membership</h2>
+      <h3 style="margin-bottom: 1rem;"><Currency price={defaultPasses.membership.price} client:only /></h3>
+      <div class="button-container"><a href="/pass/membership" class="button action arrow">Buy</a></div>
+    </Card>
+  </Card>
+  <div class="section-header">
+    <div>
+      <h3 style="margin-bottom: 1rem;">Enjoy every year Afrokiz events</h3>
+      <p class="text">
+        Unlock your Afrokiz Membership and get a full pass, exclusive promo codes for festivals, and special discounts
+        on our limited-edition T-shirts and Vans shoes. Dance more, save more, and celebrate the Afrokiz spirit all year
+        long!
+      </p>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .background-card {
+    padding: 1.25rem;
+  }
+  .container1 {
+    position: relative;
+    z-index: 1;
+    margin-top: -120px;
+    grid-column: 3 / span 8;
+  }
+</style>
+
+<style>
+  .text {
+    font-size: var(--h4-font-size);
+  }
+</style>

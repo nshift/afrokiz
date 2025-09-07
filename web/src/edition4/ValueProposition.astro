@@ -1,16 +1,16 @@
 <div class="video">
   <div class="overlay"></div>
-  <video loop autoplay playsinline muted poster="/images/video-background.jpg">
-    <h1>AfroKiz Bangkok Festival Edition 3</h1>
-    <source src="https://afrokiz-assets.s3.ap-southeast-1.amazonaws.com/afrokiz.edition3.mp4" type="video/mp4" />
-  </video>
+  <div class="videoContainer">
+    <img src="/images/afrokiz4.jpg" style="height: 100%; width: 100%; object-fit: cover" />
+  </div>
 </div>
 
 <style>
   .video {
     height: calc(var(--video-size) - 100px);
   }
-  video {
+  video,
+  .videoContainer {
     position: absolute;
     top: 0;
     width: 100%;
@@ -20,7 +20,7 @@
   }
   .overlay {
     position: absolute;
-    background-color: rgba(55, 27, 88, 0.4);
+    background-color: rgba(55, 27, 88, 0.5);
     width: 100%;
     height: var(--video-size);
     top: 0;

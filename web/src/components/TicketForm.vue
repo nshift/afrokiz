@@ -98,7 +98,7 @@ const shouldDisabled = (id: string) => {
                 : !['fullpass-edition3', 'fullpass-valentine', 'vip-silver-valentine', 'vip-gold-valentine'].includes(
                     pass.id
                   )
-                ? 'Single ' + pass.name
+                ? pass.name
                 : pass.name
             }}
           </h2>

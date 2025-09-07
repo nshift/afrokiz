@@ -1,23 +1,19 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import Header from '../sections/edition3/Header.astro'
-import Footer from '../edition4/Footer.astro'
-import Card from '../components/Card.astro'
+import Layout from "../layouts/Layout.astro";
+import Header from "../sections/edition3/Header.astro";
+import Footer from "../sections/Footer.astro";
+import Card from "../components/Card.astro";
 ---
 
 <Layout title="Find My Order | Afrokiz Bkk Festival Edition 3">
   <Header />
   <main>
     <div class="grid">
-      <Card classes={['find-order']}>
+      <Card classes={["find-order"]}>
         <div class="content">
           <div class="description">
             <h1>Find your order</h1>
-            <p>
-              To view the status of your order and add any add-ons, please search using your order number. You can find
-              this number in your purchase confirmation email. If you're unable to locate your order, please contact us
-              at afrokiz.bkk@gmail.com.
-            </p>
+            <p>To view the status of your order and add any add-ons, please search using your order number. You can find this number in your purchase confirmation email. If you're unable to locate your order, please contact us at afrokiz.bkk@gmail.com.</p>
           </div>
           <div>
             <form class="information-element" action="/order" method="get">

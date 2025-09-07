@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Header from '../edition3/Header.astro'
+import ValueProposition from '../edition3/ValueProposition.astro'
+import KeyMetrics from '../edition3/KeyMetrics.astro'
+import LineUp from '../edition3/LineUp.astro'
+import Bangkok from '../edition3/Bangkok.astro'
+import KohSamet from '../edition3/KohSamet.astro'
+import TravelPackage from '../edition3/TravelPackage.astro'
+import Footer from '../edition3/Footer.astro'
+import AfrokizMerch from '../edition3/AfrokizMerch.astro'
+---
+
+<Layout title="Afrokiz Bkk Festival Edition 3">
+  <Header />
+  <main>
+    <ValueProposition />
+    <KeyMetrics />
+    <LineUp />
+    <div id="tickets" class="container">
+      <AfrokizMerch />
+      <Bangkok />
+      <KohSamet />
+      <TravelPackage />
+    </div>
+  </main>
+  <Footer />
+</Layout>

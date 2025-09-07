@@ -1,0 +1,15 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import Header from '../../edition3/Header.astro'
+import Footer from '../../edition4/Footer.astro'
+import TicketForm from '../../components/TicketForm.vue'
+import { defaultPasses } from '../../data/edition4/pass'
+---
+
+<Layout title={`${defaultPasses.membership.name} | Afrokiz Bkk Festival Edition 4`}>
+  <Header />
+  <main>
+    <TicketForm client:load pass={defaultPasses.membership} />
+  </main>
+  <Footer />
+</Layout>

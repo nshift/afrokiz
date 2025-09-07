@@ -131,7 +131,7 @@ export class DynamoDbRepository implements Repository {
 
   async getAllPromotions(passId: string): Promise<{ [key: string]: Promotion }> {
     return {
-      PLOY: makeEdition3PromoterDiscount('PLOY'),
+      ROMAIN: makeEdition3PromoterDiscount('ROMAIN'),
       VICTORIA: makeEdition3PromoterDiscount('VICTORIA'),
     }
     return {
