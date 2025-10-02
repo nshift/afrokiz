@@ -12,6 +12,7 @@ export const makeOperationEndpoints = (props: {
   guestTable: cdk.aws_dynamodb.Table
   sametTable: cdk.aws_dynamodb.Table
   documentBucket: cdk.aws_s3.Bucket
+  apiAuthorizer: cdk.aws_apigatewayv2.CfnAuthorizer
 }) => {
   const sharedLayer = createSharedLayer('OperationSharedLayer', OperationModule('.build/layer'), props.stack)
   const codeUri = OperationModule('.build/src')
@@ -32,6 +33,7 @@ const makeAllSalesReportEndpoint = (props: {
   api: cdk.aws_apigatewayv2.CfnApi
   sharedLayer: cdk.aws_lambda.LayerVersion
   orderTable: cdk.aws_dynamodb.Table
+  apiAuthorizer: cdk.aws_apigatewayv2.CfnAuthorizer
 }) => {
   const endpoint = createEndpoint('AllSalesReport', {
     handler: 'adapters/lambda/lambda.makeAllSalesReport',
@@ -43,6 +45,7 @@ const makeAllSalesReportEndpoint = (props: {
       ORDER_TABLE_NAME: props.orderTable.tableName,
     },
     memorySize: 2048,
+    authorizer: props.apiAuthorizer,
     ...props,
   })
   props.orderTable.grant(endpoint.lambda, 'dynamodb:Scan')

@@ -46,3 +46,15 @@ export const createPaymentTable = (stack: cdk.Stack) =>
     ],
     stack,
   })
+
+export const createEventConfigurationTable = (stack: cdk.Stack) =>
+  createDynamoDbTable('EventConfigurationTable', {
+    partitionKey: { name: 'pk', type: STRING },
+    sortKey: { name: 'sk', type: STRING },
+    secondaryIndexes: [
+      { indexName: 'UserIdGSI', partitionKey: { name: 'userId', type: STRING } },
+      { indexName: 'ByCode', partitionKey: { name: 'code', type: STRING }, sortKey: { name: 'sk', type: STRING } },
+      { indexName: 'BySKU', partitionKey: { name: 'sku', type: STRING } },
+    ],
+    stack,
+  })

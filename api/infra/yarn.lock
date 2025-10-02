@@ -546,8 +546,8 @@
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
 "@nshift/cdk@https://github.com/nshift/cdk#main":
-  version "0.3.0"
-  resolved "https://github.com/nshift/cdk#0b3a5aea74c19d5234606209bbfe4caa9192e8e5"
+  version "0.4.0"
+  resolved "https://github.com/nshift/cdk#d7896f96b4f6f69753a32f592f71f69c39dd6625"
   dependencies:
     aws-cdk-lib "2.104.0"
     constructs "^10.0.0"
