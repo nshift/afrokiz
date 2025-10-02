@@ -53,7 +53,10 @@ export class DynamoDbRepository implements Repository {
     private readonly dateGenerator: DateGenerator
   ) {}
 
-  async savePaymentStatus({ order, payment }: {
+  async savePaymentStatus({
+    order,
+    payment,
+  }: {
     order: { id: string }
     payment: { id: string; status: PaymentStatus }
   }): Promise<void> {
@@ -279,7 +282,9 @@ export class DynamoDbRepository implements Repository {
         this.dynamodb.send(getImportOrdersByFingerprintsRequest(fingerprints))
       )
     )
-    return importOrdersResponse(responses.flatMap((response) => response.Responses?.[Environment.ImportOrderTableName()]) ?? [])
+    return importOrdersResponse(
+      responses.flatMap((response) => response.Responses?.[Environment.ImportOrderTableName()]) ?? []
+    )
   }
 
   async updateOrderCheckIn(orderId: string, value: boolean): Promise<void> {

@@ -89,6 +89,9 @@ export class Checkout {
     if (!checkoutOrder) {
       throw new Error(`Order (${orderId}) is not found.`)
     }
+    if (!payment.id) {
+      throw new Error(`Payment id is required.`)
+    }
     const { order, customer, paymentStructures } = checkoutOrder
     const processedPayment = await this.repository.getPaymentById(payment.id)
     if (!processedPayment) {
