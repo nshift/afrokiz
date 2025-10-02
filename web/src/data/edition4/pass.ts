@@ -29,7 +29,7 @@ export const defaultPasses: { [key: string]: Pass } = {
     isSoldOut: false,
     price: { USD: 12900, EUR: 10900, THB: 390000 },
     doorPrice: { USD: 12900, EUR: 10900, THB: 390000 },
-    includes: ['Afrokiz full pass', 'Evazion 3 Festival Early Bird Discount (Lyon, France)', 'Wuhan Kizomba Festival Discount (China)', 'AKC Festival Discount (Seoul, Korea)', 'Japan Kizomba Festival Discount (Tokyo, Japan)', '10% off on Afrokiz Merch'],
+    includes: ['Afrokiz full pass from 30th October to 1st November.', 'Evazion 3 Festival Early Bird Discount (Lyon, France)', 'Wuhan Kizomba Festival Discount (China)', 'AKC Festival Discount (Seoul, Korea)', 'Japan Kizomba Festival Discount (Tokyo, Japan)', '10% off on Afrokiz Merch'],
     giveAways: [],
     isPromoted: true,
     options: { },
