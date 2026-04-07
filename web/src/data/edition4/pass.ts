@@ -27,12 +27,19 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'afrokiz-membership',
     name: 'Afrokiz Membership',
     isSoldOut: false,
-    price: { USD: 12900, EUR: 10900, THB: 390000 },
-    doorPrice: { USD: 12900, EUR: 10900, THB: 390000 },
-    includes: ['Afrokiz full pass from 30th October to 1st November.', 'Evazion 3 Festival Early Bird Discount (Lyon, France)', 'Wuhan Kizomba Festival Discount (China)', 'AKC Festival Discount (Seoul, Korea)', 'Japan Kizomba Festival Discount (Tokyo, Japan)', '10% off on Afrokiz Merch'],
+    price: { USD: 15000, EUR: 13000, THB: 500000 },
+    doorPrice: { USD: 15000, EUR: 13000, THB: 500000 },
+    includes: [
+      'Afrokiz full pass from 30th October to 1st November.',
+      'Evazion 3 Festival Early Bird Discount (Lyon, France)',
+      'Wuhan Kizomba Festival Discount (China)',
+      'AKC Festival Discount (Seoul, Korea)',
+      'Japan Kizomba Festival Discount (Tokyo, Japan)',
+      '10% off on Afrokiz Merch',
+    ],
     giveAways: [],
     isPromoted: true,
-    options: { },
+    options: {},
   },
 }
 
@@ -41,7 +48,7 @@ export const defaultPasses: { [key: string]: Pass } = {
 export function calculateTotal(
   pass: Pass,
   selectedOptionIds: string[],
-  discount: number = 1
+  discount: number = 1,
 ): { USD: number; EUR: number; THB: number } {
   return Object.keys(pass.price).reduce((prices, currency) => {
     let total = pass.price[currency as Currency] * discount
@@ -51,7 +58,7 @@ export function calculateTotal(
           ? option.price[currency as Currency] *
             (selectedOptionIds.includes('couple-option') && option.id != 'couple-option' ? 2 : 1)
           : 0),
-      0
+      0,
     )
     prices[currency] = total
     return prices
@@ -68,6 +75,6 @@ export function sumPrices(prices: { USD: number; EUR: number; THB: number }[]) {
       }
       return total
     },
-    { USD: 0, EUR: 0, THB: 0 }
+    { USD: 0, EUR: 0, THB: 0 },
   )
 }
