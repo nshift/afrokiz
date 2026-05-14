@@ -27,8 +27,8 @@ export const defaultPasses: { [key: string]: Pass } = {
     id: 'afrokiz-membership',
     name: 'Afrokiz Membership',
     isSoldOut: false,
-    price: { USD: 15000, EUR: 13000, THB: 500000 },
-    doorPrice: { USD: 15000, EUR: 13000, THB: 500000 },
+    price: { USD: 18000, EUR: 15500, THB: 580000 },
+    doorPrice: { USD: 18000, EUR: 15500, THB: 580000 },
     includes: [
       'Afrokiz full pass from 30th October to 1st November.',
       'Evazion 3 Festival Early Bird Discount (Lyon, France)',
